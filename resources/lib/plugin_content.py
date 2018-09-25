@@ -129,9 +129,9 @@ class PluginContent(object):
         random.shuffle(genres)
 
         if len(genres) > 1:
-            query_filter={"and": [unplayed_filter,{"operator": "isnot", "field": "title", "value": title},{"operator": "is", "field": "genre", "value": genres[0]}, {"operator": "is", "field": "genre", "value": genres[1]}]}
+            query_filter={"and": [{"operator": "isnot", "field": "title", "value": title},{"operator": "is", "field": "genre", "value": genres[0]}, {"operator": "is", "field": "genre", "value": genres[1]}]}
         else:
-            query_filter={"and": [unplayed_filter,{"operator": "isnot", "field": "title", "value": title},{"operator": "is", "field": "genre", "value": genres[0]}]}
+            query_filter={"and": [{"operator": "isnot", "field": "title", "value": title},{"operator": "is", "field": "genre", "value": genres[0]}]}
 
         json_query = json_call(self.method_item,
                             properties=self.properties,
