@@ -5,8 +5,6 @@ import xbmc
 import time
 
 class KodiMonitor(xbmc.Monitor):
-    update_widgets_busy = False
-    last_mediatype = ""
 
     def __init__(self, **kwargs):
         xbmc.Monitor.__init__(self)
@@ -18,13 +16,9 @@ class KodiMonitor(xbmc.Monitor):
         self.refresh_widgets()
 
     def onNotification(self, sender, method, data):
-        try:
-            if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate" or method == "Player.OnStop" or method == "Player.OnPlay":
-                log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
-                self.refresh_widgets()
-
-        except Exception as exc:
-            log("Exception in KodiMonitor: %s" % exc)
+        if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate" or method == "Player.OnStop" or method == "Player.OnPlay":
+            log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
+            self.refresh_widgets()
 
     def refresh_widgets(self):
         log("Refreshing widgets")
