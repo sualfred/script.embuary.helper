@@ -60,7 +60,7 @@ plugin://script.embuary.helper?info=getcast&amp;type=movie&amp;dbid=$INFO[ListIt
 
 Results will have no <onlick> command. You have to use a own <onclick> override for the container to enable an action.
 
-________________________________________________________________________________________________________  
+________________________________________________________________________________________________________
 ## Similar movie (because you watched ...)
 
 Based on a random recently watched item:
@@ -75,7 +75,7 @@ Based on a DBID
 plugin://script.embuary.helper/?info=getsimilar&amp;type=movie&amp;dbid=$INFO[ListItem.DBID]&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
 ```
 
-________________________________________________________________________________________________________  
+________________________________________________________________________________________________________
 ## Similar TV show (because you watched ...)
 
 Based on a random recently watched TV show (inprogress or completely watched):
@@ -89,8 +89,14 @@ Based on a DBID
 ```
 plugin://script.embuary.helper/?info=getsimilar&amp;type=tvshow&amp;dbid=$INFO[ListItem.DBID]&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
 ```
+Available window properties if the container was placed inside of DialogVideoInfo.xml and a item was called (useful if you want TV show info labels which aren't available on season level):
+- Window(home).Property(TVShowDBID)
+- Window(home).Property(TVShowRating)
+- Window(home).Property(TVShowYear)
+- Window(home).Property(TVShowTotalSeasons)
+- Window(home).Property(TVShowTotalEpisodes)
 
-________________________________________________________________________________________________________  
+________________________________________________________________________________________________________
 ## Jump to letter
 
 ```
@@ -100,7 +106,7 @@ plugin://script.embuary.helper/?info=jumptoletter&amp;reload=$INFO[Container.Num
 Provides a list to jump directly to a item inside of list in the media windows.
 
 Available ListItem properties:
-- ListItem.Property(NotAvailable) 
+- ListItem.Property(NotAvailable)
 - ListItem.Property(IsNumber)
 
 Example implementation:
