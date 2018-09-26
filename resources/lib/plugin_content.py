@@ -12,7 +12,9 @@ class PluginContent(object):
         self.dbtitle = dbtitle
         self.dbtype = dbtype
         self.dbid = dbid
+        self.saveprops = False
         self.li = li
+
 
         if dbtype == "movie":
             self.method_details = "VideoLibrary.GetMovieDetails"
@@ -142,12 +144,12 @@ class PluginContent(object):
         try:
             json_query = json_query['result'][self.key_items]
         except KeyError:
-            log("No similar movies. Do nothing")
+            log("No similar items. Do nothing")
         else:
             if self.dbtype == "movie":
                 parse_movies(self.li,json_query,title)
             elif self.dbtype == "tvshow":
-                parse_tvshows(self.li,json_query,title)
+                parse_tvshows(self.li,json_query,title,self.saveprops)
 
     # cast
     def get_cast(self):

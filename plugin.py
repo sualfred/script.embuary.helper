@@ -49,6 +49,8 @@ class Main:
             plugin.get_genre()
         elif self.info == 'getinprogress':
             plugin.get_inprogress()
+        elif self.info == 'switchwindow':
+            xbmc.executeBuiltIn("ActivateWindow(videos,videodb://tvshows/titles/%s/,return)") % self.params.get("dbid")
         elif self.info == 'jumptoletter':
             if action:
                 smsjump(action)

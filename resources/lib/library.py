@@ -212,15 +212,20 @@ def parse_movies(li, json_query, title=False):
             li_item.addStreamInfo("video", stream)
         li.append((movie['file'], li_item, False))
 
-def parse_tvshows(li, json_query, title):
+def parse_tvshows(li, json_query, title, saveprops):
 
     for tvshow in json_query:
 
         if "cast" in tvshow:
             cast = _get_cast(tvshow['cast'])
 
+        if not saveprops:
+            tvshow["file"] = "videodb://tvshows/titles/%s/" % tvshow["tvshowid"]
+        else:
+            tvshow["file"] = "plugin://script.embuary.helper/?info=switchwindow&dbid=%s&rating=%s&seasons=%s&episodes=%s&mpaa=%s&premiered=%s" % (str(tvshow['tvshowid']),str(float(tvshow['rating'])),str(tvshow['season']),str(tvshow['episode']),tvshow['mpaa'],tvshow['premiered'])
+
+        log("test %s" % tvshow["file"])
         li_item = xbmcgui.ListItem(tvshow['title'])
-        tvshow["file"] = "videodb://tvshows/titles/%s/" % tvshow["tvshowid"]
         li_item.setInfo(type="Video", infoLabels={"Title": tvshow['title'],
                                               "Year": tvshow['year'],
                                               "Genre": _get_joined_items(tvshow.get('genre', "")),
@@ -229,6 +234,7 @@ def parse_tvshows(li, json_query, title):
                                               "Plot": tvshow['plot'],
                                               "Rating": str(float(tvshow['rating'])),
                                               "Votes": tvshow['votes'],
+                                              "Premiered": tvshow['premiered'],
                                               "MPAA": tvshow['mpaa'],
                                               "Cast": cast[0],
                                               "CastAndRole": cast[1],
