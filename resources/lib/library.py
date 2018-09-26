@@ -212,46 +212,55 @@ def parse_movies(li, json_query, title=False):
             li_item.addStreamInfo("video", stream)
         li.append((movie['file'], li_item, False))
 
-def parse_tvshows(li, json_query, title, saveprops):
+def parse_tvshows(li, json_query, title):
 
     for tvshow in json_query:
 
         if "cast" in tvshow:
             cast = _get_cast(tvshow['cast'])
 
-        if not saveprops:
-            tvshow["file"] = "videodb://tvshows/titles/%s/" % tvshow["tvshowid"]
+        rating = str(round(tvshow['rating'],1))
+        dbid = str(tvshow['tvshowid'])
+        season = str(tvshow['season'])
+        episode = str(tvshow['episode'])
+        year = str(tvshow['year'])
+        mpaa = tvshow['year']
+
+        if not xbmc.getCondVisibility("Window.IsVisible(movieinformation)"):
+            folder = True
+            tvshow["file"] = "videodb://tvshows/titles/%s/" % dbid
         else:
-            tvshow["file"] = "plugin://script.embuary.helper/?info=switchwindow&dbid=%s&rating=%s&seasons=%s&episodes=%s&mpaa=%s&premiered=%s" % (str(tvshow['tvshowid']),str(float(tvshow['rating'])),str(tvshow['season']),str(tvshow['episode']),tvshow['mpaa'],tvshow['premiered'])
+            folder = False
+            tvshow["file"] = "plugin://script.embuary.helper/?action=jumptoshow&dbid=%s&rating=%s&seasons=%s&episodes=%s&mpaa=%s&year=%s" % (dbid,rating,season,episode,mpaa,year)
 
         log("test %s" % tvshow["file"])
         li_item = xbmcgui.ListItem(tvshow['title'])
         li_item.setInfo(type="Video", infoLabels={"Title": tvshow['title'],
-                                              "Year": tvshow['year'],
+                                              "Year": year,
                                               "Genre": _get_joined_items(tvshow.get('genre', "")),
                                               "Studio": _get_first_item(tvshow.get('studio', "")),
                                               "Country": _get_first_item(tvshow.get('country', "")),
                                               "Plot": tvshow['plot'],
-                                              "Rating": str(float(tvshow['rating'])),
+                                              "Rating": rating,
                                               "Votes": tvshow['votes'],
                                               "Premiered": tvshow['premiered'],
-                                              "MPAA": tvshow['mpaa'],
+                                              "MPAA": mpaa,
                                               "Cast": cast[0],
                                               "CastAndRole": cast[1],
                                               "mediatype": "tvshow",
-                                              "dbid": str(tvshow['tvshowid']),
+                                              "dbid": dbid,
                                               "imdbnumber": str(tvshow['imdbnumber']),
                                               "Path": tvshow["file"],
                                               "DateAdded": tvshow["dateadded"],
                                               "Playcount": tvshow['playcount']})
         if title:
             li_item.setProperty("similartitle", title)
-        li_item.setProperty("TotalSeasons", str(tvshow['season']))
-        li_item.setProperty("TotalEpisodes", str(tvshow['episode']))
+        li_item.setProperty("TotalSeasons", season)
+        li_item.setProperty("TotalEpisodes", episode)
         li_item.setArt(tvshow['art'])
         li_item.setThumbnailImage(tvshow['art'].get('poster', ''))
         li_item.setIconImage('DefaultVideo.png')
-        li.append((tvshow['file'], li_item, True))
+        li.append((tvshow['file'], li_item, folder))
 
 
 def parse_episodes(li, json_query):

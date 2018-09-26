@@ -6,9 +6,7 @@ import xbmcaddon
 import urlparse
 
 from resources.lib.plugin_content import *
-from resources.lib.utils import remove_quotes
-from resources.lib.utils import log
-from resources.lib.utils import smsjump
+from resources.lib.utils import *
 
 ADDON = xbmcaddon.Addon()
 ADDON_VERSION = ADDON.getAddonInfo('version')
@@ -19,11 +17,13 @@ WINDOW = xbmcgui.Window(10000)
 class Main:
 
     def __init__(self):
-        log("version %s started" % ADDON_VERSION)
         self._parse_argv()
         self.info = self.params.get("info")
+        self.action = self.params.get("action")
         if self.info:
-            self.info_actions()
+            self.getinfos()
+        if self.action:
+            self.actions()
 
     def _parse_argv(self):
         base_url = sys.argv[0]
@@ -33,13 +33,9 @@ class Main:
         except Exception:
             self.params = {}
 
-    def info_actions(self):
+    def getinfos(self):
         li = list()
-        dbid = remove_quotes(self.params.get("dbid"))
-        dbtype = remove_quotes(self.params.get("type"))
-        dbtitle = remove_quotes(self.params.get("title"))
-        action = remove_quotes(self.params.get("action"))
-        plugin = PluginContent(dbtype,dbid,dbtitle,li)
+        plugin = PluginContent(self.params,li)
 
         if self.info == 'getcast':
             plugin.get_cast()
@@ -49,16 +45,17 @@ class Main:
             plugin.get_genre()
         elif self.info == 'getinprogress':
             plugin.get_inprogress()
-        elif self.info == 'switchwindow':
-            xbmc.executeBuiltIn("ActivateWindow(videos,videodb://tvshows/titles/%s/,return)") % self.params.get("dbid")
         elif self.info == 'jumptoletter':
-            if action:
-                smsjump(action)
-            else:
-                plugin.jumptoletter()
+            plugin.jumptoletter()
 
         xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
+
+    def actions(self):
+        if self.action == "smsjump":
+            smsjump(self.params.get("letter"))
+        elif self.action == "jumptoshow":
+            jumptoshow(self.params)
 
 if __name__ == "__main__":
     Main()

@@ -4,26 +4,25 @@ import xbmcplugin
 import json as simplejson
 import random
 from resources.lib.utils import log
+from resources.lib.utils import remove_quotes
 from resources.lib.library import *
 
 class PluginContent(object):
-    def __init__(self,dbtype,dbid,dbtitle,li):
+    def __init__(self,params,li):
 
-        self.dbtitle = dbtitle
-        self.dbtype = dbtype
-        self.dbid = dbid
-        self.saveprops = False
+        self.dbtitle = remove_quotes(params.get("title"))
+        self.dbtype = remove_quotes(params.get("type"))
+        self.dbid = remove_quotes(params.get("dbid"))
         self.li = li
 
-
-        if dbtype == "movie":
+        if self.dbtype == "movie":
             self.method_details = "VideoLibrary.GetMovieDetails"
             self.method_item = "VideoLibrary.GetMovies"
             self.param = "movieid"
             self.key_details = "moviedetails"
             self.key_items = "movies"
             self.properties = movie_properties
-        elif dbtype == "tvshow":
+        elif self.dbtype == "tvshow":
             self.method_details = "VideoLibrary.GetTVShowDetails"
             self.method_item = "VideoLibrary.GetTVShows"
             self.param = "tvshowid"
@@ -149,7 +148,7 @@ class PluginContent(object):
             if self.dbtype == "movie":
                 parse_movies(self.li,json_query,title)
             elif self.dbtype == "tvshow":
-                parse_tvshows(self.li,json_query,title,self.saveprops)
+                parse_tvshows(self.li,json_query,title)
 
     # cast
     def get_cast(self):
@@ -194,10 +193,10 @@ class PluginContent(object):
                     li_item = xbmcgui.ListItem(label=letter)
 
                     if letter == "#":
-                        li_path = "plugin://script.embuary.helper/?info=jumptoletter&action=0"
+                        li_path = "plugin://script.embuary.helper/?action=smsjump&letter=0"
                         li_item.setProperty("IsNumber", "0")
                     elif letter in all_letters:
-                        li_path = "plugin://script.embuary.helper/?info=jumptoletter&action=%s" % letter
+                        li_path = "plugin://script.embuary.helper/?action=smsjump&letter=%s" % letter
                     else:
                         li_path = ""
                         li_item.setProperty("NotAvailable", "true")

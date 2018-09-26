@@ -23,35 +23,56 @@ def remove_quotes(label):
             label = label[1:-1]
     return label
 
-def smsjump(action):
+def jumptoshow(params):
+    try:
+        xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
+    except Exception:
+        pass
+    finally:
+        window.setProperty("TVShowRating",params.get("rating"))
+        window.setProperty("TVShowDBID",params.get("dbid"))
+        window.setProperty("TVShowYear",params.get("year"))
+        window.setProperty("TVShowTotalSeasons",params.get("seasons"))
+        window.setProperty("TVShowTotalEpisodes",params.get("episodes"))
+
+        if not xbmc.getCondVisibility("Window.IsMedia"):
+            execute = "ActivateWindow(videos,videodb://tvshows/titles/%s/,return)" % params.get("dbid")
+        else:
+            execute = "Container.Update(videodb://tvshows/titles/%s/)" % params.get("dbid")
+
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin(execute)
+
+
+def smsjump(letter):
     try:
         xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
     except Exception:
         pass
     finally:
         jumpcmd = ""
-        if action:
-            action = action.upper()
-        if action == "0":
+        if letter:
+            letter = letter.upper()
+        if letter == "0":
                 if xbmc.getInfoLabel("Container.SortOrder") == "Descending":
                     jumpcmd = "lastpage"
                 else:
                     jumpcmd = "firstpage"
-        elif action in ["A", "B", "C"]:
+        elif letter in ["A", "B", "C"]:
             jumpcmd = "jumpsms2"
-        elif action in ["D", "E", "F"]:
+        elif letter in ["D", "E", "F"]:
             jumpcmd = "jumpsms3"
-        elif action in ["G", "H", "I"]:
+        elif letter in ["G", "H", "I"]:
             jumpcmd = "jumpsms4"
-        elif action in ["J", "K", "L"]:
+        elif letter in ["J", "K", "L"]:
             jumpcmd = "jumpsms5"
-        elif action in ["M", "N", "O"]:
+        elif letter in ["M", "N", "O"]:
             jumpcmd = "jumpsms6"
-        elif action in ["P", "Q", "R", "S"]:
+        elif letter in ["P", "Q", "R", "S"]:
             jumpcmd = "jumpsms7"
-        elif action in ["T", "U", "V"]:
+        elif letter in ["T", "U", "V"]:
             jumpcmd = "jumpsms8"
-        elif action in ["W", "X", "Y", "Z"]:
+        elif letter in ["W", "X", "Y", "Z"]:
             jumpcmd = "jumpsms9"
         if jumpcmd:
             xbmc.executebuiltin("SetFocus(50)")
@@ -59,7 +80,7 @@ def smsjump(action):
                 xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "Input.ExecuteAction",\
                     "params": { "action": "%s" }, "id": 1 }' % (jumpcmd))
                 xbmc.sleep(50)
-                if xbmc.getInfoLabel("ListItem.Sortletter").upper() == action or action == "0":
+                if xbmc.getInfoLabel("ListItem.Sortletter").upper() == letter or letter == "0":
                     break
 
 def log(txt):
