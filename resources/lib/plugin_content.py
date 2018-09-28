@@ -39,7 +39,12 @@ class PluginContent(object):
                         query_filter=inprogress_filter
                         )
 
-        for episode in json_query['result']["tvshows"]:
+        try:
+            json_query = json_query['result']["tvshows"]
+        except KeyError:
+            return
+
+        for episode in json_query:
 
                 episode_query = json_call("VideoLibrary.GetEpisodes",
                             properties=episode_properties,
@@ -64,7 +69,12 @@ class PluginContent(object):
                         query_filter=unplayed_filter
                         )
 
-        for tvshow in json_query['result']["tvshows"]:
+        try:
+            json_query = json_query['result']["tvshows"]
+        except KeyError:
+            return
+
+        for tvshow in json_query:
 
             totalepisodes = tvshow['episode']
             watchedepisodes = tvshow['watchedepisodes']
@@ -102,6 +112,7 @@ class PluginContent(object):
 
     # inprogress media
     def get_inprogress(self):
+
         if not self.dbtype or self.dbtype == "movie":
             json_query = json_call("VideoLibrary.GetMovies",
                                 properties=movie_properties,
@@ -120,7 +131,6 @@ class PluginContent(object):
                             query_filter=inprogress_filter
                             )
             try:
-            #log(json_query)
                 json_query = json_query["result"]["episodes"]
             except Exception:
                 log("No inprogress episodes found.")
@@ -134,8 +144,13 @@ class PluginContent(object):
                             sort={"method": "label"},
                             params={"type": self.dbtype}
                             )
+        try:
+            json_query = json_query["result"]["genres"]
+        except KeyError:
+            log("No genres found. Do nothing")
+            return
 
-        for genre in json_query["result"]["genres"]:
+        for genre in json_query:
 
             genre_items = json_call(self.method_item,
                             properties=["art"],
@@ -150,14 +165,14 @@ class PluginContent(object):
                 index+=1
 
             genre["art"] = posters
-            genre["file"] = "videodb://%ss/genres/%s/" % (self.dbtype, genre["genreid"])
 
-        try:
-            json_query = json_query["result"]["genres"]
-        except Exception:
-            log("No genres found. Do nothing")
-        else:
-            parse_genre(self.li,json_query)
+            try:
+                genre["file"] = "videodb://%ss/genres/%s/" % (self.dbtype, genre["genreid"])
+            except KeyError:
+                log("No genre IDs found. Do nothing")
+                return
+
+        parse_genre(self.li,json_query)
 
 
     # because you watched xyz
