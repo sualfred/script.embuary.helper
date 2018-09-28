@@ -22,6 +22,24 @@ plugin://script.embuary.helper/?info=getinprogress&amp;reload=$INFO[Window(home)
 ```
 
 ________________________________________________________________________________________________________
+## Next up episodes
+
+```
+plugin://script.embuary.helper/?info=getnextup&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
+```
+
+Provides a list with the next unwatched episode of inprogress TV shows.
+
+________________________________________________________________________________________________________
+## Recently updated TV shows (mixed TV shows and episodes)
+
+```
+plugin://script.embuary.helper/?info=getnewshows&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
+```
+
+Provides a list with recently updated TV shows. If a show has only one new episode it will be listed as episode to directly start the playback. If more new episodes are available the item will link to the TV show instead.
+
+________________________________________________________________________________________________________
 ## Genres movies / tvshows
 
 ```
