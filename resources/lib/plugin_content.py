@@ -30,6 +30,76 @@ class PluginContent(object):
             self.key_items = "tvshows"
             self.properties = tvshow_properties
 
+    # get nextup episodes of last played tv shows
+    def get_nextup(self):
+
+        json_query = json_call("VideoLibrary.GetTVShows",
+                        properties=tvshow_properties,
+                        sort=sort_lastplayed, limit=25,
+                        query_filter=inprogress_filter
+                        )
+
+        for episode in json_query['result']["tvshows"]:
+
+                episode_query = json_call("VideoLibrary.GetEpisodes",
+                            properties=episode_properties,
+                            sort={"order": "ascending", "method": "episode"},limit=1,
+                            query_filter={"and": [{"field": "playcount", "operator": "lessthan", "value": "1"},{"field": "inprogress", "operator": "false", "value": ""}]},
+                            params={"tvshowid": int(episode['tvshowid'])}
+                            )
+
+                try:
+                    episode_query = episode_query["result"]["episodes"]
+                except Exception:
+                    log("Error by fetching episode details")
+                else:
+                    parse_episodes(self.li,episode_query)
+
+    # get mixed recently added tvshows/episodes
+    def get_newshows(self):
+
+        json_query = json_call("VideoLibrary.GetTVShows",
+                        properties=tvshow_properties,
+                        sort=sort_recent, limit=25,
+                        query_filter=unplayed_filter
+                        )
+
+        for tvshow in json_query['result']["tvshows"]:
+
+            totalepisodes = tvshow['episode']
+            watchedepisodes = tvshow['watchedepisodes']
+
+            if totalepisodes > watchedepisodes:
+                unwatchedepisodes = int(totalepisodes) - int(watchedepisodes)
+            else:
+                unwatchedepisodes = 0
+
+            if unwatchedepisodes == 1:
+                episode_query = json_call("VideoLibrary.GetEpisodes",
+                            properties=episode_properties,
+                            sort=sort_recent,limit=1,
+                            params={"tvshowid": int(tvshow['tvshowid'])}
+                            )
+
+                try:
+                    episode_query = episode_query["result"]["episodes"]
+                except Exception:
+                    log("Error by fetching episode details")
+                else:
+                    parse_episodes(self.li,episode_query)
+
+            else:
+                tvshow_query = json_call("VideoLibrary.GetTVShowDetails",
+                            properties=tvshow_properties,
+                            params={"tvshowid": int(tvshow['tvshowid'])}
+                            )
+                try:
+                    tvshow_query = tvshow_query["result"]["tvshowdetails"]
+                except Exception:
+                    log("Error by fetching TV show details")
+                else:
+                    parse_tvshows(self.li,[tvshow_query])
+
     # inprogress media
     def get_inprogress(self):
         if not self.dbtype or self.dbtype == "movie":
@@ -50,6 +120,7 @@ class PluginContent(object):
                             query_filter=inprogress_filter
                             )
             try:
+            #log(json_query)
                 json_query = json_query["result"]["episodes"]
             except Exception:
                 log("No inprogress episodes found.")

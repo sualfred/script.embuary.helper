@@ -45,6 +45,10 @@ class Main:
             plugin.get_genre()
         elif self.info == 'getinprogress':
             plugin.get_inprogress()
+        elif self.info == 'getnewshows':
+            plugin.get_newshows()
+        elif self.info == 'getnextup':
+            plugin.get_nextup()
         elif self.info == 'jumptoletter':
             plugin.jumptoletter()
 
