@@ -44,9 +44,9 @@ episode_properties = [
                         "rating",
                         "resume",
                         "tvshowid",
+                        "firstaired",
                         "art",
                         "streamdetails",
-                        "firstaired",
                         "runtime",
                         "director",
                         "writer",
@@ -69,6 +69,7 @@ tvshow_properties = [
                         "playcount",
                         "art",
                         "dateadded",
+                        "watchedepisodes",
                         "imdbnumber"]
 music_properties = [
                         "title",
@@ -112,6 +113,7 @@ musicvideo_properties = [
                         "streamdetails",
                         "resume"]
 
+sort_lastplayed = {"order": "descending", "method": "lastplayed"}
 sort_recent = {"order": "descending", "method": "dateadded"}
 sort_random = {"method": "random"}
 unplayed_filter = {"field": "playcount", "operator": "lessthan", "value": "1"}
@@ -212,7 +214,7 @@ def parse_movies(li, json_query, title=False):
             li_item.addStreamInfo("video", stream)
         li.append((movie['file'], li_item, False))
 
-def parse_tvshows(li, json_query, title):
+def parse_tvshows(li, json_query, title=False):
 
     for tvshow in json_query:
 
@@ -223,6 +225,12 @@ def parse_tvshows(li, json_query, title):
         dbid = str(tvshow['tvshowid'])
         season = str(tvshow['season'])
         episode = str(tvshow['episode'])
+        watchedepisodes = str(tvshow['watchedepisodes'])
+        if episode > watchedepisodes:
+            unwatchedepisodes = int(episode) - int(watchedepisodes)
+            unwatchedepisodes = str(unwatchedepisodes)
+        else:
+            unwatchedepisodes = "0"
         year = str(tvshow['year'])
         mpaa = tvshow['year']
 
@@ -233,7 +241,6 @@ def parse_tvshows(li, json_query, title):
             folder = False
             tvshow["file"] = "plugin://script.embuary.helper/?action=jumptoshow&dbid=%s&rating=%s&seasons=%s&episodes=%s&mpaa=%s&year=%s" % (dbid,rating,season,episode,mpaa,year)
 
-        log("test %s" % tvshow["file"])
         li_item = xbmcgui.ListItem(tvshow['title'])
         li_item.setInfo(type="Video", infoLabels={"Title": tvshow['title'],
                                               "Year": year,
@@ -257,6 +264,8 @@ def parse_tvshows(li, json_query, title):
             li_item.setProperty("similartitle", title)
         li_item.setProperty("TotalSeasons", season)
         li_item.setProperty("TotalEpisodes", episode)
+        li_item.setProperty("WatchedEpisodes", watchedepisodes)
+        li_item.setProperty("UnwatchedEpisodes", unwatchedepisodes)
         li_item.setArt(tvshow['art'])
         li_item.setThumbnailImage(tvshow['art'].get('poster', ''))
         li_item.setIconImage('DefaultVideo.png')
@@ -270,13 +279,12 @@ def parse_episodes(li, json_query):
         nSeason = "%.2d" % float(episode['season'])
         if "cast" in episode:
             cast = _get_cast(episode['cast'])
-
         li_item = xbmcgui.ListItem(episode['title'])
         li_item.setInfo(type="Video", infoLabels={"Title": episode['title'],
                                               "Episode": episode['episode'],
                                               "Season": episode['season'],
                                               "Premiered": episode['firstaired'],
-                                              "Dbid": episode['episodeid'],
+                                              "Dbid": str(episode['episodeid']),
                                               "Plot": episode['plot'],
                                               "TVshowTitle": episode['showtitle'],
                                               "lastplayed": episode['lastplayed'],
