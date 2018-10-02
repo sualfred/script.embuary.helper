@@ -18,6 +18,8 @@ class Main:
         self._parse_argv()
         if self.infos:
             self.info_actions(self.infos, self.params)
+        else:
+            xbmcgui.Dialog().ok("Error", "This is a tool to provide features to a skin and requires skin integration.")
 
     def _parse_argv(self):
         args = sys.argv
@@ -44,6 +46,7 @@ class Main:
         for info in self.infos:
             if info == 'smsjump':
                 smsjump(action)
+
 
 if __name__ == "__main__":
     Main()

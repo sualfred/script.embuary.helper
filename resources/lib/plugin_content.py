@@ -13,6 +13,7 @@ class PluginContent(object):
         self.dbtitle = remove_quotes(params.get("title"))
         self.dbtype = remove_quotes(params.get("type"))
         self.dbid = remove_quotes(params.get("dbid"))
+        self.season = remove_quotes(params.get("season"))
         self.li = li
 
         if self.dbtype == "movie":
@@ -29,6 +30,38 @@ class PluginContent(object):
             self.key_details = "tvshowdetails"
             self.key_items = "tvshows"
             self.properties = tvshow_properties
+
+    # get more episodes from the same season
+    def get_seasonepisodes(self):
+
+        if not self.dbid:
+            get_dbid = json_call("VideoLibrary.GetTVShows",
+                            properties=["title"], limit=1,
+                            query_filter={"operator": "is", "field": "title", "value": self.dbtitle}
+                            )
+
+            try:
+                tvshow_dbid = get_dbid["result"]["tvshows"][0]["tvshowid"]
+            except Exception:
+                log("Error by fetching TV show id")
+                return
+
+        else:
+            tvshow_dbid = self.dbid
+
+        episode_query = json_call("VideoLibrary.GetEpisodes",
+                            properties=episode_properties,
+                            sort={"order": "ascending", "method": "episode"},
+                            query_filter={"operator": "is", "field": "season", "value": self.season},
+                            params={"tvshowid": int(tvshow_dbid)}
+                            )
+
+        try:
+            episode_query = episode_query["result"]["episodes"]
+        except Exception:
+            log("Error by fetching episode details")
+        else:
+            parse_episodes(self.li,episode_query)
 
     # get nextup episodes of last played tv shows
     def get_nextup(self):

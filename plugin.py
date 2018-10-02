@@ -49,6 +49,8 @@ class Main:
             plugin.get_newshows()
         elif self.info == 'getnextup':
             plugin.get_nextup()
+        elif self.info == 'getseasonepisodes':
+            plugin.get_seasonepisodes()
         elif self.info == 'jumptoletter':
             plugin.jumptoletter()
 

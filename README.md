@@ -29,6 +29,20 @@ plugin://script.embuary.helper/?info=getnextup&amp;reload=$INFO[Window(home).Pro
 ```
 
 Provides a list with the next unwatched episode of inprogress TV shows.
+________________________________________________________________________________________________________
+## Get episodes from the same season
+
+```
+plugin://script.embuary.helper/?info=getseasonepisodes&amp;season=$INFO[ListItem.Season]&amp;title='$ESCINFO[ListItem.TvShowTitle]'&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
+```
+
+Provides a list with all episodes from the same TV show season.
+
+It's also possible to call the listing with the TV show ID if it's available for some reason (Window property for example).
+
+```
+plugin://script.embuary.helper/?info=getseasonepisodes&amp;season=$INFO[ListItem.Season]&amp;dbid=$INFO[Window(home).Property(TVShowDBID)&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
+```
 
 ________________________________________________________________________________________________________
 ## Recently updated TV shows (mixed TV shows and episodes)
