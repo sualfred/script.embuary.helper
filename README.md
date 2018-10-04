@@ -1,6 +1,22 @@
 # script.embuary.helper
 Addon for Kodi providing functions to the Embuary skin
 ________________________________________________________________________________________________________
+
+
+# Utilities
+________________________________________________________________________________________________________
+## "Run from home"
+```
+RunScript(script.embuary.helper,action=playfromhome,item='$ESCINFO[ListItem.Filenameandpath]')
+```
+
+Closes all dialogs and goes back to the home window. Once home is active it starts the playback of the provided filename.
+
+
+
+
+# Plugin sources
+________________________________________________________________________________________________________
 ## In progress movies
 
 ```
