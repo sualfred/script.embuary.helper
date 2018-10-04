@@ -16,19 +16,19 @@ class Main:
     def __init__(self):
         log("version %s started" % ADDON_VERSION)
         self._parse_argv()
-        if self.infos:
-            self.info_actions(self.infos, self.params)
+        if self.action:
+            self.getactions()
         else:
             xbmcgui.Dialog().ok("Error", "This is a tool to provide features to a skin and requires skin integration.")
 
     def _parse_argv(self):
         args = sys.argv
-        self.infos = []
+        self.action = []
         for arg in args:
             if arg == 'script.embuary.helper':
                 continue
-            if arg.startswith('info='):
-                self.infos.append(arg[5:])
+            if arg.startswith('action='):
+                self.action.append(arg[7:])
             else:
                 try:
                     self.params[arg.split("=")[0].lower()] = "=".join(arg.split("=")[1:]).strip()
@@ -37,16 +37,12 @@ class Main:
                     self.params = {}
                     pass
 
-    def info_actions(self,infos,params):
-        prettyprint(params)
-        prettyprint(infos)
-
-        action = self.params.get("action")
-
-        for info in self.infos:
-            if info == 'smsjump':
-                smsjump(action)
-
+    def getactions(self):
+        for action in self.action:
+            if action == 'smsjump':
+                smsjump(self.params.get("letter"))
+            elif action == 'playfromhome':
+                play_from_home(self.params.get("item"))
 
 if __name__ == "__main__":
     Main()

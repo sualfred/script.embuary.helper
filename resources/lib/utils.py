@@ -23,6 +23,19 @@ def remove_quotes(label):
             label = label[1:-1]
     return label
 
+def play_from_home(item):
+    item = remove_quotes(item)
+    item = "PlayMedia(%s)" % item
+    for i in range(50):
+        if not xbmc.getCondVisibility("Window.IsVisible(home)"):
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            xbmc.executebuiltin("ActivateWindow(home)")
+            xbmc.sleep(50)
+        elif xbmc.getCondVisibility("Window.IsVisible(home)"):
+            xbmc.executebuiltin(item)
+            break
+
+
 def jumptoshow(params):
     try:
         xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
