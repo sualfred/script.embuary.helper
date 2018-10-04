@@ -24,16 +24,19 @@ def remove_quotes(label):
     return label
 
 def play_from_home(item):
-    item = remove_quotes(item)
-    item = "PlayMedia(%s)" % item
     for i in range(50):
-        if not xbmc.getCondVisibility("Window.IsVisible(home)"):
+        if xbmc.getCondVisibility("!Window.IsVisible(home) | Window.IsVisible(movieinformation)"):
             xbmc.executebuiltin("Dialog.Close(all,true)")
             xbmc.executebuiltin("ActivateWindow(home)")
             xbmc.sleep(50)
-        elif xbmc.getCondVisibility("Window.IsVisible(home)"):
-            xbmc.executebuiltin(item)
+        else:
+            ishome = True
             break
+
+    if ishome:
+        item = remove_quotes(item)
+        item = "PlayMedia(%s)" % item
+        xbmc.executebuiltin(item)
 
 
 def jumptoshow(params):
