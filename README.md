@@ -4,7 +4,7 @@ ________________________________________________________________________________
 
 
 # Utilities
-________________________________________________________________________________________________________
+
 ## "Run from home"
 ```
 RunScript(script.embuary.helper,action=playfromhome,item='$ESCINFO[ListItem.Filenameandpath]')
@@ -12,11 +12,18 @@ RunScript(script.embuary.helper,action=playfromhome,item='$ESCINFO[ListItem.File
 
 Closes all dialogs and goes back to the home window. Once home is active it starts the playback of the provided filename.
 
+________________________________________________________________________________________________________
+## Automatically clear playlist
 
+```
+<onload>Skin.SetBool(EmbuaryHelperClearPlaylist)</onload>
+```
+
+This enables the script background service to clear the playlist after the playback has stopped.
 
 
 # Plugin sources
-________________________________________________________________________________________________________
+
 ## In progress movies
 
 ```
