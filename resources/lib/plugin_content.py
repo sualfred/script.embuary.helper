@@ -82,7 +82,7 @@ class PluginContent(object):
                 episode_query = json_call("VideoLibrary.GetEpisodes",
                             properties=episode_properties,
                             sort={"order": "ascending", "method": "episode"},limit=1,
-                            query_filter={"and": [{"field": "playcount", "operator": "lessthan", "value": "1"},{"field": "inprogress", "operator": "false", "value": ""}]},
+                            query_filter={"and": [{"field": "playcount", "operator": "lessthan", "value": "1"},{"field": "inprogress", "operator": "false", "value": ""},{"field": "season", "operator": "greaterthan", "value": "0"}]},
                             params={"tvshowid": int(episode['tvshowid'])}
                             )
 
