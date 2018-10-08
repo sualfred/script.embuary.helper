@@ -23,6 +23,26 @@ def remove_quotes(label):
             label = label[1:-1]
     return label
 
+def close_and_open(params):
+    window.setProperty("TVShowRating",params.get("rating"))
+    window.setProperty("TVShowDBID",params.get("dbid"))
+    window.setProperty("TVShowYear",params.get("year"))
+    window.setProperty("TVShowTotalSeasons",params.get("seasons"))
+    window.setProperty("TVShowTotalEpisodes",params.get("episodes"))
+
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.sleep(50)
+
+    path = remove_quotes(params.get("path"))
+    target = params.get("target")
+
+    if xbmc.getCondVisibility("Window.IsMedia"):
+        execute = "Container.Update(%s)" % path
+    else:
+        execute = "ActivateWindow(%s,%s,return)" % (target,path)
+
+    xbmc.executebuiltin(execute)
+
 def play_from_home(item):
     for i in range(50):
         if xbmc.getCondVisibility("!Window.IsVisible(home) | Window.IsVisible(movieinformation)"):
@@ -37,7 +57,6 @@ def play_from_home(item):
         item = remove_quotes(item)
         item = "PlayMedia(%s)" % item
         xbmc.executebuiltin(item)
-
 
 def jumptoshow(params):
     try:

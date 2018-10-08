@@ -13,6 +13,24 @@ RunScript(script.embuary.helper,action=playfromhome,item='$ESCINFO[ListItem.File
 Closes all dialogs and goes back to the home window. Once home is active it starts the playback of the provided filename.
 
 ________________________________________________________________________________________________________
+## "Close and open"
+```
+RunScript(script.embuary.helper,action=closeandopen,path='$ESCINFO[ListItem.Filenameandpath]',target=videos)
+```
+
+Closes all dialogs jumps directly to the provided path. If the script is called from a media window the existing container path is updated instead.
+
+Useful for widgets inside of dialogs like a set of TV shows listed in the movieinformation dialog.
+
+If the dialog was activated from a non media window like the home screen:
+1. Dialog.Close(all,true)
+2. "ActivateWindow($target,$path,return)" is called
+
+If the dialog was activated from a media window like MyVideoNav.xml:
+1. Dialog.Close(all,true)
+2. "Container.Update($path)" is called
+
+________________________________________________________________________________________________________
 ## Automatically clear playlist
 
 ```

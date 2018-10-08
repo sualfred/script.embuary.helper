@@ -14,7 +14,6 @@ window = xbmcgui.Window(10000)
 class Main:
 
     def __init__(self):
-        log("version %s started" % ADDON_VERSION)
         self._parse_argv()
         if self.action:
             self.getactions()
@@ -32,7 +31,6 @@ class Main:
             else:
                 try:
                     self.params[arg.split("=")[0].lower()] = "=".join(arg.split("=")[1:]).strip()
-                    log("params %s" % self.params)
                 except:
                     self.params = {}
                     pass
@@ -43,6 +41,8 @@ class Main:
                 smsjump(self.params.get("letter"))
             elif action == 'playfromhome':
                 play_from_home(self.params.get("item"))
+            elif action == 'closeandopen':
+                close_and_open(self.params)
 
 if __name__ == "__main__":
     Main()
