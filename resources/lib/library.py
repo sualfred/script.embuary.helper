@@ -53,6 +53,14 @@ episode_properties = [
                         "cast",
                         "dateadded",
                         "lastplayed"]
+season_properties = [
+                        "season",
+                        "episode",
+                        "art",
+                        "watchedepisodes",
+                        "showtitle",
+                        "playcount",
+                        "tvshowid"]
 tvshow_properties = [
                         "title",
                         "studio",
@@ -137,7 +145,6 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
 
     json_string = simplejson.dumps(json_string)
 
-    #log("json_string %s" % (json_string))
     result = xbmc.executeJSONRPC(json_string)
     result = unicode(result, 'utf-8', errors='ignore')
     result = simplejson.loads(result)
@@ -270,6 +277,44 @@ def parse_tvshows(li, json_query, title=False):
         li_item.setThumbnailImage(tvshow['art'].get('poster', ''))
         li_item.setIconImage('DefaultVideo.png')
         li.append((tvshow['file'], li_item, folder))
+
+def parse_seasons(li, json_query, title=False):
+
+    for season in json_query:
+
+        tvshowdbid = str(season['tvshowid'])
+        seasonnr = str(season['season'])
+        episode = str(season['episode'])
+        watchedepisodes = str(season['watchedepisodes'])
+
+        title = "%s %s" % (xbmc.getLocalizedString(20373), seasonnr)
+
+        if episode > watchedepisodes:
+            unwatchedepisodes = int(episode) - int(watchedepisodes)
+            unwatchedepisodes = str(unwatchedepisodes)
+        else:
+            unwatchedepisodes = "0"
+
+        if not xbmc.getCondVisibility("Window.IsVisible(movieinformation)"):
+            folder = True
+            file = "videodb://tvshows/titles/%s/%s/" % (tvshowdbid, seasonnr)
+        else:
+            folder = False
+            file = "plugin://script.embuary.helper/?action=jumptoseason&dbid=%s&season=%s" % (tvshowdbid, seasonnr)
+
+        li_item = xbmcgui.ListItem(title)
+        li_item.setInfo(type="Video", infoLabels={"Title": title,
+                                              "season": seasonnr,
+                                              "episode": episode,
+                                              "tvshowtitle": season['showtitle'],
+                                              "playcount": season['playcount'],
+                                              "dbid": season['seasonid']})
+        li_item.setArt(season['art'])
+        li_item.setProperty("WatchedEpisodes", watchedepisodes)
+        li_item.setProperty("UnwatchedEpisodes", unwatchedepisodes)
+        li_item.setThumbnailImage(season['art'].get('poster', ''))
+        li_item.setIconImage('DefaultVideo.png')
+        li.append((file, li_item, folder))
 
 
 def parse_episodes(li, json_query):

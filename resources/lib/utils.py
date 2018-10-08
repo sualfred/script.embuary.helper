@@ -59,6 +59,20 @@ def jumptoshow(params):
         xbmc.executebuiltin("Dialog.Close(all,true)")
         xbmc.executebuiltin(execute)
 
+def jumptoseason(params):
+    try:
+        xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
+    except Exception:
+        pass
+    finally:
+        if not xbmc.getCondVisibility("Window.IsMedia"):
+            execute = "ActivateWindow(videos,videodb://tvshows/titles/%s/%s/,return)" % (params.get("dbid"),params.get("season"))
+        else:
+            execute = "Container.Update(videodb://tvshows/titles/%s/%s/)" % (params.get("dbid"),params.get("season"))
+
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin(execute)
+
 
 def smsjump(letter):
     try:

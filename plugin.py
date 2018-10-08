@@ -51,6 +51,8 @@ class Main:
             plugin.get_nextup()
         elif self.info == 'getseasonepisodes':
             plugin.get_seasonepisodes()
+        elif self.info == 'getseasons':
+            plugin.get_seasons()
         elif self.info == 'jumptoletter':
             plugin.jumptoletter()
 
@@ -62,6 +64,8 @@ class Main:
             smsjump(self.params.get("letter"))
         elif self.action == "jumptoshow":
             jumptoshow(self.params)
+        elif self.action == "jumptoseason":
+            jumptoseason(self.params)
 
 if __name__ == "__main__":
     Main()

@@ -31,6 +31,36 @@ class PluginContent(object):
             self.key_items = "tvshows"
             self.properties = tvshow_properties
 
+    # get seasons
+    def get_seasons(self):
+        if not self.dbid:
+            get_dbid = json_call("VideoLibrary.GetTVShows",
+                            properties=["title"], limit=1,
+                            query_filter={"operator": "is", "field": "title", "value": self.dbtitle}
+                            )
+
+            try:
+                tvshow_dbid = get_dbid["result"]["tvshows"][0]["tvshowid"]
+            except Exception as error:
+                log("Error by fetching TV show id: %s" % error)
+                return
+
+        else:
+            tvshow_dbid = self.dbid
+
+        season_query = json_call("VideoLibrary.GetSeasons",
+                            properties=season_properties,
+                            sort={"order": "ascending", "method": "season"},
+                            params={"tvshowid": int(tvshow_dbid)}
+                            )
+
+        try:
+            season_query = season_query["result"]["seasons"]
+        except Exception as error:
+            log("Error by fetching season details: %s" % error)
+        else:
+            parse_seasons(self.li,season_query)
+
     # get more episodes from the same season
     def get_seasonepisodes(self):
 
@@ -42,8 +72,8 @@ class PluginContent(object):
 
             try:
                 tvshow_dbid = get_dbid["result"]["tvshows"][0]["tvshowid"]
-            except Exception:
-                log("Error by fetching TV show id")
+            except Exception as error:
+                log("Error by fetching TV show id: %s" % error)
                 return
 
         else:
@@ -58,8 +88,8 @@ class PluginContent(object):
 
         try:
             episode_query = episode_query["result"]["episodes"]
-        except Exception:
-            log("Error by fetching episode details")
+        except Exception as error:
+            log("Error by fetching episode details: %s" % error)
         else:
             parse_episodes(self.li,episode_query)
 
@@ -88,8 +118,8 @@ class PluginContent(object):
 
                 try:
                     episode_query = episode_query["result"]["episodes"]
-                except Exception:
-                    log("Error by fetching episode details")
+                except Exception as error:
+                    log("Error by fetching episode details: %s" % error)
                 else:
                     parse_episodes(self.li,episode_query)
 
@@ -126,8 +156,8 @@ class PluginContent(object):
 
                 try:
                     episode_query = episode_query["result"]["episodes"]
-                except Exception:
-                    log("Error by fetching episode details")
+                except Exception as error:
+                    log("Error by fetching episode details: %s" % error)
                 else:
                     parse_episodes(self.li,episode_query)
 
@@ -138,8 +168,8 @@ class PluginContent(object):
                             )
                 try:
                     tvshow_query = tvshow_query["result"]["tvshowdetails"]
-                except Exception:
-                    log("Error by fetching TV show details")
+                except Exception as error:
+                    log("Error by fetching TV show details: %s" % error)
                 else:
                     parse_tvshows(self.li,[tvshow_query])
 
@@ -242,8 +272,8 @@ class PluginContent(object):
                 title = similar_list[0]["title"]
                 genres = similar_list[0]["genre"]
 
-        except Exception:
-            log ("Not able to get genres")
+        except Exception as error:
+            log ("Not able to get genres: %s" % error)
             return
 
         random.shuffle(genres)
