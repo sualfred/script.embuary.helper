@@ -29,6 +29,7 @@ def close_and_open(params):
     window.setProperty("TVShowYear",params.get("year"))
     window.setProperty("TVShowTotalSeasons",params.get("seasons"))
     window.setProperty("TVShowTotalEpisodes",params.get("episodes"))
+    window.setProperty("EmbyID",params.get("embyid"))
 
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.sleep(50)
