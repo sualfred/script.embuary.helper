@@ -16,12 +16,18 @@ class KodiMonitor(xbmc.Monitor):
         self.refresh_widgets()
 
     def onNotification(self, sender, method, data):
-        if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate" or method == "Player.OnStop" or method == "Player.OnPlay":
-            log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
+
+        #log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
+
+        if method == "Player.OnStop" or method == "Player.OnPlay":
+            xbmc.sleep(5000)
             self.refresh_widgets()
+
+        if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate":
+            self.refresh_widgets()
+
         if method == "Player.OnStop" and xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist)"):
             log("Playback stopped. Wait 4s before clearing the playlist.")
-            xbmc.sleep(4000)
             if not xbmc.getCondVisibility("Player.HasMedia"):
                 xbmc.executebuiltin("Playlist.Clear")
                 log("Playlist cleared")
