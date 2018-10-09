@@ -23,16 +23,12 @@ class KodiMonitor(xbmc.Monitor):
             xbmc.sleep(5000)
             self.refresh_widgets()
 
-        if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate":
-            self.refresh_widgets()
-
-        if method == "Player.OnStop" and xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist)"):
-            log("Playback stopped. Wait 4s before clearing the playlist.")
-            if not xbmc.getCondVisibility("Player.HasMedia"):
+            if method == "Player.OnStop" and xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist) + !Player.HasMedia"):
                 xbmc.executebuiltin("Playlist.Clear")
                 log("Playlist cleared")
-            else:
-                log("Playback in progress. Don't clear the playlist.")
+
+        if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate":
+            self.refresh_widgets()
 
     def refresh_widgets(self):
         log("Refreshing widgets")
