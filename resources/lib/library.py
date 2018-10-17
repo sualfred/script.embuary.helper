@@ -233,11 +233,13 @@ def parse_tvshows(li, json_query, title=False):
         season = str(tvshow['season'])
         episode = str(tvshow['episode'])
         watchedepisodes = str(tvshow['watchedepisodes'])
-        if episode > watchedepisodes:
+
+        if int(episode) > int(watchedepisodes):
             unwatchedepisodes = int(episode) - int(watchedepisodes)
             unwatchedepisodes = str(unwatchedepisodes)
         else:
             unwatchedepisodes = "0"
+
         year = str(tvshow['year'])
         mpaa = tvshow['year']
 
@@ -281,7 +283,6 @@ def parse_tvshows(li, json_query, title=False):
 def parse_seasons(li, json_query, title=False):
 
     for season in json_query:
-
         tvshowdbid = str(season['tvshowid'])
         seasonnr = str(season['season'])
         episode = str(season['episode'])
@@ -289,7 +290,7 @@ def parse_seasons(li, json_query, title=False):
 
         title = "%s %s" % (xbmc.getLocalizedString(20373), seasonnr)
 
-        if episode > watchedepisodes:
+        if int(episode) > int(watchedepisodes):
             unwatchedepisodes = int(episode) - int(watchedepisodes)
             unwatchedepisodes = str(unwatchedepisodes)
         else:
