@@ -19,11 +19,16 @@ class KodiMonitor(xbmc.Monitor):
 
         #log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
 
-        if method == "Player.OnStop" or method == "Player.OnPlay":
-            xbmc.sleep(5000)
+        if method == "Player.OnPlay":
+            xbmc.sleep(6000)
             self.refresh_widgets()
 
-            if method == "Player.OnStop" and xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist) + !Player.HasMedia"):
+        if method == "Player.OnStop":
+            self.refresh_widgets()
+
+            # let's wait for the player so we don't clear it by mistake
+            xbmc.sleep(1000)
+            if xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist) + !Player.HasMedia + !Window.IsVisible(busydialog)"):
                 xbmc.executebuiltin("Playlist.Clear")
                 log("Playlist cleared")
 
