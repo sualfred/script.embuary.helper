@@ -1,28 +1,50 @@
 #!/usr/bin/python
 
-from resources.lib.utils import log, ADDON_ID
+from resources.lib.utils import log, grabfanart, ADDON_ID
 from resources.lib.kodi_monitor import KodiMonitor
 import xbmc
 import xbmcgui
 import xbmcaddon
 import time
+import random
 
-TASK_INTERVAL = 520
 WIN = xbmcgui.Window(10000)
 ADDON = xbmcaddon.Addon(ADDON_ID)
 MONITOR = KodiMonitor(win=WIN, addon=ADDON)
+
+task_interval = 300
+bg_task_interval = 200
+bg_interval = 10
+
 log('Service started')
 
 while not MONITOR.abortRequested():
 
-    if TASK_INTERVAL >= 300:
-        log("Update widget reload property")
-        WIN.setProperty("EmbuaryWidgetUpdate", time.strftime("%Y%m%d%H%M%S", time.gmtime()))
-        TASK_INTERVAL = 0
-    else:
-        TASK_INTERVAL += 10
+	# Grab fanarts
+	if bg_task_interval >= 200:
+		log("Start new fanart grabber process")
+		fanarts = grabfanart()
+		bg_task_interval = 0
+	else:
+		bg_task_interval += 10
 
-    MONITOR.waitForAbort(10)
+	# Set fanart property
+	if fanarts and bg_interval >=10:
+		random.shuffle(fanarts)
+		WIN.setProperty("EmbuaryBackground", fanarts[0])
+		bg_interval = 0
+	else:
+		bg_interval += 10
+
+	# Refresh widgets
+	if task_interval >= 300:
+		log("Update widget reload property")
+		WIN.setProperty("EmbuaryWidgetUpdate", time.strftime("%Y%m%d%H%M%S", time.gmtime()))
+		task_interval = 0
+	else:
+		task_interval += 10
+
+	MONITOR.waitForAbort(10)
 
 del MONITOR
 del WIN

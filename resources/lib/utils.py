@@ -9,6 +9,7 @@ import simplejson
 import hashlib
 import urllib
 import random
+from resources.lib.library import *
 
 ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
@@ -132,6 +133,35 @@ def smsjump(letter):
                 xbmc.sleep(50)
                 if xbmc.getInfoLabel("ListItem.Sortletter").upper() == letter or letter == "0":
                     break
+
+def grabfanart():
+    fanarts = list()
+
+    movie_query = json_call("VideoLibrary.GetMovies",
+                        properties=['art'],
+                        sort=sort_random, limit=20
+                        )
+
+    try:
+        for art in movie_query["result"]['movies']:
+                movie_fanart = art["art"].get("fanart", "")
+                fanarts.append(movie_fanart)
+    except Exception:
+        log("Backgrounds: No movie artworks found.")
+
+    tvshow_query = json_call("VideoLibrary.GetTVShows",
+                        properties=['art'],
+                        sort=sort_random, limit=20
+                        )
+
+    try:
+        for art in tvshow_query["result"]['tvshows']:
+                tvshow_fanart = art["art"].get("fanart", "")
+                fanarts.append(tvshow_fanart)
+    except Exception:
+        log("Backgrounds: No TV show artworks found.")
+
+    return fanarts
 
 def log(txt):
     if isinstance(txt, str):

@@ -39,6 +39,16 @@ ________________________________________________________________________________
 
 This enables the script background service to clear the playlist after the playback has stopped.
 
+________________________________________________________________________________________________________
+## Simple background provider
+
+```
+$INFO[Window(home).Property(EmbuaryBackground)]
+```
+
+Provides a random fanart image of a random local movie or TV show.
+The value is going to be refreshed after 20 seconds.
+
 
 # Plugin sources
 

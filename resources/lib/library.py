@@ -5,7 +5,7 @@ import xbmcgui
 import xbmcaddon
 import json as simplejson
 from time import gmtime, strftime
-from resources.lib.utils import log
+#from resources.lib.utils import log
 
 movie_properties = [
                         "title",
