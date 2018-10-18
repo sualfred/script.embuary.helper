@@ -24,6 +24,30 @@ def remove_quotes(label):
             label = label[1:-1]
     return label
 
+def dialogok(params):
+    headertxt = remove_quotes(params.get("header", ""))
+    bodytxt = remove_quotes(params.get("message", ""))
+    dialog = xbmcgui.Dialog()
+    dialog.ok(heading=headertxt, line1=bodytxt)
+    del dialog
+
+def dialogyesno(params):
+    headertxt = remove_quotes(params.get("header", ""))
+    bodytxt = remove_quotes(params.get("message", ""))
+    yesactions = params.get("yesaction", "").split("|")
+    noactions = params.get("noaction", "").split("|")
+    if xbmcgui.Dialog().yesno(heading=headertxt, line1=bodytxt):
+        for action in yesactions:
+            xbmc.executebuiltin(action.encode("utf-8"))
+    else:
+        for action in noactions:
+            xbmc.executebuiltin(action.encode("utf-8"))
+
+def textviewer(params):
+    headertxt = remove_quotes(params.get("header", ""))
+    bodytxt = remove_quotes(params.get("message", ""))
+    xbmcgui.Dialog().textviewer(headertxt, bodytxt)
+
 def close_and_open(params):
     window.setProperty("TVShowRating",params.get("rating"))
     window.setProperty("TVShowDBID",params.get("dbid"))

@@ -43,6 +43,12 @@ class Main:
                 play_from_home(self.params.get("item"))
             elif action == 'closeandopen':
                 close_and_open(self.params)
+            elif action == 'textviewer':
+                textviewer(self.params)
+            elif action == 'dialogok':
+                dialogok(self.params)
+            elif action == 'dialogyesno':
+                dialogyesno(self.params)
 
 if __name__ == "__main__":
     Main()
