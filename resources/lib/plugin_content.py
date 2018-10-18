@@ -41,8 +41,8 @@ class PluginContent(object):
 
             try:
                 tvshow_dbid = get_dbid["result"]["tvshows"][0]["tvshowid"]
-            except Exception as error:
-                log("Error by fetching TV show id: %s" % error)
+            except Exception:
+                log("Get seasons by TV show: Show not found")
                 return
 
         else:
@@ -56,8 +56,8 @@ class PluginContent(object):
 
         try:
             season_query = season_query["result"]["seasons"]
-        except Exception as error:
-            log("Error by fetching season details: %s" % error)
+        except Exception:
+            log("Get seasons by TV show: No seasons found")
         else:
             parse_seasons(self.li,season_query)
 
@@ -72,8 +72,8 @@ class PluginContent(object):
 
             try:
                 tvshow_dbid = get_dbid["result"]["tvshows"][0]["tvshowid"]
-            except Exception as error:
-                log("Error by fetching TV show id: %s" % error)
+            except Exception:
+                log("Get more episodes by season: Show not found")
                 return
 
         else:
@@ -88,8 +88,8 @@ class PluginContent(object):
 
         try:
             episode_query = episode_query["result"]["episodes"]
-        except Exception as error:
-            log("Error by fetching episode details: %s" % error)
+        except Exception:
+            log("Get more episodes by season: No episodes found")
         else:
             parse_episodes(self.li,episode_query)
 
@@ -104,7 +104,8 @@ class PluginContent(object):
 
         try:
             json_query = json_query['result']["tvshows"]
-        except KeyError:
+        except Exception:
+            log("Get next up episodes: No TV shows found")
             return
 
         for episode in json_query:
@@ -118,8 +119,8 @@ class PluginContent(object):
 
                 try:
                     episode_query = episode_query["result"]["episodes"]
-                except Exception as error:
-                    log("Error by fetching episode details: %s" % error)
+                except Exception:
+                    log("Get next up episodes: No episodes found")
                 else:
                     parse_episodes(self.li,episode_query)
 
@@ -134,7 +135,8 @@ class PluginContent(object):
 
         try:
             json_query = json_query['result']["tvshows"]
-        except KeyError:
+        except Exception:
+            log("Get new media: No TV shows found")
             return
 
         for tvshow in json_query:
@@ -156,8 +158,8 @@ class PluginContent(object):
 
                 try:
                     episode_query = episode_query["result"]["episodes"]
-                except Exception as error:
-                    log("Error by fetching episode details: %s" % error)
+                except Exception:
+                    log("Get new media: Error fetching by episode details")
                 else:
                     parse_episodes(self.li,episode_query)
 
@@ -168,8 +170,8 @@ class PluginContent(object):
                             )
                 try:
                     tvshow_query = tvshow_query["result"]["tvshowdetails"]
-                except Exception as error:
-                    log("Error by fetching TV show details: %s" % error)
+                except Exception:
+                    log("Get new media: Error fetching by TV show details")
                 else:
                     parse_tvshows(self.li,[tvshow_query])
 
@@ -184,7 +186,7 @@ class PluginContent(object):
             try:
                 json_query = json_query["result"]["movies"]
             except Exception:
-                log("No inprogress movies found.")
+                log("In progress media: No movies found.")
             else:
                 parse_movies(self.li,json_query)
 
@@ -196,7 +198,7 @@ class PluginContent(object):
             try:
                 json_query = json_query["result"]["episodes"]
             except Exception:
-                log("No inprogress episodes found.")
+                log("In progress media: No episodes found.")
             else:
                 parse_episodes(self.li,json_query)
 
@@ -210,7 +212,7 @@ class PluginContent(object):
         try:
             json_query = json_query["result"]["genres"]
         except KeyError:
-            log("No genres found. Do nothing")
+            log("Get genres: No genres found")
             return
 
         for genre in json_query:
@@ -231,8 +233,8 @@ class PluginContent(object):
 
             try:
                 genre["file"] = "videodb://%ss/genres/%s/" % (self.dbtype, genre["genreid"])
-            except KeyError:
-                log("No genre IDs found. Do nothing")
+            except Exception:
+                log("Get genres: No genre ID found")
                 return
 
         parse_genre(self.li,json_query)
@@ -272,8 +274,8 @@ class PluginContent(object):
                 title = similar_list[0]["title"]
                 genres = similar_list[0]["genre"]
 
-        except Exception as error:
-            log ("Not able to get genres: %s" % error)
+        except Exception:
+            log ("Get similar: Not able to get genres")
             return
 
         random.shuffle(genres)
@@ -292,7 +294,7 @@ class PluginContent(object):
         try:
             json_query = json_query['result'][self.key_items]
         except KeyError:
-            log("No similar items. Do nothing")
+            log("Get similar: No matching items found")
         else:
             if self.dbtype == "movie":
                 parse_movies(self.li,json_query,title)
@@ -321,7 +323,7 @@ class PluginContent(object):
                 json_query = json_query['result'][self.key_items][0]['cast']
 
         except Exception:
-            log("No cast found. Do nothing")
+            log("Get cast: No cast found.")
 
         else:
             parse_cast(self.li,json_query)
