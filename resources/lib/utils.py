@@ -48,6 +48,32 @@ def textviewer(params):
     bodytxt = remove_quotes(params.get("message", ""))
     xbmcgui.Dialog().textviewer(headertxt, bodytxt)
 
+def togglekodisetting(params):
+    settingname = params.get("setting", "")
+    cur_value = xbmc.getCondVisibility("system.getbool(%s)" % settingname)
+    if cur_value:
+        value = "false"
+    else:
+        value = "true"
+    xbmc.executeJSONRPC(
+        '{"jsonrpc":"2.0", "id":1, "method":"Settings.SetSettingValue","params":{"setting":"%s","value":%s}}' %
+        (settingname, value))
+
+def setkodisetting(params):
+    settingname = params.get("setting", "")
+    value = params.get("value", "")
+    try:
+        value = int(value)
+    except Exception:
+        if value.lower() in ["true", "false"]:
+            value = value.lower()
+        else:
+            log("SetKodiSetting: No valid value")
+            return
+    xbmc.executeJSONRPC(
+        '{"jsonrpc":"2.0", "id":1, "method":"Settings.SetSettingValue","params":{"setting":"%s","value":%s}}' %
+        (settingname, value))
+
 def close_and_open(params):
     window.setProperty("TVShowRating",params.get("rating"))
     window.setProperty("TVShowDBID",params.get("dbid"))

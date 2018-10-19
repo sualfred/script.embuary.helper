@@ -49,6 +49,10 @@ class Main:
                 dialogok(self.params)
             elif action == 'dialogyesno':
                 dialogyesno(self.params)
+            elif action == 'setkodisetting':
+                setkodisetting(self.params)
+            elif action == 'togglekodisetting':
+                togglekodisetting(self.params)
 
 if __name__ == "__main__":
     Main()
