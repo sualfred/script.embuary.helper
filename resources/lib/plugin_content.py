@@ -118,11 +118,11 @@ class PluginContent(object):
                             )
 
                 try:
-                    episode_query = episode_query["result"]["episodes"]
+                    episode_details = episode_query["result"]["episodes"]
                 except Exception:
-                    log("Get next up episodes: No episodes found")
+                    log("Get next up episodes: No next episodes found for %s" % episode['title'])
                 else:
-                    parse_episodes(self.li,episode_query)
+                    parse_episodes(self.li,episode_details)
 
     # get mixed recently added tvshows/episodes
     def get_newshows(self):
