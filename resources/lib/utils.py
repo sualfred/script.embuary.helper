@@ -24,6 +24,29 @@ def remove_quotes(label):
             label = label[1:-1]
     return label
 
+def create_select_dialog(params):
+    selectionlist = []
+    indexlist = []
+    headertxt = remove_quotes(params.get("header", ""))
+    for i in range(1, 30):
+        label = xbmc.getInfoLabel("Window.Property(Dialog.%i.Label)" % (i))
+        if label == "":
+            break
+        elif label != "none" and label != "-":
+            selectionlist.append(label)
+            indexlist.append(i)
+    if selectionlist:
+        select_dialog = xbmcgui.Dialog()
+        index = select_dialog.select(headertxt, selectionlist)
+        if index > -1:
+            value = xbmc.getInfoLabel("Window.Property(Dialog.%i.Builtin)" % (indexlist[index]))
+            for builtin in value.split("||"):
+                xbmc.executebuiltin(builtin)
+                xbmc.sleep(30)
+    for i in range(1, 30):
+        xbmc.executebuiltin("ClearProperty(Dialog.%i.Builtin)" % (i))
+        xbmc.executebuiltin("ClearProperty(Dialog.%i.Label)" % (i))
+
 def dialogok(params):
     headertxt = remove_quotes(params.get("header", ""))
     bodytxt = remove_quotes(params.get("message", ""))

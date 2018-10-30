@@ -53,6 +53,8 @@ class Main:
                 setkodisetting(self.params)
             elif action == 'togglekodisetting':
                 togglekodisetting(self.params)
+            elif action == 'createselect':
+                create_select_dialog(self.params)
 
 if __name__ == "__main__":
     Main()
