@@ -10,6 +10,7 @@ from resources.lib.library import *
 class PluginContent(object):
     def __init__(self,params,li):
 
+        self.params = params
         self.dbtitle = remove_quotes(params.get("title"))
         self.dbtype = remove_quotes(params.get("type"))
         self.dbid = remove_quotes(params.get("dbid"))
@@ -175,6 +176,65 @@ class PluginContent(object):
                 else:
                     parse_tvshows(self.li,[tvshow_query])
 
+    # media by genre
+    def get_mediabygenre(self):
+
+        genre = remove_quotes(self.params.get("genre"))
+        unwatched = self.params.get("unwatched")
+
+        if not genre:
+            genres_list = []
+
+            movies_genres_query = json_call("VideoLibrary.GetGenres",
+                                sort={"method": "label"},
+                                params={"type": "movie"}
+                                )
+            tvshow_genres_query = json_call("VideoLibrary.GetGenres",
+                                sort={"method": "label"},
+                                params={"type": "tvshow"}
+                                )
+
+            for item in movies_genres_query["result"]["genres"]:
+                genres_list.append(item.get("label"))
+            for item in tvshow_genres_query["result"]["genres"]:
+                genres_list.append(item.get("label"))
+
+            random.shuffle(genres_list)
+            genre = genres_list[0]
+
+        if genre:
+
+            if unwatched == "True":
+                filter={"and": [{"field": "playcount", "operator": "lessthan", "value": "1"},{"operator": "is", "field": "genre", "value": genre}]}
+            else:
+                filter={"operator": "is", "field": "genre", "value": genre}
+
+            if not self.dbtype or self.dbtype == "movie":
+                json_query = json_call("VideoLibrary.GetMovies",
+                                    properties=movie_properties,
+                                    query_filter=filter,limit=10
+                                    )
+                try:
+                    json_query = json_query["result"]["movies"]
+                except Exception:
+                    log("Movies by genre %s: No movies found." % genre)
+                else:
+                    parse_movies(self.li,json_query,searchstring=genre)
+
+            if not self.dbtype or self.dbtype == "tvshow":
+                json_query = json_call("VideoLibrary.GetTVShows",
+                                    properties=tvshow_properties,
+                                    query_filter=filter,limit=10
+                                    )
+                try:
+                    json_query = json_query["result"]["tvshows"]
+                except Exception:
+                    log("TV shows by genre %s: No shows found." % genre)
+                else:
+                    parse_tvshows(self.li,json_query,searchstring=genre)
+
+            random.shuffle(self.li)
+
     # inprogress media
     def get_inprogress(self):
 
@@ -192,9 +252,9 @@ class PluginContent(object):
 
         if not self.dbtype or self.dbtype == "tvshow":
             json_query = json_call("VideoLibrary.GetEpisodes",
-                            properties=episode_properties,
-                            query_filter=inprogress_filter
-                            )
+                                properties=episode_properties,
+                                query_filter=inprogress_filter
+                                )
             try:
                 json_query = json_query["result"]["episodes"]
             except Exception:
@@ -238,7 +298,6 @@ class PluginContent(object):
                 return
 
         parse_genre(self.li,json_query)
-
 
     # because you watched xyz
     def get_similar(self):

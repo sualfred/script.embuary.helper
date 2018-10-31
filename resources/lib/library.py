@@ -174,7 +174,7 @@ def _get_joined_items(item):
         item = ""
     return item
 
-def parse_movies(li, json_query, title=False):
+def parse_movies(li, json_query, title=False, searchstring=False):
 
     for movie in json_query:
 
@@ -207,6 +207,8 @@ def parse_movies(li, json_query, title=False):
         li_item.setProperty("fanart_image", movie['art'].get('fanart', ''))
         if title:
             li_item.setProperty("similartitle", title)
+        if searchstring:
+            li_item.setProperty("searchstring", searchstring)
         li_item.setArt(movie['art'])
         li_item.setThumbnailImage(movie['art'].get('poster', ''))
         li_item.setIconImage('DefaultVideo.png')
@@ -221,7 +223,7 @@ def parse_movies(li, json_query, title=False):
             li_item.addStreamInfo("video", stream)
         li.append((movie['file'], li_item, False))
 
-def parse_tvshows(li, json_query, title=False):
+def parse_tvshows(li, json_query, title=False, searchstring=False):
 
     for tvshow in json_query:
 
@@ -271,6 +273,8 @@ def parse_tvshows(li, json_query, title=False):
                                               "Playcount": tvshow['playcount']})
         if title:
             li_item.setProperty("similartitle", title)
+        if searchstring:
+            li_item.setProperty("searchstring", searchstring)
         li_item.setProperty("TotalSeasons", season)
         li_item.setProperty("TotalEpisodes", episode)
         li_item.setProperty("WatchedEpisodes", watchedepisodes)

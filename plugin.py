@@ -53,6 +53,8 @@ class Main:
             plugin.get_seasonepisodes()
         elif self.info == 'getseasons':
             plugin.get_seasons()
+        elif self.info == 'getbygenre':
+            plugin.get_mediabygenre()
         elif self.info == 'jumptoletter':
             plugin.jumptoletter()
 
