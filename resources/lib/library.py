@@ -79,54 +79,6 @@ tvshow_properties = [
                         "dateadded",
                         "watchedepisodes",
                         "imdbnumber"]
-music_properties = [
-                        "title",
-                        "playcount",
-                        "genre",
-                        "artist",
-                        "album",
-                        "year",
-                        "file",
-                        "thumbnail",
-                        "fanart",
-                        "rating",
-                        "lastplayed"]
-album_properties = [
-                        "title",
-                        "description",
-                        "albumlabel",
-                        "theme",
-                        "mood",
-                        "style",
-                        "type",
-                        "artist",
-                        "genre",
-                        "year",
-                        "thumbnail",
-                        "fanart",
-                        "rating",
-                        "playcount"]
-musicvideo_properties = [
-                        "title",
-                        "artist",
-                        "playcount",
-                        "studio",
-                        "director",
-                        "year",
-                        "plot",
-                        "genre",
-                        "runtime",
-                        "art",
-                        "file",
-                        "streamdetails",
-                        "resume"]
-
-sort_lastplayed = {"order": "descending", "method": "lastplayed"}
-sort_recent = {"order": "descending", "method": "dateadded"}
-sort_random = {"method": "random"}
-unplayed_filter = {"field": "playcount", "operator": "lessthan", "value": "1"}
-specials_filter = {"field": "season", "operator": "greaterthan", "value": "0"}
-inprogress_filter = {"field": "inprogress", "operator": "true", "value": ""}
 
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None):
 
@@ -223,7 +175,7 @@ def parse_movies(li, json_query, title=False, searchstring=False):
             li_item.addStreamInfo("video", stream)
         li.append((movie['file'], li_item, False))
 
-def parse_tvshows(li, json_query, title=False, searchstring=False):
+def parse_tvshows(li, json_query, searchstring=False):
 
     for tvshow in json_query:
 
@@ -271,8 +223,6 @@ def parse_tvshows(li, json_query, title=False, searchstring=False):
                                               "Path": tvshow["file"],
                                               "DateAdded": tvshow["dateadded"],
                                               "Playcount": tvshow['playcount']})
-        if title:
-            li_item.setProperty("similartitle", title)
         if searchstring:
             li_item.setProperty("searchstring", searchstring)
         li_item.setProperty("TotalSeasons", season)
