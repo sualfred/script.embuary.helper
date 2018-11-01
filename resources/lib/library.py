@@ -263,6 +263,7 @@ def parse_seasons(li, json_query, title=False):
                                               "episode": episode,
                                               "tvshowtitle": season['showtitle'],
                                               "playcount": season['playcount'],
+                                              "mediatype": "season",
                                               "dbid": season['seasonid']})
         li_item.setArt(season['art'])
         li_item.setProperty("WatchedEpisodes", watchedepisodes)
