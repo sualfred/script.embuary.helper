@@ -212,7 +212,7 @@ def grabfanart():
 
     movie_query = json_call("VideoLibrary.GetMovies",
                         properties=['art'],
-                        sort=sort_random, limit=20
+                        sort={"method": "random"}, limit=20
                         )
 
     try:
@@ -224,7 +224,7 @@ def grabfanart():
 
     tvshow_query = json_call("VideoLibrary.GetTVShows",
                         properties=['art'],
-                        sort=sort_random, limit=20
+                        sort={"method": "random"}, limit=20
                         )
 
     try:
