@@ -41,6 +41,7 @@ class PluginContent(object):
         self.unplayedepisodes_filter = {"field":"numwatched","operator":"greaterthan","value":["0"]}
         self.specials_filter = {"field": "season", "operator": "greaterthan", "value": "0"}
         self.inprogress_filter = {"field": "inprogress", "operator": "true", "value": ""}
+        self.notinprogress_filter = {"field": "inprogress", "operator": "false", "value": ""}
         self.tag_filter = {"operator": "is", "field": "tag", "value": self.tag}
         self.title_filter = {"operator": "is", "field": "title", "value": self.dbtitle}
 
@@ -109,10 +110,15 @@ class PluginContent(object):
     # get nextup episodes of last played tv shows
     def get_nextup(self):
 
+        filters = [self.inprogress_filter]
+        if self.tag:
+            filters.append(self.tag_filter)
+        filter = {"and": filters}
+
         json_query = json_call("VideoLibrary.GetTVShows",
                         properties=tvshow_properties,
                         sort=self.sort_lastplayed, limit=25,
-                        query_filter=self.inprogress_filter
+                        query_filter=filter
                         )
 
         try:
@@ -126,7 +132,7 @@ class PluginContent(object):
                 episode_query = json_call("VideoLibrary.GetEpisodes",
                             properties=episode_properties,
                             sort={"order": "ascending", "method": "episode"},limit=1,
-                            query_filter={"and": [self.unplayed_filter,self.inprogress_filter,{"field": "season", "operator": "greaterthan", "value": "0"}]},
+                            query_filter={"and": [self.unplayed_filter,self.notinprogress_filter,{"field": "season", "operator": "greaterthan", "value": "0"}]},
                             params={"tvshowid": int(episode['tvshowid'])}
                             )
 
@@ -140,10 +146,15 @@ class PluginContent(object):
     # get mixed recently added tvshows/episodes
     def get_newshows(self):
 
+        filters = [self.unplayed_filter]
+        if self.tag:
+            filters.append(self.tag_filter)
+        filter = {"and": filters}
+
         json_query = json_call("VideoLibrary.GetTVShows",
                         properties=tvshow_properties,
                         sort=self.sort_recent, limit=25,
-                        query_filter=self.unplayed_filter
+                        query_filter=filter
                         )
 
         try:
