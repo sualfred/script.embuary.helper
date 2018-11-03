@@ -207,26 +207,34 @@ class PluginContent(object):
         if not genre:
             genres_list = []
 
-            movies_genres_query = json_call("VideoLibrary.GetGenres",
-                                sort={"method": "label"},
-                                params={"type": "movie"}
-                                )
-            tvshow_genres_query = json_call("VideoLibrary.GetGenres",
-                                sort={"method": "label"},
-                                params={"type": "tvshow"}
-                                )
+            if not self.dbtype or self.dbtype == "movie":
+                movies_genres_query = json_call("VideoLibrary.GetGenres",
+                                    sort={"method": "label"},
+                                    params={"type": "movie"}
+                                    )
+                try:
+                    for item in movies_genres_query["result"]["genres"]:
+                        genres_list.append(item.get("label"))
+                except Exception:
+                    log("Get movies by genre: no genres found")
 
-            for item in movies_genres_query["result"]["genres"]:
-                genres_list.append(item.get("label"))
-            for item in tvshow_genres_query["result"]["genres"]:
-                genres_list.append(item.get("label"))
+            if not self.dbtype or self.dbtype == "tvshow":
+                tvshow_genres_query = json_call("VideoLibrary.GetGenres",
+                                    sort={"method": "label"},
+                                    params={"type": "tvshow"}
+                                    )
+                try:
+                    for item in tvshow_genres_query["result"]["genres"]:
+                        genres_list.append(item.get("label"))
+                except Exception:
+                    log("Get TV shows by genre: no genres found")
 
-            random.shuffle(genres_list)
-            genre = genres_list[0]
+            if genres_list:
+                random.shuffle(genres_list)
+                genre = genres_list[0]
 
         if genre:
-
-            filters = [{"operator": "is", "field": "genre", "value": genre}]
+            filters = [{"operator": "contains", "field": "genre", "value": genre}]
             if self.unwatched == "True":
                 filters.append(self.unplayed_filter)
             if self.tag:
