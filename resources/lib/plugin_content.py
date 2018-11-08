@@ -333,6 +333,40 @@ class PluginContent(object):
 
         parse_genre(self.li,json_query)
 
+    # get movies by director
+    def get_directed_by(self):
+
+        json_query = json_call("VideoLibrary.GetMovieDetails",
+                            properties=["title", "director"],
+                            params={"movieid": int(self.dbid)}
+                            )
+
+        try:
+            directors = json_query['result']['moviedetails']['director']
+            title = json_query['result']['moviedetails']['title']
+            joineddirectors = " / ".join(directors)
+        except Exception:
+            log("Movies by director: No director found")
+            return
+
+        filters=[]
+        for director in directors:
+            filters.append({"operator": "is", "field": "director", "value": director})
+        filter = {"and": [{"or": filters}, {"operator": "isnot", "field": "title", "value": title}]}
+
+        json_query = json_call("VideoLibrary.GetMovies",
+                                    properties=movie_properties,
+                                    sort=self.sort_random,
+                                    query_filter=filter
+                                    )
+        try:
+            json_query = json_query["result"]["movies"]
+        except Exception:
+            log("Movies by director %s: No additional movies found" % joineddirectors)
+        else:
+            parse_movies(self.li,json_query,searchstring=joineddirectors)
+
+
     # because you watched xyz
     def get_similar(self):
 
