@@ -336,10 +336,11 @@ class PluginContent(object):
     # get movies by director
     def get_directed_by(self):
 
-        json_query = json_call("VideoLibrary.GetMovieDetails",
-                            properties=["title", "director"],
-                            params={"movieid": int(self.dbid)}
-                            )
+        if self.dbid:
+            json_query = json_call("VideoLibrary.GetMovieDetails",
+                                properties=["title", "director"],
+                                params={"movieid": int(self.dbid)}
+                                )
 
         try:
             directors = json_query['result']['moviedetails']['director']
