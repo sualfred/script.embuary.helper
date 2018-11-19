@@ -13,6 +13,7 @@ ADDON = xbmcaddon.Addon(ADDON_ID)
 MONITOR = KodiMonitor(win=WIN, addon=ADDON)
 
 task_interval = 300
+cache_interval = 150
 bg_task_interval = 200
 bg_interval = 10
 
@@ -43,6 +44,14 @@ while not MONITOR.abortRequested():
 		task_interval = 0
 	else:
 		task_interval += 10
+
+	# Refresh cache
+	if cache_interval >= 150:
+		log("Update cache reload property")
+		WIN.setProperty("EmbuaryCacheTime", time.strftime("%Y%m%d%H%M%S", time.gmtime()))
+		cache_interval = 0
+	else:
+		cache_interval += 10
 
 	MONITOR.waitForAbort(10)
 

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding: utf8
 
 import xbmcplugin
 import json as simplejson
@@ -17,6 +18,7 @@ class PluginContent(object):
         self.season = remove_quotes(params.get("season"))
         self.tag = remove_quotes(params.get("tag"))
         self.unwatched = remove_quotes(params.get("unwatched"))
+        self.limit = remove_quotes(params.get("limit"))
         self.li = li
 
         if self.dbtype == "movie":
@@ -44,6 +46,77 @@ class PluginContent(object):
         self.notinprogress_filter = {"field": "inprogress", "operator": "false", "value": ""}
         self.tag_filter = {"operator": "is", "field": "tag", "value": self.tag}
         self.title_filter = {"operator": "is", "field": "title", "value": self.dbtitle}
+
+    # season widgets
+    def get_seasonal(self):
+
+        xmas = ["xmas", "christmas", "x-mas", "mistletow", "claus", "snowman", "happy holidays", "st. nick", "Weihnacht", "weihnachten", "fest der liebe", "trannenbaum", "schneemann", "heilige nacht", "heiliger abend", "heiligabend", "nikolaus", "christkind", "mistelzweig", "Noël", "Meilleurs vœux", "feliz navidad", "joyeux noel", "Natale", "szczęśliwe święta", "Veselé Vánoce", "Vrolijk kerstfeest", "Kerstmis", "Boże Narodzenie", "Kalėdos", "Crăciun"]
+        horror = ["ужас", "užas", "rædsel", "horror", "φρίκη", "õudus", "kauhu", "horreur", "užas", "borzalom", "hryllingi", "ホラー", "siaubas", "verschrikking", "skrekk", "przerażenie", "groază", "фильм ужасов", "hrôza", "grozo", "Skräck", "korku", "жах"]
+        filters = []
+
+        if self.params.get("list") == "xmas":
+            use_episodes = True
+            for keyword in xmas:
+                filters.append({"operator": "contains", "field": "title", "value": keyword})
+                filters.append({"operator": "contains", "field": "plot", "value": keyword})
+        elif self.params.get("list") == "horror":
+            use_episodes = False
+            for keyword in horror:
+                filters.append({"operator": "contains", "field": "genre", "value": keyword})
+        else:
+            return
+
+        filter = {"or": filters}
+
+        if self.limit:
+            limit = int(self.limit)
+        else:
+            limit = 25
+
+        if not self.dbtype or self.dbtype == "movie":
+            json_query = json_call("VideoLibrary.GetMovies",
+                                properties=movie_properties,
+                                sort=self.sort_random, limit=limit,
+                                query_filter=filter,
+                                use_cache="seasonalMovies"
+                                )
+            try:
+                json_query = json_query["result"]["movies"]
+            except Exception:
+                log("Movies by seasonal keyword: No movies found.")
+            else:
+                parse_movies(self.li,json_query)
+
+        if not self.dbtype or self.dbtype == "tvshow":
+            if use_episodes:
+                json_query = json_call("VideoLibrary.GetEpisodes",
+                                    properties=episode_properties,
+                                    sort=self.sort_random, limit=limit,
+                                    query_filter=filter,
+                                    use_cache="seasonalEpisodes"
+                                    )
+                try:
+                    json_query = json_query["result"]["episodes"]
+                except Exception:
+                    log("Episodes by seasonal keyword: No episodes found.")
+                else:
+                    parse_episodes(self.li,json_query)
+
+            else:
+                json_query = json_call("VideoLibrary.GetTVShows",
+                                    properties=tvshow_properties,
+                                    sort=self.sort_random, limit=limit,
+                                    query_filter=filter,
+                                    use_cache="seasonalShows"
+                                    )
+                try:
+                    json_query = json_query["result"]["tvshows"]
+                except Exception:
+                    log("TV shows by seasonal keyword: No shows found.")
+                else:
+                    parse_tvshows(self.li,json_query)
+
+        random.shuffle(self.li)
 
     # get seasons
     def get_seasons(self):
@@ -132,7 +205,7 @@ class PluginContent(object):
                 episode_query = json_call("VideoLibrary.GetEpisodes",
                             properties=episode_properties,
                             sort={"order": "ascending", "method": "episode"},limit=1,
-                            query_filter={"and": [self.unplayed_filter,self.notinprogress_filter,{"field": "season", "operator": "greaterthan", "value": "0"}]},
+                            query_filter={"and": [self.unplayed_filter,{"field": "season", "operator": "greaterthan", "value": "0"}]},
                             params={"tvshowid": int(episode['tvshowid'])}
                             )
 

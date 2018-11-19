@@ -19,10 +19,6 @@ class KodiMonitor(xbmc.Monitor):
 
         #log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
 
-        if method == "Player.OnPlay":
-            xbmc.sleep(6000)
-            self.refresh_widgets()
-
         if method == "Player.OnStop":
             self.refresh_widgets()
 
