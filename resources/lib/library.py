@@ -249,6 +249,8 @@ def parse_tvshows(li, json_query, searchstring=False):
 														"CastAndRole": cast[1],
 														"mediatype": "tvshow",
 														"dbid": dbid,
+														"season": season,
+														"episode": episode,
 														"imdbnumber": str(tvshow['imdbnumber']),
 														"Path": tvshow["file"],
 														"DateAdded": tvshow["dateadded"],
