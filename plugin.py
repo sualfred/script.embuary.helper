@@ -7,6 +7,7 @@ import urlparse
 
 from resources.lib.plugin_content import *
 from resources.lib.utils import *
+from resources.lib.plugin_utils import *
 
 ADDON = xbmcaddon.Addon()
 ADDON_VERSION = ADDON.getAddonInfo('version')
@@ -49,6 +50,8 @@ class Main:
             plugin.get_newshows()
         elif self.info == 'getnextup':
             plugin.get_nextup()
+        elif self.info == 'getnextupbyseason':
+            plugin.get_nextup_byseason()
         elif self.info == 'getseasonepisodes':
             plugin.get_seasonepisodes()
         elif self.info == 'getseasons':
@@ -67,7 +70,7 @@ class Main:
 
     def actions(self):
         if self.action == "smsjump":
-            smsjump(self.params.get("letter"))
+            smsjump(self.params)
         elif self.action == "jumptoshow":
             jumptoshow(self.params)
         elif self.action == "jumptoseason":

@@ -6,10 +6,8 @@ import xbmcvfs
 import os
 import sys
 import simplejson
-import hashlib
-import urllib
-import random
 from resources.lib.library import *
+from resources.lib.json_map import *
 
 ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
@@ -24,7 +22,7 @@ def remove_quotes(label):
             label = label[1:-1]
     return label
 
-def create_select_dialog(params):
+def selectdialog(params):
     selectionlist = []
     indexlist = []
     headertxt = remove_quotes(params.get("header", ""))
@@ -97,22 +95,7 @@ def setkodisetting(params):
         '{"jsonrpc":"2.0", "id":1, "method":"Settings.SetSettingValue","params":{"setting":"%s","value":%s}}' %
         (settingname, value))
 
-def close_and_open(params):
-    window.setProperty("TVShowRating",params.get("rating"))
-    window.setProperty("TVShowDBID",params.get("dbid"))
-    window.setProperty("TVShowYear",params.get("year"))
-    window.setProperty("TVShowTotalSeasons",params.get("seasons"))
-    window.setProperty("TVShowTotalEpisodes",params.get("episodes"))
-    window.setProperty("EmbyID",params.get("embyid"))
-
-    xbmc.executebuiltin("Dialog.Close(all,true)")
-    xbmc.sleep(50)
-
-    path = remove_quotes(params.get("path"))
-    target = params.get("target")
-    gotopath(path,target)
-
-def play_from_home(item):
+def playfromhome(params):
     for i in range(50):
         if xbmc.getCondVisibility("!Window.IsVisible(home) | Window.IsVisible(movieinformation)"):
             xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -123,24 +106,9 @@ def play_from_home(item):
             break
 
     if ishome:
-        item = remove_quotes(item)
+        item = remove_quotes(params.get("item"))
         item = "PlayMedia(%s)" % item
         xbmc.executebuiltin(item)
-
-def jumptoshow(params):
-    try:
-        xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
-    except Exception:
-        pass
-    finally:
-        window.setProperty("TVShowRating",params.get("rating"))
-        window.setProperty("TVShowDBID",params.get("dbid"))
-        window.setProperty("TVShowYear",params.get("year"))
-        window.setProperty("TVShowTotalSeasons",params.get("seasons"))
-        window.setProperty("TVShowTotalEpisodes",params.get("episodes"))
-
-        path = "videodb://tvshows/titles/%s/" % params.get("dbid")
-        gotopath(path)
 
 def jumptoshow_by_episode(params):
     episode_query = json_call("VideoLibrary.GetEpisodeDetails",
@@ -156,14 +124,10 @@ def jumptoshow_by_episode(params):
     path = "videodb://tvshows/titles/%s/" % tvshow_id
     gotopath(path)
 
-def jumptoseason(params):
-    try:
-        xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
-    except Exception:
-        pass
-    finally:
-        path = "videodb://tvshows/titles/%s/%s/" % (params.get("dbid"),params.get("season"))
-        gotopath(path)
+def goto(params):
+    path = remove_quotes(params.get("path"))
+    target = params.get("target")
+    gotopath(path,target)
 
 def gotopath(path,target="videos"):
     if not xbmc.getCondVisibility("Window.IsMedia"):
@@ -173,45 +137,6 @@ def gotopath(path,target="videos"):
 
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin(execute)
-
-def smsjump(letter):
-    try:
-        xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
-    except Exception:
-        pass
-    finally:
-        jumpcmd = ""
-        if letter:
-            letter = letter.upper()
-        if letter == "0":
-                if xbmc.getInfoLabel("Container.SortOrder") == "Descending":
-                    jumpcmd = "lastpage"
-                else:
-                    jumpcmd = "firstpage"
-        elif letter in ["A", "B", "C"]:
-            jumpcmd = "jumpsms2"
-        elif letter in ["D", "E", "F"]:
-            jumpcmd = "jumpsms3"
-        elif letter in ["G", "H", "I"]:
-            jumpcmd = "jumpsms4"
-        elif letter in ["J", "K", "L"]:
-            jumpcmd = "jumpsms5"
-        elif letter in ["M", "N", "O"]:
-            jumpcmd = "jumpsms6"
-        elif letter in ["P", "Q", "R", "S"]:
-            jumpcmd = "jumpsms7"
-        elif letter in ["T", "U", "V"]:
-            jumpcmd = "jumpsms8"
-        elif letter in ["W", "X", "Y", "Z"]:
-            jumpcmd = "jumpsms9"
-        if jumpcmd:
-            xbmc.executebuiltin("SetFocus(50)")
-            for i in range(40):
-                xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "Input.ExecuteAction",\
-                    "params": { "action": "%s" }, "id": 1 }' % (jumpcmd))
-                xbmc.sleep(50)
-                if xbmc.getInfoLabel("ListItem.Sortletter").upper() == letter or letter == "0":
-                    break
 
 def grabfanart():
     fanarts = list()

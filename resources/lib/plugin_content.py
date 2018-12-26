@@ -5,6 +5,7 @@ import xbmcplugin
 import json as simplejson
 import random
 from resources.lib.utils import log
+from resources.lib.utils import gotopath
 from resources.lib.utils import remove_quotes
 from resources.lib.library import *
 
@@ -180,7 +181,21 @@ class PluginContent(object):
         else:
             parse_episodes(self.li,episode_query)
 
-    # get nextup episodes of last played tv shows
+    # get nextup
+    # by season id
+    def get_nextup_byseason(self):
+        season_query = json_call("VideoLibrary.GetSeasonDetails",
+                    properties=["tvshowid"],
+                    params={"seasonid": int(self.dbid)}
+                    )
+        try:
+            tvshow_id = season_query["result"]["seasondetails"]
+        except Exception:
+            return
+
+        self.get_nextup_results([tvshow_id])
+
+    # by last played tv shows
     def get_nextup(self):
 
         filters = [self.inprogress_filter]
@@ -200,7 +215,11 @@ class PluginContent(object):
             log("Get next up episodes: No TV shows found")
             return
 
-        for episode in json_query:
+        self.get_nextup_results(json_query)
+
+    # return nextup episodes
+    def get_nextup_results(self,query):
+        for episode in query:
 
                 episode_query = json_call("VideoLibrary.GetEpisodes",
                             properties=episode_properties,
@@ -556,4 +575,6 @@ class PluginContent(object):
                         li_item.setProperty("NotAvailable", "true")
 
                     self.li.append((li_path, li_item, False))
+
+
 

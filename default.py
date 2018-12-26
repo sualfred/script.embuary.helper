@@ -37,12 +37,10 @@ class Main:
 
     def getactions(self):
         for action in self.action:
-            if action == 'smsjump':
-                smsjump(self.params.get("letter"))
-            elif action == 'playfromhome':
-                play_from_home(self.params.get("item"))
-            elif action == 'closeandopen':
-                close_and_open(self.params)
+            if action == 'playfromhome':
+                playfromhome(self.params)
+            elif action == 'goto':
+                goto(self.params)
             elif action == 'textviewer':
                 textviewer(self.params)
             elif action == 'dialogok':
@@ -54,7 +52,7 @@ class Main:
             elif action == 'togglekodisetting':
                 togglekodisetting(self.params)
             elif action == 'createselect':
-                create_select_dialog(self.params)
+                selectdialog(self.params)
             elif action == 'jumptoshow_by_episode':
                 jumptoshow_by_episode(self.params)
 

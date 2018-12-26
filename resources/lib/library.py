@@ -6,81 +6,9 @@ import xbmcaddon
 import random
 import json as simplejson
 from time import gmtime, strftime
+from resources.lib.json_map import *
 
 window = xbmcgui.Window(10000)
-
-movie_properties = [
-					"title",
-					"originaltitle",
-					"votes",
-					"playcount",
-					"year",
-					"genre",
-					"studio",
-					"country",
-					"tagline",
-					"plot",
-					"runtime",
-					"file",
-					"plotoutline",
-					"lastplayed",
-					"trailer",
-					"rating",
-					"resume",
-					"art",
-					"streamdetails",
-					"mpaa",
-					"director",
-					"writer",
-					"cast",
-					"dateadded",
-					"imdbnumber"]
-episode_properties = [
-					"title",
-					"playcount",
-					"season",
-					"episode",
-					"showtitle",
-					"plot",
-					"file",
-					"rating",
-					"resume",
-					"tvshowid",
-					"firstaired",
-					"art",
-					"streamdetails",
-					"runtime",
-					"director",
-					"writer",
-					"cast",
-					"dateadded",
-					"lastplayed"]
-season_properties = [
-					"season",
-					"episode",
-					"art",
-					"watchedepisodes",
-					"showtitle",
-					"playcount",
-					"tvshowid"]
-tvshow_properties = [
-					"title",
-					"studio",
-					"year",
-					"plot",
-					"cast",
-					"rating",
-					"votes",
-					"genre",
-					"episode",
-					"season",
-					"mpaa",
-					"premiered",
-					"playcount",
-					"art",
-					"dateadded",
-					"watchedepisodes",
-					"imdbnumber"]
 
 def get_cache(name):
 		cache = "EmbuaryCache.%s" % name
@@ -232,7 +160,7 @@ def parse_tvshows(li, json_query, searchstring=False):
 					tvshow["file"] = "videodb://tvshows/titles/%s/" % dbid
 				else:
 					folder = False
-					tvshow["file"] = "plugin://script.embuary.helper/?action=jumptoshow&dbid=%s&rating=%s&seasons=%s&episodes=%s&mpaa=%s&year=%s" % (dbid,rating,season,episode,mpaa,year)
+					tvshow["file"] = "plugin://script.embuary.helper/?action=jumptoshow&dbid=%s" % dbid
 
 				li_item = xbmcgui.ListItem(tvshow['title'])
 				li_item.setInfo(type="Video", infoLabels={"Title": tvshow['title'],
