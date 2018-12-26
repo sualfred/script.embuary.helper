@@ -55,6 +55,8 @@ class Main:
                 togglekodisetting(self.params)
             elif action == 'createselect':
                 create_select_dialog(self.params)
+            elif action == 'jumptoshow_by_episode':
+                jumptoshow_by_episode(self.params)
 
 if __name__ == "__main__":
     Main()

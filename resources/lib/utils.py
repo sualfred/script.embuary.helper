@@ -110,13 +110,7 @@ def close_and_open(params):
 
     path = remove_quotes(params.get("path"))
     target = params.get("target")
-
-    if xbmc.getCondVisibility("Window.IsMedia"):
-        execute = "Container.Update(%s)" % path
-    else:
-        execute = "ActivateWindow(%s,%s,return)" % (target,path)
-
-    xbmc.executebuiltin(execute)
+    gotopath(path,target)
 
 def play_from_home(item):
     for i in range(50):
@@ -145,13 +139,22 @@ def jumptoshow(params):
         window.setProperty("TVShowTotalSeasons",params.get("seasons"))
         window.setProperty("TVShowTotalEpisodes",params.get("episodes"))
 
-        if not xbmc.getCondVisibility("Window.IsMedia"):
-            execute = "ActivateWindow(videos,videodb://tvshows/titles/%s/,return)" % params.get("dbid")
-        else:
-            execute = "Container.Update(videodb://tvshows/titles/%s/)" % params.get("dbid")
+        path = "videodb://tvshows/titles/%s/" % params.get("dbid")
+        gotopath(path)
 
-        xbmc.executebuiltin("Dialog.Close(all,true)")
-        xbmc.executebuiltin(execute)
+def jumptoshow_by_episode(params):
+    episode_query = json_call("VideoLibrary.GetEpisodeDetails",
+                    properties=["tvshowid"],
+                    params={"episodeid": int(params.get("dbid"))}
+                    )
+    try:
+        tvshow_id = str(episode_query["result"]["episodedetails"]["tvshowid"])
+    except Exception:
+        log("Could not get the TV show ID")
+        return
+
+    path = "videodb://tvshows/titles/%s/" % tvshow_id
+    gotopath(path)
 
 def jumptoseason(params):
     try:
@@ -159,14 +162,17 @@ def jumptoseason(params):
     except Exception:
         pass
     finally:
-        if not xbmc.getCondVisibility("Window.IsMedia"):
-            execute = "ActivateWindow(videos,videodb://tvshows/titles/%s/%s/,return)" % (params.get("dbid"),params.get("season"))
-        else:
-            execute = "Container.Update(videodb://tvshows/titles/%s/%s/)" % (params.get("dbid"),params.get("season"))
+        path = "videodb://tvshows/titles/%s/%s/" % (params.get("dbid"),params.get("season"))
+        gotopath(path)
 
-        xbmc.executebuiltin("Dialog.Close(all,true)")
-        xbmc.executebuiltin(execute)
+def gotopath(path,target="videos"):
+    if not xbmc.getCondVisibility("Window.IsMedia"):
+        execute = "ActivateWindow(%s,%s,return)" % (target,path)
+    else:
+        execute = "Container.Update(%s)" % path
 
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin(execute)
 
 def smsjump(letter):
     try:
