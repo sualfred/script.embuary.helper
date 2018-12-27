@@ -138,6 +138,41 @@ def gotopath(path,target="videos"):
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin(execute)
 
+def tvshow_details_by_season(params):
+    season_query = json_call("VideoLibrary.GetSeasonDetails",
+                        properties=["tvshowid"],
+                        params={"seasonid": int(params.get("dbid"))}
+                        )
+    try:
+        tvshow_id = str(season_query["result"]["seasondetails"]["tvshowid"])
+    except Exception:
+        log("Show details by season: Could not get TV show ID")
+        return
+
+    tvshow_query = json_call("VideoLibrary.GetTVShowDetails",
+                        properties=tvshow_properties,
+                        params={"tvshowid": int(tvshow_id)}
+                        )
+
+    try:
+        details = tvshow_query["result"]["tvshowdetails"]
+    except Exception:
+        log("Show details by season: Could not get TV show details")
+        return
+
+    if int(details["episode"]) > int(details["watchedepisodes"]):
+        unwatchedepisodes = int(details["episode"]) - int(details["watchedepisodes"])
+        unwatchedepisodes = str(unwatchedepisodes)
+    else:
+        unwatchedepisodes = "0"
+
+    window.setProperty("tvshow.dbid", str(details["tvshowid"]))
+    window.setProperty("tvshow.rating", str(round(details['rating'],1)))
+    window.setProperty("tvshow.seasons", str(details["season"]))
+    window.setProperty("tvshow.episodes", str(details["episode"]))
+    window.setProperty("tvshow.watchedepisodes", str(details["watchedepisodes"]))
+    window.setProperty("tvshow.unwatchedepisodes", unwatchedepisodes)
+
 def grabfanart():
     fanarts = list()
 

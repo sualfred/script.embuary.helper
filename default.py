@@ -55,6 +55,8 @@ class Main:
                 selectdialog(self.params)
             elif action == 'jumptoshow_by_episode':
                 jumptoshow_by_episode(self.params)
+            elif action == 'details_by_season':
+                tvshow_details_by_season(self.params)
 
 if __name__ == "__main__":
     Main()

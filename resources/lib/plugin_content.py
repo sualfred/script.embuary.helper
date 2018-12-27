@@ -182,20 +182,6 @@ class PluginContent(object):
             parse_episodes(self.li,episode_query)
 
     # get nextup
-    # by season id
-    def get_nextup_byseason(self):
-        season_query = json_call("VideoLibrary.GetSeasonDetails",
-                    properties=["tvshowid"],
-                    params={"seasonid": int(self.dbid)}
-                    )
-        try:
-            tvshow_id = season_query["result"]["seasondetails"]
-        except Exception:
-            return
-
-        self.get_nextup_results([tvshow_id])
-
-    # by last played tv shows
     def get_nextup(self):
 
         filters = [self.inprogress_filter]
@@ -215,11 +201,7 @@ class PluginContent(object):
             log("Get next up episodes: No TV shows found")
             return
 
-        self.get_nextup_results(json_query)
-
-    # return nextup episodes
-    def get_nextup_results(self,query):
-        for episode in query:
+        for episode in json_query:
 
                 episode_query = json_call("VideoLibrary.GetEpisodes",
                             properties=episode_properties,
