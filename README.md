@@ -10,12 +10,12 @@ ________________________________________________________________________________
 RunScript(script.embuary.helper,action=playfromhome,item='$ESCINFO[ListItem.Filenameandpath]')
 ```
 
-Closes all dialogs and goes back to the home window. Once home is active it starts the playback of the provided filename.
+Closes all dialogs and goes back to the home window. Once home is active it starts the playback of the provided file.
 
 ________________________________________________________________________________________________________
-## "Close and open"
+## "Go to path"
 ```
-RunScript(script.embuary.helper,action=closeandopen,path='$ESCINFO[ListItem.Filenameandpath]',target=videos)
+RunScript(script.embuary.helper,action=goto,path='$ESCINFO[ListItem.Filenameandpath]',target=videos)
 ```
 
 Closes all dialogs jumps directly to the provided path. If the script is called from a media window the existing container path is updated instead.
@@ -40,6 +40,15 @@ ________________________________________________________________________________
 This enables the script background service to clear the playlist after the playback has stopped.
 
 ________________________________________________________________________________________________________
+## Reset container positionsd
+
+```
+<onload>RunScript(script.embuary.helper,action=resetposition,container=200||201||202)</onload>
+```
+
+Will reset the provided container IDs to the first position.
+
+________________________________________________________________________________________________________
 ## Simple background provider
 
 ```
@@ -48,6 +57,41 @@ $INFO[Window(home).Property(EmbuaryBackground)]
 
 Provides a random fanart image of a random local movie or TV show.
 The value is going to be refreshed after 20 seconds.
+
+________________________________________________________________________________________________________
+## Jump to show by episode
+
+```
+RunScript(script.embuary.helper,action=jumptoshow_by_episode,dbid=$INFO[ListItem.DBID])
+```
+
+Option to browse the show based on a DBID of a episode.
+
+________________________________________________________________________________________________________
+## Helper to get additional TV show details properties on season level
+
+```
+Runscript(script.embuary.helper,action=details_by_season,dbid=$INFO[ListItemAbsolute(0).DBID])
+```
+
+Example with a hidden custom dialog:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<window id="1118" type="dialog">
+	<visible>Container.Content(seasons) + String.IsEmpty(Container.Pluginname)</visible>
+	<onload condition="!String.IsEmpty(ListItemAbsolute(0).DBID)">Runscript(script.embuary.helper,action=details_by_season,dbid=$INFO[ListItemAbsolute(0).DBID])</onload>
+	<onload condition="String.IsEmpty(ListItemAbsolute(0).DBID) + !String.IsEmpty(ListItemAbsolute(1).DBID)">Runscript(script.embuary.helper,action=details_by_season,dbid=$INFO[ListItemAbsolute(1).DBID])</onload>
+	<onunload>ClearProperty(tvshow.dbid,home)</onunload>
+	<onunload>ClearProperty(tvshow.rating,home)</onunload>
+	<onunload>ClearProperty(tvshow.seasons,home)</onunload>
+	<onunload>ClearProperty(tvshow.episodes,home)</onunload>
+	<onunload>ClearProperty(tvshow.watchedepisodes,home)</onunload>
+	<onunload>ClearProperty(tvshow.unwatchedepisodes,home)</onunload>
+	<controls/>
+</window>
+```
+
 
 
 # Plugin sources
@@ -187,12 +231,41 @@ Based on a DBID
 ```
 plugin://script.embuary.helper/?info=getsimilar&amp;type=tvshow&amp;dbid=$INFO[ListItem.DBID]&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]
 ```
-Available window properties if the container was placed inside of DialogVideoInfo.xml and a item was called (useful if you want TV show info labels which aren't available on season level):
-- Window(home).Property(TVShowDBID)
-- Window(home).Property(TVShowRating)
-- Window(home).Property(TVShowYear)
-- Window(home).Property(TVShowTotalSeasons)
-- Window(home).Property(TVShowTotalEpisodes)
+
+________________________________________________________________________________________________________
+## Seasonal widgets
+
+Helper to return movies/episodes for Christmas or Halloween.
+
+Example:
+```
+	<variable name="SeasonalSpecial">
+		<value condition="System.Date(12-01,12-27) + Window.IsVisible(home)">plugin://script.embuary.helper/?info=getseasonal&amp;list=xmas&amp;limit=15&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+		<value condition="System.Date(12-01,12-27) + Window.IsVisible(1120)">plugin://script.embuary.helper/?info=getseasonal&amp;list=xmas&amp;type=movie&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+		<value condition="System.Date(12-01,12-27) + Window.IsVisible(1121)">plugin://script.embuary.helper/?info=getseasonal&amp;list=xmas&amp;type=tvshow&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+		<value condition="System.Date(10-30,11-01) + Window.IsVisible(home)">plugin://script.embuary.helper/?info=getseasonal&amp;list=horror&amp;limit=15&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+		<value condition="System.Date(10-30,11-01) + Window.IsVisible(1120)">plugin://script.embuary.helper/?info=getseasonal&amp;list=horror&amp;type=movie&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+		<value condition="System.Date(10-30,11-01) + Window.IsVisible(1121)">plugin://script.embuary.helper/?info=getseasonal&amp;list=horror&amp;type=tvshow&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+	</variable>
+```
+
+________________________________________________________________________________________________________
+## Get seasons
+
+```
+plugin://script.embuary.helper/?info=getseasons&amp;dbid=$INFO[ListItem.DBID]
+```
+
+Can be called by DBID or title. Useful to display seasons in the info dialog
+
+________________________________________________________________________________________________________
+## Get episodes from season
+
+```
+plugin://script.embuary.helper/?info=getseasonepisodes&amp;title='$ESCINFO[ListItem.TvShowTitle]'&amp;season=$INFO[ListItem.Season]
+```
+
+Can be called by DBID or title. Useful to display another episodes from the same season in the episode info dialog.
 
 ________________________________________________________________________________________________________
 ## Jump to letter

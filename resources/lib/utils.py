@@ -137,6 +137,19 @@ def gotopath(path,target="videos"):
 
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin(execute)
+    gotopath(path,target)
+
+def resetposition(params):
+    containers = params.get("container").split("||")
+    for item in containers:
+        try:
+            current_item = "Container(%s).CurrentItem" % item
+            current_item = xbmc.getInfoLabel(current_item)
+            current_item = int(current_item) - 1
+            execute = "Control.Move(%s,-%s)" % (item,str(current_item))
+            xbmc.executebuiltin(execute)
+        except Exception:
+            pass
 
 def tvshow_details_by_season(params):
     season_query = json_call("VideoLibrary.GetSeasonDetails",

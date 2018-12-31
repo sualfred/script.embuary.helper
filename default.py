@@ -57,6 +57,8 @@ class Main:
                 jumptoshow_by_episode(self.params)
             elif action == 'details_by_season':
                 tvshow_details_by_season(self.params)
+            elif action == 'resetposition':
+                resetposition(self.params)
 
 if __name__ == "__main__":
     Main()
