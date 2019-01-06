@@ -137,7 +137,6 @@ def gotopath(path,target="videos"):
 
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin(execute)
-    gotopath(path,target)
 
 def resetposition(params):
     containers = params.get("container").split("||")
