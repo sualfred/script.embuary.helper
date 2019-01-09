@@ -203,7 +203,10 @@ def parse_seasons(li, json_query, title=False):
 				episode = str(season['episode'])
 				watchedepisodes = str(season['watchedepisodes'])
 
-				title = "%s %s" % (xbmc.getLocalizedString(20373), seasonnr)
+				if seasonnr == "0":
+					title = "%s" % (xbmc.getLocalizedString(20381))
+				else:
+					title = "%s %s" % (xbmc.getLocalizedString(20373), seasonnr)
 
 				if int(episode) > int(watchedepisodes):
 					unwatchedepisodes = int(episode) - int(watchedepisodes)
@@ -231,16 +234,17 @@ def parse_seasons(li, json_query, title=False):
 				li_item.setProperty("UnwatchedEpisodes", unwatchedepisodes)
 				li_item.setThumbnailImage(season['art'].get('poster', ''))
 				li_item.setIconImage('DefaultVideo.png')
+				if seasonnr == "0":
+					li_item.setProperty("IsSpecial", "true")
 				li.append((file, li_item, folder))
 
 
 def parse_episodes(li, json_query):
 
 		for episode in json_query:
-				nEpisode = "%.2d" % float(episode['episode'])
-				nSeason = "%.2d" % float(episode['season'])
 				if "cast" in episode:
 					cast = _get_cast(episode['cast'])
+
 				li_item = xbmcgui.ListItem(episode['title'])
 				li_item.setInfo(type="Video", infoLabels={"Title": episode['title'],
 														"Episode": episode['episode'],
@@ -263,6 +267,8 @@ def parse_episodes(li, json_query):
 				li_item.setArt(episode['art'])
 				li_item.setThumbnailImage(episode['art'].get('thumb', ''))
 				li_item.setIconImage('DefaultTVShows.png')
+				if episode['season'] == "0":
+					li_item.setProperty("IsSpecial", "true")
 
 				hasVideo = False
 				for key, value in episode['streamdetails'].iteritems():
