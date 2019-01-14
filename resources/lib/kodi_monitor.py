@@ -17,21 +17,20 @@ class KodiMonitor(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
 
-        #log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
+        if method == "Player.OnStop" or method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate":
+            log("Kodi_Monitor: sender %s - method: %s  - data: %s" % (sender, method, data))
+            self.refresh_widgets()
 
         if method == "Player.OnStop":
-            self.refresh_widgets()
-
-            # let's wait for the player so we don't clear it by mistake
-            xbmc.sleep(1000)
-            if xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist) + !Player.HasMedia + !Window.IsVisible(busydialog)"):
-                xbmc.executebuiltin("Playlist.Clear")
-                log("Playlist cleared")
-
-        if method == "VideoLibrary.OnUpdate" or method == "AudioLibrary.OnUpdate":
-            self.refresh_widgets()
+            self.clear_playlist()
 
     def refresh_widgets(self):
         log("Refreshing widgets")
         timestr = time.strftime("%Y%m%d%H%M%S", time.gmtime())
         self.win.setProperty("EmbuaryWidgetUpdate", timestr)
+
+    def clear_playlist(self):
+        xbmc.sleep(2000) # let's wait for the player so we don't clear it by mistake
+        if xbmc.getCondVisibility("Skin.HasSetting(EmbuaryHelperClearPlaylist) + !Player.HasMedia + !Window.IsVisible(busydialog)"):
+            xbmc.executebuiltin("Playlist.Clear")
+            log("Playlist cleared")
