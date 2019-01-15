@@ -59,6 +59,8 @@ class Main:
                 tvshow_details_by_season(self.params)
             elif action == 'resetposition':
                 resetposition(self.params)
+            elif action == 'toggleaddons':
+                toggleaddons(self.params)
 
 if __name__ == "__main__":
     Main()

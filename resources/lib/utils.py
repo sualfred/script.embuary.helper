@@ -95,6 +95,18 @@ def setkodisetting(params):
         '{"jsonrpc":"2.0", "id":1, "method":"Settings.SetSettingValue","params":{"setting":"%s","value":%s}}' %
         (settingname, value))
 
+def toggleaddons(params):
+    addonid = params.get("addonid").split("+")
+    enable = params.get("enable")
+    for addon in addonid:
+        try:
+            xbmc.executeJSONRPC(
+                '{"jsonrpc":"2.0", "id":1, "method":"Addons.SetAddonEnabled","params":{"addonid":"%s","enabled": %s}}' %
+                (addon, enable))
+            log("%s - enable: %s" % (addon, enable))
+        except Exception:
+            pass
+
 def playfromhome(params):
     for i in range(50):
         if xbmc.getCondVisibility("!Window.IsVisible(home) | Window.IsVisible(movieinformation)"):
