@@ -13,7 +13,7 @@ class KodiMonitor(xbmc.Monitor):
 
     def onDatabaseUpdated(self, database):
         log("Kodi_Monitor: %s database updated" % database)
-        self.refresh_widgets()
+        #self.refresh_widgets()
 
     def onNotification(self, sender, method, data):
 

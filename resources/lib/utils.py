@@ -118,9 +118,15 @@ def playfromhome(params):
             break
 
     if ishome:
+        dbid = params.get("dbid")
         item = remove_quotes(params.get("item"))
-        item = "PlayMedia(%s)" % item
-        xbmc.executebuiltin(item)
+        if dbid:
+            xbmc.executeJSONRPC(
+                '{"jsonrpc":"2.0", "method":"Player.Open", "params":{"item":{"movieid": %s}}, "id":1}' %
+                int(dbid))
+        else:
+            item = "PlayMedia(%s)" % item
+            xbmc.executebuiltin(item)
 
 def jumptoshow_by_episode(params):
     episode_query = json_call("VideoLibrary.GetEpisodeDetails",
