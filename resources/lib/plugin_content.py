@@ -392,10 +392,13 @@ class PluginContent(object):
                             )
             posters = {}
             index=0
-            for art in genre_items["result"][self.key_items]:
-                poster = "poster.%s" % index
-                posters[poster] = art["art"].get("poster", "")
-                index+=1
+            try:
+                for art in genre_items["result"][self.key_items]:
+                    poster = "poster.%s" % index
+                    posters[poster] = art["art"].get("poster", "")
+                    index+=1
+            except Exception:
+                pass
 
             genre["art"] = posters
 
