@@ -16,10 +16,31 @@ task_interval = 300
 cache_interval = 150
 bg_task_interval = 200
 bg_interval = 10
+master_lock = "None"
 
 log('Service started')
 
 while not MONITOR.abortRequested():
+
+	# Master lock reload logic for widgets
+	if xbmc.getCondVisibility("System.HasLocks"):
+
+		if master_lock == "None":
+			master_lock = True if xbmc.getCondVisibility("System.IsMaster") else False
+			log("Master mode: %s" % master_lock)
+
+		if master_lock == True and not xbmc.getCondVisibility("System.IsMaster"):
+			log("Left master mode. Reload skin.")
+			master_lock = False
+			xbmc.executebuiltin("ReloadSkin()")
+
+		elif master_lock == False and xbmc.getCondVisibility("System.IsMaster"):
+			log("Entered master mode. Reload skin.")
+			master_lock = True
+			xbmc.executebuiltin("ReloadSkin()")
+
+	elif not master_lock == "None":
+		master_lock = "None"
 
 	# Grab fanarts
 	if bg_task_interval >= 200:
