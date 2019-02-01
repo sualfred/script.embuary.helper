@@ -25,8 +25,8 @@ while not MONITOR.abortRequested():
 
 	# Provide a property if playing video has multiple audio tracks
 	if PLAYER.isPlaying():
-		player_lang = PLAYER.getAvailableAudioStreams()
-		WIN.setProperty("EmbuaryPlayerLanguages", "true") if len(player_lang) > 1 else WIN.clearProperty("EmbuaryPlayerLanguages")
+		audiotracks = PLAYER.getAvailableAudioStreams()
+		WIN.setProperty("EmbuaryPlayerAudioTracks", "true") if len(audiotracks) > 1 else WIN.clearProperty("EmbuaryPlayerAudioTracks")
 
 	# Master lock reload logic for widgets
 	if xbmc.getCondVisibility("System.HasLocks"):
