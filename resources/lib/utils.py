@@ -107,6 +107,10 @@ def toggleaddons(params):
         except Exception:
             pass
 
+def playsfx(params):
+    path = remove_quotes(params.get("path", ""))
+    xbmc.playSFX(path)
+
 def playfromhome(params):
     for i in range(50):
         if xbmc.getCondVisibility("!Window.IsVisible(home) | Window.IsVisible(movieinformation)"):

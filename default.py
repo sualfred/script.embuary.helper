@@ -61,6 +61,8 @@ class Main:
                 resetposition(self.params)
             elif action == 'toggleaddons':
                 toggleaddons(self.params)
+            elif action == 'playsfx':
+                playsfx(self.params)
 
 if __name__ == "__main__":
     Main()
