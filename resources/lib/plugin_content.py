@@ -144,6 +144,9 @@ class PluginContent(object):
 
         try:
             season_query = season_query["result"]["seasons"]
+            if not len(season_query) > 1 and self.params.get("allseasons") == "false":
+                return
+
         except Exception:
             log("Get seasons by TV show: No seasons found")
         else:
