@@ -10,8 +10,8 @@ from resources.lib.utils import remove_quotes
 from resources.lib.library import *
 
 class PluginContent(object):
-    def __init__(self,params,li):
-
+    def __init__(self,params,li,win):
+        self.win = win
         self.params = params
         self.dbtitle = remove_quotes(params.get("title"))
         self.dbtype = remove_quotes(params.get("type"))
@@ -547,22 +547,33 @@ class PluginContent(object):
             for i in range(int(xbmc.getInfoLabel("Container.NumItems"))):
                 all_letters.append(xbmc.getInfoLabel("Listitem(%s).SortLetter" % i).upper())
 
-            if len(all_letters) > 0:
+            if len(all_letters) > 1:
+
+                first_number = False
+                for number in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+
+                    if number in all_letters:
+                        first_number = number
+                        break
+
                 for letter in ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
                                "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]:
 
                     li_item = xbmcgui.ListItem(label=letter)
 
-                    if letter == "#":
+                    if letter == "#" and first_number:
                         li_path = "plugin://script.embuary.helper/?action=smsjump&letter=0"
-                        li_item.setProperty("IsNumber", "0")
+                        li_item.setProperty("IsNumber", first_number)
+                        self.li.append((li_path, li_item, False))
+
                     elif letter in all_letters:
                         li_path = "plugin://script.embuary.helper/?action=smsjump&letter=%s" % letter
+                        self.li.append((li_path, li_item, False))
+
                     else:
                         li_path = ""
                         li_item.setProperty("NotAvailable", "true")
-
-                    self.li.append((li_path, li_item, False))
-
+                        if not self.params.get("showall") == "false":
+                            self.li.append((li_path, li_item, False))
 
 

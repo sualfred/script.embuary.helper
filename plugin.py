@@ -13,7 +13,7 @@ ADDON = xbmcaddon.Addon()
 ADDON_VERSION = ADDON.getAddonInfo('version')
 ADDON_LANGUAGE = ADDON.getLocalizedString
 ADDON_PATH = ADDON.getAddonInfo('path').decode("utf-8")
-WINDOW = xbmcgui.Window(10000)
+WIN = xbmcgui.Window(10000)
 
 class Main:
 
@@ -36,7 +36,7 @@ class Main:
 
     def getinfos(self):
         li = list()
-        plugin = PluginContent(self.params,li)
+        plugin = PluginContent(self.params,li,win=WIN)
 
         if self.info == 'getcast':
             plugin.get_cast()
