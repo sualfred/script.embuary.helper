@@ -31,7 +31,7 @@ def write_cache(name,content):
 		window.setProperty(cache,content)
 		window.setProperty(cache_time,cache_interval)
 
-def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,use_cache=None):
+def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,use_cache=None):
 
 		if use_cache is not None:
 			cached_json = get_cache(use_cache)
@@ -48,6 +48,8 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
 			json_string["params"]["sort"] = sort
 		if query_filter is not None:
 			json_string["params"]["filter"] = query_filter
+		if item is not None:
+			json_string["params"]["item"] = item
 		if params is not None:
 			json_string["params"].update(params)
 		json_string = simplejson.dumps(json_string)

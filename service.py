@@ -10,8 +10,8 @@ import random
 
 WIN = xbmcgui.Window(10000)
 ADDON = xbmcaddon.Addon(ADDON_ID)
-MONITOR = KodiMonitor(win=WIN, addon=ADDON)
 PLAYER = xbmc.Player()
+MONITOR = KodiMonitor(win=WIN, addon=ADDON, player=PLAYER)
 
 task_interval = 300
 cache_interval = 150
@@ -22,11 +22,6 @@ master_lock = "None"
 log('Service started')
 
 while not MONITOR.abortRequested():
-
-	# Provide a property if playing video has multiple audio tracks
-	if PLAYER.isPlaying():
-		audiotracks = PLAYER.getAvailableAudioStreams()
-		WIN.setProperty("EmbuaryPlayerAudioTracks", "true") if len(audiotracks) > 1 else WIN.clearProperty("EmbuaryPlayerAudioTracks")
 
 	# Master lock reload logic for widgets
 	if xbmc.getCondVisibility("System.HasLocks"):
