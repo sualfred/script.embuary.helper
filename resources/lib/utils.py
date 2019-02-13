@@ -8,10 +8,14 @@ import sys
 import simplejson
 from resources.lib.library import *
 from resources.lib.json_map import *
+from library import json_call
 
 ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
-window = xbmcgui.Window(10000)
+WIN = xbmcgui.Window(10000)
+PLAYER = xbmc.Player()
+VIDEOPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+MUSICPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 
 def remove_quotes(label):
     if not label:
@@ -100,9 +104,7 @@ def toggleaddons(params):
     enable = params.get("enable")
     for addon in addonid:
         try:
-            xbmc.executeJSONRPC(
-                '{"jsonrpc":"2.0", "id":1, "method":"Addons.SetAddonEnabled","params":{"addonid":"%s","enabled": %s}}' %
-                (addon, enable))
+            xbmc.executeJSONRPC('{"jsonrpc":"2.0", "id":1, "method":"Addons.SetAddonEnabled","params":{"addonid":"%s","enabled": %s}}' % (addon, enable))
             log("%s - enable: %s" % (addon, enable))
         except Exception:
             pass
@@ -111,26 +113,70 @@ def playsfx(params):
     path = remove_quotes(params.get("path", ""))
     xbmc.playSFX(path)
 
-def playfromhome(params):
-    for i in range(50):
-        if xbmc.getCondVisibility("!Window.IsVisible(home) | Window.IsVisible(movieinformation)"):
-            xbmc.executebuiltin("Dialog.Close(all,true)")
-            xbmc.executebuiltin("ActivateWindow(home)")
-            xbmc.sleep(50)
-        else:
-            ishome = True
-            break
+def playitem(params):
+    VIDEOPLAYLIST.clear()
+    xbmc.executebuiltin("Dialog.Close(all,true)")
 
-    if ishome:
-        dbid = params.get("dbid")
-        item = remove_quotes(params.get("item"))
-        if dbid:
-            xbmc.executeJSONRPC(
-                '{"jsonrpc":"2.0", "method":"Player.Open", "params":{"item":{"movieid": %s}}, "id":1}' %
-                int(dbid))
+    dbid = params.get("dbid")
+    dbtype = "movieid" if not params.get("dbtype") == "episode" else "episodeid"
+
+    if dbid:
+        json_call("Player.Open",
+                    item={dbtype: int(dbid)}
+                    )
+    else:
+        xbmc.executebuiltin("PlayMedia(%s)" % remove_quotes(params.get("item")))
+
+def playall(params):
+    VIDEOPLAYLIST.clear()
+
+    if params.get("method") == "fromhere":
+        method = "Container(%s).ListItemNoWrap" % params.get("id")
+    else:
+        method = "Container(%s).ListItemAbsolute" % params.get("id")
+
+    for i in range(int(xbmc.getInfoLabel("Container.NumItems"))):
+
+        if xbmc.getCondVisibility("String.IsEqual(%s(%s).DBType,movie)" % (method,i)):
+            media_type = "movie"
+        elif xbmc.getCondVisibility("String.IsEqual(%s(%s).DBType,episode)" % (method,i)):
+            media_type = "episode"
         else:
-            item = "PlayMedia(%s)" % item
-            xbmc.executebuiltin(item)
+            media_type = None
+
+        dbid = xbmc.getInfoLabel("%s(%s).DBID" % (method,i))
+        url = xbmc.getInfoLabel("%s(%s).Filenameandpath" % (method,i))
+
+        if media_type and dbid:
+            json_call("Playlist.Add",
+                        item={"%sid" % media_type: int(dbid)},
+                        params={"playlistid": 1}
+                        )
+
+        elif url:
+            json_call("Playlist.Add",
+                        item={"file": url},
+                        params={"playlistid": 1}
+                        )
+
+    PLAYER.play(VIDEOPLAYLIST, startpos=0, windowed=False)
+
+def playrandom(params):
+    VIDEOPLAYLIST.clear()
+
+    i = random.randint(1,int(xbmc.getInfoLabel("Container.NumItems")))
+
+    if xbmc.getCondVisibility("String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,movie)" % (params.get("id"),i)):
+        media_type = "movie"
+    elif xbmc.getCondVisibility("String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,episode)" % (params.get("id"),i)):
+        media_type = "episode"
+    else:
+        media_type = None
+
+    dbid = xbmc.getInfoLabel("Container(%s).ListItemAbsolute(%s).DBID" % (params.get("id"),i))
+    url = xbmc.getInfoLabel("Container(%s).ListItemAbsolute(%s).Filenameandpath" % (params.get("id"),i))
+
+    playitem({"dbtype": media_type, "dbid": dbid, "item": url})
 
 def jumptoshow_by_episode(params):
     episode_query = json_call("VideoLibrary.GetEpisodeDetails",
@@ -200,12 +246,12 @@ def tvshow_details_by_season(params):
     else:
         unwatchedepisodes = "0"
 
-    window.setProperty("tvshow.dbid", str(details["tvshowid"]))
-    window.setProperty("tvshow.rating", str(round(details['rating'],1)))
-    window.setProperty("tvshow.seasons", str(details["season"]))
-    window.setProperty("tvshow.episodes", str(details["episode"]))
-    window.setProperty("tvshow.watchedepisodes", str(details["watchedepisodes"]))
-    window.setProperty("tvshow.unwatchedepisodes", unwatchedepisodes)
+    WIN.setProperty("tvshow.dbid", str(details["tvshowid"]))
+    WIN.setProperty("tvshow.rating", str(round(details['rating'],1)))
+    WIN.setProperty("tvshow.seasons", str(details["season"]))
+    WIN.setProperty("tvshow.episodes", str(details["episode"]))
+    WIN.setProperty("tvshow.watchedepisodes", str(details["watchedepisodes"]))
+    WIN.setProperty("tvshow.unwatchedepisodes", unwatchedepisodes)
 
 def grabfanart():
     fanarts = list()

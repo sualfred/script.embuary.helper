@@ -36,6 +36,13 @@ class PluginContent(object):
             self.key_details = "tvshowdetails"
             self.key_items = "tvshows"
             self.properties = tvshow_properties
+        elif self.dbtype == "episode":
+            self.method_details = "VideoLibrary.GetEpisodeDetails"
+            self.method_item = "VideoLibrary.GetEpisodes"
+            self.param = "episodeid"
+            self.key_details = "episodedetails"
+            self.key_items = "episodes"
+            self.properties = episode_properties
 
         self.sort_lastplayed = {"order": "descending", "method": "lastplayed"}
         self.sort_recent = {"order": "descending", "method": "dateadded"}

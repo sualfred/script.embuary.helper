@@ -37,8 +37,8 @@ class Main:
 
     def getactions(self):
         for action in self.action:
-            if action == 'playfromhome':
-                playfromhome(self.params)
+            if action == 'playitem':
+                playitem(self.params)
             elif action == 'goto':
                 goto(self.params)
             elif action == 'textviewer':
@@ -63,6 +63,10 @@ class Main:
                 toggleaddons(self.params)
             elif action == 'playsfx':
                 playsfx(self.params)
+            elif action == 'playall':
+                playall(self.params)
+            elif action == 'playrandom':
+                playrandom(self.params)
 
 if __name__ == "__main__":
     Main()
