@@ -1,15 +1,13 @@
-import sys
-import xbmc
-import xbmcgui
-import xbmcaddon
+#!/usr/bin/python
 
+########################
+
+import xbmcgui
+
+from resources.lib.helper import *
 from resources.lib.utils import *
 
-ADDON = xbmcaddon.Addon()
-ADDON_VERSION = ADDON.getAddonInfo('version')
-ADDON_LANGUAGE = ADDON.getLocalizedString
-ADDON_PATH = ADDON.getAddonInfo('path').decode("utf-8")
-window = xbmcgui.Window(10000)
+########################
 
 class Main:
 
@@ -18,7 +16,7 @@ class Main:
         if self.action:
             self.getactions()
         else:
-            xbmcgui.Dialog().ok("Error", "This is a tool to provide features to a skin and requires skin integration.")
+            xbmcgui.Dialog().ok('Error', 'This is a tool to provide features to a skin and requires skin integration.')
 
     def _parse_argv(self):
         args = sys.argv
@@ -67,6 +65,8 @@ class Main:
                 playall(self.params)
             elif action == 'playrandom':
                 playrandom(self.params)
+            elif action == 'playcinema':
+                PlayCinema(self.params)
 
 if __name__ == "__main__":
     Main()
