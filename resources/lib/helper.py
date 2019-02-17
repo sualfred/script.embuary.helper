@@ -51,7 +51,7 @@ def execute(cmd):
 
 
 def visible(condition):
-	xbmc.getCondVisibility(condition)
+	return xbmc.getCondVisibility(condition)
 
 
 def grabfanart():

@@ -64,11 +64,10 @@ class KodiMonitor(xbmc.Monitor):
 
 
     def do_fullscreen(self):
-
         xbmc.sleep(1000)
-        if visible('Skin.HasSetting(StartPlayerFullscreen)') and PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500]:
+        if visible('Skin.HasSetting(StartPlayerFullscreen)'):
             for i in range(1,200):
-                if not xbmcgui.getCurrentWindowId() == 10138:
+                if xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138]:
                     execute('Dialog.Close(all,true)')
                     execute('action(fullscreen)')
                     self.do_fullscreen_lock = True
