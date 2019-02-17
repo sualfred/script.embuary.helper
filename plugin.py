@@ -1,26 +1,22 @@
 #!/usr/bin/python
-import sys
-import xbmc
-import xbmcgui
-import xbmcaddon
-import urlparse
 
+########################
+
+import urlparse
+import xbmcplugin
+
+from resources.lib.helper import *
 from resources.lib.plugin_content import *
-from resources.lib.utils import *
 from resources.lib.plugin_utils import *
 
-ADDON = xbmcaddon.Addon()
-ADDON_VERSION = ADDON.getAddonInfo('version')
-ADDON_LANGUAGE = ADDON.getLocalizedString
-ADDON_PATH = ADDON.getAddonInfo('path').decode("utf-8")
-WIN = xbmcgui.Window(10000)
+########################
 
 class Main:
 
     def __init__(self):
         self._parse_argv()
-        self.info = self.params.get("info")
-        self.action = self.params.get("action")
+        self.info = self.params.get('info')
+        self.action = self.params.get('action')
         if self.info:
             self.getinfos()
         if self.action:
@@ -36,7 +32,7 @@ class Main:
 
     def getinfos(self):
         li = list()
-        plugin = PluginContent(self.params,li,win=WIN)
+        plugin = PluginContent(self.params,li)
 
         if self.info == 'getcast':
             plugin.get_cast()
@@ -67,12 +63,12 @@ class Main:
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
 
     def actions(self):
-        if self.action == "smsjump":
+        if self.action == 'smsjump':
             smsjump(self.params)
-        elif self.action == "jumptoshow":
+        elif self.action == 'jumptoshow':
             jumptoshow(self.params)
-        elif self.action == "jumptoseason":
+        elif self.action == 'jumptoseason':
             jumptoseason(self.params)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     Main()

@@ -1,75 +1,40 @@
 #!/usr/bin/python
 
+########################
+
 import xbmc
 import xbmcgui
-import xbmcaddon
-import random
-import json as simplejson
+
 from time import gmtime, strftime
 from resources.lib.json_map import *
+from resources.lib.helper import *
 
-window = xbmcgui.Window(10000)
+########################
 
-def get_cache(name):
-		cache = "EmbuaryCache.%s" % name
-		cache_time = "EmbuaryCache.%s.Time" % name
-		cache = xbmc.getInfoLabel("Window(home).Property(%s)" % cache)
-		cache_time = xbmc.getInfoLabel("Window(home).Property(%s)" % cache_time)
-		cache_interval = xbmc.getInfoLabel("Window(home).Property(EmbuaryCacheTime)")
+def append_items(li, json_query, type, searchstring=False, append=True):
 
-		if cache and cache_time == cache_interval:
-			cache = simplejson.loads(cache)
-			return cache
-		else:
-			return False
+	for item in json_query:
 
-def write_cache(name,content):
-		cache = "EmbuaryCache.%s" % name
-		cache_time = "EmbuaryCache.%s.Time" % name
-		cache_interval = xbmc.getInfoLabel("Window(home).Property(EmbuaryCacheTime)")
-		content = simplejson.dumps(content)
-		window.setProperty(cache,content)
-		window.setProperty(cache_time,cache_interval)
+		if type == 'movies':
+			parse_movies(li, item, searchstring, append)
+		elif type ==  'tvshows':
+			parse_tvshows(li, item, searchstring, append)
+		elif type == 'seasons':
+			parse_seasons(li, item, append)
+		elif type == 'episodes':
+			parse_episodes(li, item, append)
+		elif type == 'genre':
+			parse_genre(li, item, append)
+		elif type == 'cast':
+			parse_cast(li, item, append)
 
-def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,use_cache=None):
-
-		if use_cache is not None:
-			cached_json = get_cache(use_cache)
-			if cached_json:
-				return cached_json
-
-		json_string = {"jsonrpc": "2.0", "id": 1, "method": method, "params": {}}
-
-		if properties is not None:
-			json_string["params"]["properties"] = properties
-		if limit is not None:
-			json_string["params"]["limits"] = {"start": 0, "end": limit}
-		if sort is not None:
-			json_string["params"]["sort"] = sort
-		if query_filter is not None:
-			json_string["params"]["filter"] = query_filter
-		if item is not None:
-			json_string["params"]["item"] = item
-		if params is not None:
-			json_string["params"].update(params)
-		json_string = simplejson.dumps(json_string)
-
-		result = xbmc.executeJSONRPC(json_string)
-		result = unicode(result, 'utf-8', errors='ignore')
-		result = simplejson.loads(result)
-
-		if use_cache is not None:
-			write_cache(use_cache,result)
-			window.setProperty("EmbuaryTemp.ReShuffle","True")
-
-		return result
 
 def _get_cast(castData):
 		listCast = []
 		listCastAndRole = []
 		for castmember in castData:
-			listCast.append(castmember["name"])
-			listCastAndRole.append((castmember["name"], castmember["role"]))
+			listCast.append(castmember['name'])
+			listCastAndRole.append((castmember['name'], castmember['role']))
 		return [listCast, listCastAndRole]
 
 
@@ -77,232 +42,245 @@ def _get_first_item(item):
 		if len(item) > 0:
 			item = item[0]
 		else:
-			item = ""
+			item = ''
 		return item
 
 
 def _get_joined_items(item):
 		if len(item) > 0:
-			item = " / ".join(item)
+			item = ' / '.join(item)
 		else:
-			item = ""
+			item = ''
 		return item
 
-def parse_movies(li, json_query, title=False, searchstring=False):
 
-		for movie in json_query:
+def parse_movies(li, item, searchstring=False, append=False):
 
-				if "cast" in movie:
-					cast = _get_cast(movie['cast'])
+	if 'cast' in item:
+		cast = _get_cast(item['cast'])
 
-				li_item = xbmcgui.ListItem(movie['title'])
-				li_item.setInfo(type="Video", infoLabels={"Title": movie['title'],
-														"OriginalTitle": movie['originaltitle'],
-														"Year": movie['year'],
-														"Genre": _get_joined_items(movie.get('genre', "")),
-														"Studio": _get_first_item(movie.get('studio', "")),
-														"Country": _get_first_item(movie.get('country', "")),
-														"Plot": movie['plot'],
-														"PlotOutline": movie['plotoutline'],
-														"dbid": movie['movieid'],
-														"imdbnumber": movie['imdbnumber'],
-														"Tagline": movie['tagline'],
-														"Rating": str(float(movie['rating'])),
-														"Votes": movie['votes'],
-														"MPAA": movie['mpaa'],
-														"lastplayed": movie['lastplayed'],
-														"Cast": cast[0],
-														"CastAndRole": cast[1],
-														"mediatype": "movie",
-														"Trailer": movie['trailer'],
-														"Playcount": movie['playcount']})
-				li_item.setProperty("resumetime", str(movie['resume']['position']))
-				li_item.setProperty("totaltime", str(movie['resume']['total']))
-				li_item.setProperty("fanart_image", movie['art'].get('fanart', ''))
-				if searchstring:
-					li_item.setProperty("searchstring", searchstring)
-				li_item.setArt(movie['art'])
-				li_item.setThumbnailImage(movie['art'].get('poster', ''))
-				li_item.setIconImage('DefaultVideo.png')
-				hasVideo = False
-				for key, value in movie['streamdetails'].iteritems():
-					for stream in value:
-						if 'video' in key:
-							hasVideo = True
-						li_item.addStreamInfo(key, stream)
-				if not hasVideo:
-					stream = {'duration': movie['runtime']}
-					li_item.addStreamInfo("video", stream)
-				li.append((movie['file'], li_item, False))
+	li_item = xbmcgui.ListItem(item['title'])
+	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
+											'OriginalTitle': item['originaltitle'],
+											'Year': item['year'],
+											'Genre': _get_joined_items(item.get('genre', '')),
+											'Studio': _get_first_item(item.get('studio', '')),
+											'Country': _get_first_item(item.get('country', '')),
+											'Plot': item['plot'],
+											'PlotOutline': item['plotoutline'],
+											'dbid': item['movieid'],
+											'imdbnumber': item['imdbnumber'],
+											'Tagline': item['tagline'],
+											'Rating': str(float(item['rating'])),
+											'Votes': item['votes'],
+											'MPAA': item['mpaa'],
+											'lastplayed': item['lastplayed'],
+											'Cast': cast[0],
+											'CastAndRole': cast[1],
+											'mediatype': 'movie',
+											'Trailer': item['trailer'],
+											'Playcount': item['playcount']})
+	li_item.setProperty('resumetime', str(item['resume']['position']))
+	li_item.setProperty('totaltime', str(item['resume']['total']))
+	li_item.setProperty('fanart_image', item['art'].get('fanart', ''))
+	li_item.setArt(item['art'])
+	li_item.setThumbnailImage(item['art'].get('poster', ''))
+	li_item.setIconImage('DefaultVideo.png')
 
-def parse_tvshows(li, json_query, searchstring=False):
+	hasVideo = False
+	for key, value in item['streamdetails'].iteritems():
+		for stream in value:
+			if 'video' in key:
+				hasVideo = True
+			li_item.addStreamInfo(key, stream)
 
-		for tvshow in json_query:
+	if not hasVideo: # if duration wasnt in the streaminfo try adding the scraped one
+		stream = {'duration': item['runtime']}
+		li_item.addStreamInfo('video', stream)
 
-				if "cast" in tvshow:
-					cast = _get_cast(tvshow['cast'])
+	if searchstring:
+		li_item.setProperty('searchstring', searchstring)
 
-				rating = str(round(tvshow['rating'],1))
-				dbid = str(tvshow['tvshowid'])
-				season = str(tvshow['season'])
-				episode = str(tvshow['episode'])
-				watchedepisodes = str(tvshow['watchedepisodes'])
-
-				if int(episode) > int(watchedepisodes):
-					unwatchedepisodes = int(episode) - int(watchedepisodes)
-					unwatchedepisodes = str(unwatchedepisodes)
-				else:
-					unwatchedepisodes = "0"
-
-				year = str(tvshow['year'])
-				mpaa = tvshow['year']
-
-				if not xbmc.getCondVisibility("Window.IsVisible(movieinformation)"):
-					folder = True
-					tvshow["file"] = "videodb://tvshows/titles/%s/" % dbid
-				else:
-					folder = False
-					tvshow["file"] = "plugin://script.embuary.helper/?action=jumptoshow&dbid=%s" % dbid
-
-				li_item = xbmcgui.ListItem(tvshow['title'])
-				li_item.setInfo(type="Video", infoLabels={"Title": tvshow['title'],
-														"Year": year,
-														"Genre": _get_joined_items(tvshow.get('genre', "")),
-														"Studio": _get_first_item(tvshow.get('studio', "")),
-														"Country": _get_first_item(tvshow.get('country', "")),
-														"Plot": tvshow['plot'],
-														"Rating": rating,
-														"Votes": tvshow['votes'],
-														"Premiered": tvshow['premiered'],
-														"MPAA": mpaa,
-														"Cast": cast[0],
-														"CastAndRole": cast[1],
-														"mediatype": "tvshow",
-														"dbid": dbid,
-														"season": season,
-														"episode": episode,
-														"tvshowtitle": tvshow['title'],
-														"imdbnumber": str(tvshow['imdbnumber']),
-														"Path": tvshow["file"],
-														"DateAdded": tvshow["dateadded"],
-														"Playcount": tvshow['playcount']})
-				if searchstring:
-					li_item.setProperty("searchstring", searchstring)
-				li_item.setProperty("TotalSeasons", season)
-				li_item.setProperty("TotalEpisodes", episode)
-				li_item.setProperty("WatchedEpisodes", watchedepisodes)
-				li_item.setProperty("UnwatchedEpisodes", unwatchedepisodes)
-				li_item.setArt(tvshow['art'])
-				li_item.setThumbnailImage(tvshow['art'].get('poster', ''))
-				li_item.setIconImage('DefaultVideo.png')
-				li.append((tvshow['file'], li_item, folder))
-
-def parse_seasons(li, json_query, title=False):
-
-		for season in json_query:
-				tvshowdbid = str(season['tvshowid'])
-				seasonnr = str(season['season'])
-				episode = str(season['episode'])
-				watchedepisodes = str(season['watchedepisodes'])
-
-				if seasonnr == "0":
-					title = "%s" % (xbmc.getLocalizedString(20381))
-				else:
-					title = "%s %s" % (xbmc.getLocalizedString(20373), seasonnr)
-
-				if int(episode) > int(watchedepisodes):
-					unwatchedepisodes = int(episode) - int(watchedepisodes)
-					unwatchedepisodes = str(unwatchedepisodes)
-				else:
-					unwatchedepisodes = "0"
-
-				if not xbmc.getCondVisibility("Window.IsVisible(movieinformation)"):
-					folder = True
-					file = "videodb://tvshows/titles/%s/%s/" % (tvshowdbid, seasonnr)
-				else:
-					folder = False
-					file = "plugin://script.embuary.helper/?action=jumptoseason&dbid=%s&season=%s" % (tvshowdbid, seasonnr)
-
-				li_item = xbmcgui.ListItem(title)
-				li_item.setInfo(type="Video", infoLabels={"Title": title,
-														"season": seasonnr,
-														"episode": episode,
-														"tvshowtitle": season['showtitle'],
-														"playcount": season['playcount'],
-														"mediatype": "season",
-														"dbid": season['seasonid']})
-				li_item.setArt(season['art'])
-				li_item.setProperty("WatchedEpisodes", watchedepisodes)
-				li_item.setProperty("UnwatchedEpisodes", unwatchedepisodes)
-				li_item.setThumbnailImage(season['art'].get('poster', ''))
-				li_item.setIconImage('DefaultVideo.png')
-				if seasonnr == "0":
-					li_item.setProperty("IsSpecial", "true")
-				li.append((file, li_item, folder))
+	if append:
+		li.append((item['file'], li_item, False))
 
 
-def parse_episodes(li, json_query):
+def parse_tvshows(li, item, searchstring=False, append=False):
 
-		for episode in json_query:
-				if "cast" in episode:
-					cast = _get_cast(episode['cast'])
+	if 'cast' in item:
+		cast = _get_cast(item['cast'])
 
-				li_item = xbmcgui.ListItem(episode['title'])
-				li_item.setInfo(type="Video", infoLabels={"Title": episode['title'],
-														"Episode": episode['episode'],
-														"Season": episode['season'],
-														"Premiered": episode['firstaired'],
-														"Dbid": str(episode['episodeid']),
-														"Plot": episode['plot'],
-														"TVshowTitle": episode['showtitle'],
-														"lastplayed": episode['lastplayed'],
-														"Rating": str(float(episode['rating'])),
-														"Playcount": episode['playcount'],
-														"Director": _get_joined_items(episode.get('director', "")),
-														"Writer": _get_joined_items(episode.get('writer', "")),
-														"Cast": cast[0],
-														"CastAndRole": cast[1],
-														"mediatype": "episode"})
-				li_item.setProperty("resumetime", str(episode['resume']['position']))
-				li_item.setProperty("totaltime", str(episode['resume']['total']))
-				li_item.setProperty("fanart_image", episode['art'].get('tvshow.fanart', ''))
-				li_item.setArt(episode['art'])
-				li_item.setThumbnailImage(episode['art'].get('thumb', ''))
-				li_item.setIconImage('DefaultTVShows.png')
-				if episode['season'] == "0":
-					li_item.setProperty("IsSpecial", "true")
+	rating = str(round(item['rating'],1))
+	dbid = str(item['tvshowid'])
+	season = str(item['season'])
+	episode = str(item['episode'])
+	watchedepisodes = str(item['watchedepisodes'])
 
-				hasVideo = False
-				for key, value in episode['streamdetails'].iteritems():
-					for stream in value:
-						if 'video' in key:
-							hasVideo = True
-						li_item.addStreamInfo(key, stream)
+	if int(episode) > int(watchedepisodes):
+		unwatchedepisodes = int(episode) - int(watchedepisodes)
+		unwatchedepisodes = str(unwatchedepisodes)
+	else:
+		unwatchedepisodes = '0'
 
-				# if duration wasnt in the streaminfo try adding the scraped one
-				if not hasVideo:
-					stream = {'duration': episode['runtime']}
-					li_item.addStreamInfo("video", stream)
-				li.append((episode['file'], li_item, False))
+	year = str(item['year'])
+	mpaa = item['year']
+
+	if not visible('Window.IsVisible(movieinformation)'):
+		folder = True
+		item['file'] = 'videodb://tvshows/titles/%s/' % dbid
+	else:
+		folder = False
+		item['file'] = 'plugin://script.embuary.helper/?action=jumptoshow&dbid=%s' % dbid
+
+	li_item = xbmcgui.ListItem(item['title'])
+	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
+											'Year': year,
+											'Genre': _get_joined_items(item.get('genre', '')),
+											'Studio': _get_first_item(item.get('studio', '')),
+											'Country': _get_first_item(item.get('country', '')),
+											'Plot': item['plot'],
+											'Rating': rating,
+											'Votes': item['votes'],
+											'Premiered': item['premiered'],
+											'MPAA': mpaa,
+											'Cast': cast[0],
+											'CastAndRole': cast[1],
+											'mediatype': 'tvshow',
+											'dbid': dbid,
+											'season': season,
+											'episode': episode,
+											'tvshowtitle': item['title'],
+											'imdbnumber': str(item['imdbnumber']),
+											'Path': item['file'],
+											'DateAdded': item['dateadded'],
+											'Playcount': item['playcount']})
+	li_item.setProperty('TotalSeasons', season)
+	li_item.setProperty('TotalEpisodes', episode)
+	li_item.setProperty('WatchedEpisodes', watchedepisodes)
+	li_item.setProperty('UnwatchedEpisodes', unwatchedepisodes)
+	li_item.setArt(item['art'])
+	li_item.setThumbnailImage(item['art'].get('poster', ''))
+	li_item.setIconImage('DefaultVideo.png')
+
+	if searchstring:
+		li_item.setProperty('searchstring', searchstring)
+
+	if append:
+		li.append((item['file'], li_item, folder))
 
 
-def parse_cast(li,json_query):
+def parse_seasons(li, item, append=False):
 
-		for actor in json_query:
-				li_item = xbmcgui.ListItem(actor["name"])
-				li_item.setLabel(actor["name"])
-				li_item.setLabel2(actor["role"])
-				li_item.setThumbnailImage(actor.get('thumbnail', ""))
-				li_item.setIconImage('DefaultActor.png')
-				li.append(("", li_item, False))
+	tvshowdbid = str(item['tvshowid'])
+	seasonnr = str(item['season'])
+	episode = str(item['episode'])
+	watchedepisodes = str(item['watchedepisodes'])
 
-def parse_genre(li,json_query):
+	if seasonnr == '0':
+		title = '%s' % (xbmc.getLocalizedString(20381))
+	else:
+		title = '%s %s' % (xbmc.getLocalizedString(20373), seasonnr)
 
-		for genre in json_query:
-				li_item = xbmcgui.ListItem(genre["label"])
-				li_item.setInfo(type="Video", infoLabels={"Title": genre["label"],
-														"dbid": str(genre["genreid"]),
-														"Path": genre["file"]})
-				li_item.setArt(genre["art"])
-				li_item.setIconImage("DefaultGenre.png")
-				li.append((genre["file"], li_item, True))
+	if int(episode) > int(watchedepisodes):
+		unwatchedepisodes = int(episode) - int(watchedepisodes)
+		unwatchedepisodes = str(unwatchedepisodes)
+	else:
+		unwatchedepisodes = '0'
+
+	if not visible('Window.IsVisible(movieinformation)'):
+		folder = True
+		file = 'videodb://tvshows/titles/%s/%s/' % (tvshowdbid, seasonnr)
+	else:
+		folder = False
+		file = 'plugin://script.embuary.helper/?action=jumptoseason&dbid=%s&season=%s' % (tvshowdbid, seasonnr)
+
+	li_item = xbmcgui.ListItem(title)
+	li_item.setInfo(type='Video', infoLabels={'Title': title,
+											'season': seasonnr,
+											'episode': episode,
+											'tvshowtitle': item['showtitle'],
+											'playcount': item['playcount'],
+											'mediatype': 'season',
+											'dbid': item['seasonid']})
+	li_item.setArt(item['art'])
+	li_item.setProperty('WatchedEpisodes', watchedepisodes)
+	li_item.setProperty('UnwatchedEpisodes', unwatchedepisodes)
+	li_item.setThumbnailImage(item['art'].get('poster', ''))
+	li_item.setIconImage('DefaultVideo.png')
+
+	if seasonnr == '0':
+		li_item.setProperty('IsSpecial', 'true')
+
+	if append:
+		li.append((file, li_item, folder))
+
+
+def parse_episodes(li, item, append=False):
+
+	if 'cast' in item:
+		cast = _get_cast(item['cast'])
+
+	li_item = xbmcgui.ListItem(item['title'])
+	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
+											'Episode': item['episode'],
+											'Season': item['season'],
+											'Premiered': item['firstaired'],
+											'Dbid': str(item['episodeid']),
+											'Plot': item['plot'],
+											'TVshowTitle': item['showtitle'],
+											'lastplayed': item['lastplayed'],
+											'Rating': str(float(item['rating'])),
+											'Playcount': item['playcount'],
+											'Director': _get_joined_items(item.get('director', '')),
+											'Writer': _get_joined_items(item.get('writer', '')),
+											'Cast': cast[0],
+											'CastAndRole': cast[1],
+											'mediatype': 'episode'})
+	li_item.setProperty('resumetime', str(item['resume']['position']))
+	li_item.setProperty('totaltime', str(item['resume']['total']))
+	li_item.setProperty('fanart_image', item['art'].get('item.fanart', ''))
+	li_item.setArt(item['art'])
+	li_item.setThumbnailImage(item['art'].get('thumb', ''))
+	li_item.setIconImage('DefaultTVShows.png')
+
+	hasVideo = False
+	for key, value in item['streamdetails'].iteritems():
+		for stream in value:
+			if 'video' in key:
+				hasVideo = True
+			li_item.addStreamInfo(key, stream)
+
+	if not hasVideo: # if duration wasnt in the streaminfo try adding the scraped one
+		stream = {'duration': item['runtime']}
+		li_item.addStreamInfo('video', stream)
+
+	if item['season'] == '0':
+		li_item.setProperty('IsSpecial', 'true')
+
+	if append:
+		li.append((item['file'], li_item, False))
+
+
+def parse_cast(li,item,append=False):
+
+	li_item = xbmcgui.ListItem(item['name'])
+	li_item.setLabel(item['name'])
+	li_item.setLabel2(item['role'])
+	li_item.setThumbnailImage(item.get('thumbnail', ''))
+	li_item.setIconImage('DefaultActor.png')
+
+	if append:
+		li.append(('', li_item, False))
+
+
+def parse_genre(li,item,append=False):
+
+	li_item = xbmcgui.ListItem(item['label'])
+	li_item.setInfo(type='Video', infoLabels={'Title': item['label'],
+											'dbid': str(item['genreid']),
+											'Path': item['file']})
+	li_item.setArt(item['art'])
+	li_item.setIconImage('DefaultGenre.png')
+
+	if append:
+		li.append((item['file'], li_item, True))
