@@ -13,6 +13,7 @@ from resources.lib.kodi_monitor import KodiMonitor
 ########################
 
 MONITOR = KodiMonitor()
+KODIVERSION = get_kodiversion()
 
 ########################
 
@@ -23,8 +24,20 @@ cache_interval = 150
 bg_task_interval = 200
 bg_interval = 10
 master_lock = 'None'
+has_reloaded = False
 
 while not MONITOR.abortRequested():
+
+	# Get audio tracks for < Leia
+	if KODIVERSION < 18 and PLAYER.isPlayingVideo():
+		MONITOR.get_audiotracks()
+
+	# Workaround for login screen bug
+	if not has_reloaded:
+		if visible('System.HasLoginScreen + Skin.HasSetting(ReloadOnLogin)'):
+			log('System has login screen enabled. Reload the skin to load all strings correctly.')
+			execute('ReloadSkin()')
+			has_reloaded = True
 
 	# Master lock reload logic for widgets
 	if visible('System.HasLocks'):

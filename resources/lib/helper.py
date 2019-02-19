@@ -20,6 +20,11 @@ MUSICPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 
 ########################
 
+def get_kodiversion():
+
+    build = xbmc.getInfoLabel('System.BuildVersion')
+    return int(build[:2])
+
 def log(txt,loglevel='notice'):
 
 	if loglevel == 'notice':

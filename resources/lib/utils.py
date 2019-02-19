@@ -9,6 +9,7 @@ import xbmcgui
 import xbmcvfs
 import simplejson
 import random
+import urllib2
 
 from resources.lib.helper import *
 from resources.lib.library import *
@@ -258,6 +259,19 @@ def tvshow_details_by_season(params):
     winprop('tvshow.unwatchedepisodes', unwatchedepisodes)
 
 
+def hyperion_winscreencap(params):
+
+    port = params.get('port', '9192')
+    action = params.get('cmd').upper()
+
+    try:
+        response = urllib2.urlopen('http://localhost:%s?command=%s&force=True' % (port,action))
+        response.read()
+        response.close()
+    except:
+        pass
+
+
 class PlayCinema(object):
 
     def __init__(self, params):
@@ -313,8 +327,8 @@ class PlayCinema(object):
             if intro:
                 intro_title = '%s (Intro)' % (self.item_title)
 
-                listitem = xbmcgui.ListItem('intro')
-                listitem.setInfo('video', {'Title': 'Intro', 'mediatype': 'video'})
+                listitem = xbmcgui.ListItem(intro_title, thumbnailImage='special://home/addons/script.embuary.helper/resources/trailer.jpg')
+                listitem.setInfo('video', {'Title': intro_title, 'mediatype': 'video'})
                 VIDEOPLAYLIST.add(url=intro, listitem=listitem, index=index)
 
                 log('Play with cinema mode: Adding intro %s' % intro)

@@ -67,6 +67,8 @@ class Main:
                 playrandom(self.params)
             elif action == 'playcinema':
                 PlayCinema(self.params)
+            elif action == 'hyperion':
+                hyperion_winscreencap(self.params)
 
 if __name__ == "__main__":
     Main()
