@@ -153,7 +153,8 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     result = unicode(result, 'utf-8', errors='ignore')
     result = simplejson.loads(result)
 
-    #log('json-string: %s' % result, 'warning')
+    #log('json-string: %s' % json_string, 'warning')
+    #log('json-result: %s' % result, 'warning')
 
     return result
 

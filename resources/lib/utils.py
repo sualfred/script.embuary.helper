@@ -77,7 +77,7 @@ def textviewer(params):
 
 def togglekodisetting(params):
     settingname = params.get('setting', '')
-    value = 'false' if visible('system.getbool(%s)' % settingname) else 'true'
+    value = False if visible('system.getbool(%s)' % settingname) else True
 
     json_call('Settings.SetSettingValue',
                 params={'setting': '%s' % settingname, 'value': value}
@@ -91,8 +91,10 @@ def setkodisetting(params):
     try:
         value = int(value)
     except Exception:
-        if value.lower() in ['true', 'false']:
-            value = value.lower()
+        if value.lower() == 'true':
+            value = True
+        elif value.lower() == 'false':
+            value = False
         else:
             log('SetKodiSetting: No valid value')
             return
@@ -103,7 +105,7 @@ def setkodisetting(params):
 
 def toggleaddons(params):
     addonid = params.get('addonid').split('+')
-    enable = params.get('enable')
+    enable = True if params.get('enable').lower() == 'true' else False
 
     for addon in addonid:
 
