@@ -125,6 +125,29 @@ def winprop(key, value=None, clear=False, window_id=10000):
         return result
 
 
+def get_channeldetails(channel_name):
+
+    channel_details = {}
+
+    channels = json_call('PVR.GetChannels',
+                properties=['channel', 'uniqueid', 'icon', 'thumbnail'],
+                params={'channelgroupid': 'alltv'},
+                )
+
+    try:
+        for channel in channels['result']['channels']:
+            if channel['channel'] == channel_name:
+                channel_details['channelid'] = channel['channelid']
+                channel_details['channel'] = channel['channel']
+                channel_details['icon'] = channel['icon']
+                break
+    except Exception:
+        return
+
+    return channel_details
+
+
+
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None):
 
     json_string = {'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': {}}

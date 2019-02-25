@@ -25,6 +25,8 @@ class KodiMonitor(xbmc.Monitor):
         if method == 'Player.OnPlay':
             if not self.do_fullscreen_lock:
                 self.do_fullscreen()
+            if visible('String.StartsWith(Player.Filenameandpath,pvr://)'):
+                self.get_channellogo()
 
         if method == 'Player.OnStop' or method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
             self.refresh_widgets()
@@ -37,6 +39,7 @@ class KodiMonitor(xbmc.Monitor):
             if not PLAYER.isPlaying():
                 self.do_fullscreen_lock = False
                 self.clear_playlist()
+                winprop('Player.ChannelLogo', clear=True)
 
 
     def refresh_widgets(self):
@@ -78,3 +81,12 @@ class KodiMonitor(xbmc.Monitor):
                     break
                 else:
                     xbmc.sleep(50)
+
+    def get_channellogo(self):
+
+        channel_details = get_channeldetails(xbmc.getInfoLabel('VideoPlayer.ChannelName'))
+        try:
+            winprop('Player.ChannelLogo', channel_details['icon'])
+        except Exception:
+            winprop('Player.ChannelLogo', clear=True)
+

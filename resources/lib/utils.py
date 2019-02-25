@@ -274,33 +274,6 @@ def hyperion_winscreencap(params):
         pass
 
 
-def recordpvr(params):
-
-    channel_name = remove_quotes(params.get('channel'))
-    channelid = None
-
-    channels = json_call('PVR.GetChannels',
-                properties=['channel', 'uniqueid'],
-                params={'channelgroupid': 'alltv'},
-                )
-
-    try:
-        for channel in channels['result']['channels']:
-            if channel['channel'] == channel_name:
-                channelid = channel['channelid']
-                break
-    except Exception:
-        pass
-
-    if channelid:
-        log('Record channel: %s - ID: %s' % (channel_name,channelid))
-        json_call('PVR.Record',
-                    params={'record': 'toggle', 'channel': channelid}
-                    )
-    else:
-        log('Record channel: Channel ID not found')
-
-
 class PlayCinema(object):
 
     def __init__(self, params):

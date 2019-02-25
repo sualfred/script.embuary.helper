@@ -69,8 +69,6 @@ class Main:
                 PlayCinema(self.params)
             elif action == 'hyperion':
                 hyperion_winscreencap(self.params)
-            elif action == 'recordpvr':
-                recordpvr(self.params)
 
 if __name__ == "__main__":
     Main()
