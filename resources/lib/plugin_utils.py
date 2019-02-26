@@ -9,6 +9,7 @@ import xbmcgui
 
 from resources.lib.library import *
 from resources.lib.helper import *
+from resources.lib.utils import gotopath
 
 ########################
 
