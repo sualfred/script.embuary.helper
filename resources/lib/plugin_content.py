@@ -60,8 +60,15 @@ class PluginContent(object):
     # season widgets
     def get_seasonal(self):
 
-        xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays', 'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann', 'heilige nacht', 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig', 'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce', 'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun']
-        horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas', 'borzalom', 'hryllingi', 'ホラー', 'siaubas', 'verschrikking', 'skrekk', 'przerażenie', 'groază', 'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах']
+        xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays', 'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann', 'heilige nacht',
+                'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig', 'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce',
+                'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun']
+
+        horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas', 'borzalom', 'hryllingi', 'ホラー', 'siaubas', 'verschrikking', 'skrekk', 'przerażenie', 'groază',
+                'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах']
+
+        starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks', 'Starwars', 'Kylo Ren', 'Yoda ', 'Chewbacca', 'Anakin Skywalker', 'Han Solo', 'r2-d2', 'bb-8', 'Millennium Falcon', 'Millenium Falke', 'Stormtrooper', 'Sturmtruppler']
+
         filters = []
 
         if self.params.get('list') == 'xmas':
@@ -69,10 +76,19 @@ class PluginContent(object):
             for keyword in xmas:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
+
         elif self.params.get('list') == 'horror':
             use_episodes = False
             for keyword in horror:
                 filters.append({'operator': 'contains', 'field': 'genre', 'value': keyword})
+
+        elif self.params.get('list') == 'starwars':
+            use_episodes = False
+            for keyword in starwars:
+                filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
+
         else:
             return
 
