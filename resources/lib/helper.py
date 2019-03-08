@@ -14,6 +14,12 @@ ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
 ADDON_PATH = ADDON.getAddonInfo('path').decode('utf-8')
 
+NOTICE = xbmc.LOGNOTICE
+WARNING = xbmc.LOGWARNING
+DEBUG = xbmc.LOGDEBUG
+LOG_ENABLED = True if ADDON.getSetting('log') == 'true' else False
+DEBUGLOG_ENABLED = True if ADDON.getSetting('debuglog') == 'true' else False
+
 PLAYER = xbmc.Player()
 VIDEOPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 MUSICPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
@@ -25,29 +31,26 @@ def get_kodiversion():
     build = xbmc.getInfoLabel('System.BuildVersion')
     return int(build[:2])
 
-def log(txt,loglevel='notice'):
+def log(txt,loglevel=NOTICE,force=False):
 
-	if loglevel == 'notice':
-		level = xbmc.LOGNOTICE
-	elif loglevel == 'warning':
-		level = xbmc.LOGWARNING
-	elif loglevel == 'debug':
-		level = xbmc.LOGDEBUG
+    if ((loglevel == NOTICE or loglevel == WARNING) and LOG_ENABLED) or (loglevel == DEBUG and DEBUGLOG_ENABLED) or force:
 
-	if isinstance(txt, str):
-		txt = txt.decode('utf-8')
-	message = u'[ %s ] %s' % (ADDON_ID, txt)
+        if isinstance(txt, str):
+            txt = txt.decode('utf-8')
 
-	xbmc.log(msg=message.encode('utf-8'), level=level )
+        message = u'[ %s ] %s' % (ADDON_ID,txt)
+        xbmc.log(msg=message.encode('utf-8'), level=loglevel)
 
 
 def remove_quotes(label):
     if not label:
         return ''
+
     if label.startswith("'") and label.endswith("'") and len(label) > 2:
         label = label[1:-1]
         if label.startswith('"') and label.endswith('"') and len(label) > 2:
             label = label[1:-1]
+
     return label
 
 
@@ -176,8 +179,8 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     result = unicode(result, 'utf-8', errors='ignore')
     result = simplejson.loads(result)
 
-    #log('json-string: %s' % json_string, 'warning')
-    #log('json-result: %s' % result, 'warning')
+    log('json-string: %s' % json_string, DEBUG)
+    log('json-result: %s' % result, DEBUG)
 
     return result
 

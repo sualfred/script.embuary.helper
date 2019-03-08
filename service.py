@@ -17,7 +17,7 @@ KODIVERSION = get_kodiversion()
 
 ########################
 
-log('Service started')
+log('Service started', force=True)
 
 task_interval = 300
 cache_interval = 150
@@ -95,4 +95,4 @@ while not MONITOR.abortRequested():
 
 del MONITOR
 
-log('Service stopped')
+log('Service stopped', force=True)
