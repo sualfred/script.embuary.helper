@@ -2,8 +2,14 @@
 
 ########################
 
-import urlparse
 import xbmcplugin
+
+''' Python 2<->3 compatibility
+'''
+try:
+    from urllib2 import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 from resources.lib.helper import *
 from resources.lib.plugin_content import *
@@ -23,8 +29,10 @@ class Main:
             self.actions()
 
     def _parse_argv(self):
+
         base_url = sys.argv[0]
         path = sys.argv[2]
+
         try:
             self.params = dict(urlparse.parse_qsl(path[1:]))
         except Exception:

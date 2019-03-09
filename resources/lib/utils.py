@@ -9,7 +9,13 @@ import xbmcgui
 import xbmcvfs
 import simplejson
 import random
-import urllib2
+
+''' Python 2<->3 compatibility
+'''
+try:
+    import urllib2 as urllib
+except ImportError:
+    import urllib.request as urllib
 
 from resources.lib.helper import *
 from resources.lib.library import *
@@ -63,10 +69,10 @@ def dialogyesno(params):
 
     if xbmcgui.Dialog().yesno(heading=headertxt, line1=bodytxt):
         for action in yesactions:
-            execute(action.encode('utf-8'))
+            execute(action)
     else:
         for action in noactions:
-            execute(action.encode('utf-8'))
+            execute(action)
 
 
 def textviewer(params):
@@ -267,7 +273,7 @@ def hyperion_winscreencap(params):
     action = params.get('cmd').upper()
 
     try:
-        response = urllib2.urlopen('http://localhost:%s?command=%s&force=True' % (port,action))
+        response = urllib.urlopen('http://localhost:%s?command=%s&force=True' % (port,action))
         response.read()
         response.close()
     except:

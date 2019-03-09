@@ -12,7 +12,6 @@ import simplejson
 
 ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
-ADDON_PATH = ADDON.getAddonInfo('path').decode('utf-8')
 
 NOTICE = xbmc.LOGNOTICE
 WARNING = xbmc.LOGWARNING
@@ -35,14 +34,24 @@ def log(txt,loglevel=NOTICE,force=False):
 
     if ((loglevel == NOTICE or loglevel == WARNING) and LOG_ENABLED) or (loglevel == DEBUG and DEBUGLOG_ENABLED) or force:
 
-        if isinstance(txt, str):
-            txt = txt.decode('utf-8')
+        ''' Python 2 requires to decode stuff at first
+        '''
+        try:
+            if isinstance(txt, str):
+                txt = txt.decode('utf-8')
+        except AttributeError:
+            pass
 
         message = u'[ %s ] %s' % (ADDON_ID,txt)
-        xbmc.log(msg=message.encode('utf-8'), level=loglevel)
+
+        try:
+            xbmc.log(msg=message.encode('utf-8'), level=loglevel) # Python 2
+        except TypeError:
+            xbmc.log(msg=message, level=loglevel)
 
 
 def remove_quotes(label):
+
     if not label:
         return ''
 
@@ -55,14 +64,18 @@ def remove_quotes(label):
 
 
 def execute(cmd):
-	xbmc.executebuiltin(cmd)
+
+    log('[ execute ] %s' % cmd)
+    xbmc.executebuiltin(cmd)
 
 
 def visible(condition):
+
 	return xbmc.getCondVisibility(condition)
 
 
 def grabfanart():
+
     fanarts = list()
 
     movie_query = json_call('VideoLibrary.GetMovies',
@@ -176,7 +189,14 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     json_string = simplejson.dumps(json_string)
 
     result = xbmc.executeJSONRPC(json_string)
-    result = unicode(result, 'utf-8', errors='ignore')
+
+    ''' Python 2 compatibility
+    '''
+    try:
+        result = unicode(result, 'utf-8', errors='ignore')
+    except NameError:
+        pass
+
     result = simplejson.loads(result)
 
     log('json-string: %s' % json_string, DEBUG)
