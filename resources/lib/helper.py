@@ -65,7 +65,7 @@ def remove_quotes(label):
 
 def execute(cmd):
 
-    log('[ execute ] %s' % cmd)
+    log('Execute: %s' % cmd)
     xbmc.executebuiltin(cmd)
 
 
