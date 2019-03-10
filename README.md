@@ -2,12 +2,50 @@
 Addon for Kodi providing functions to the Embuary skin
 ________________________________________________________________________________________________________
 
+# Service actions
+
+## Automatically clear playlist
+
+```
+<onload>Skin.SetBool(EmbuaryHelperClearPlaylist)</onload>
+```
+
+This enables the script background service to clear the playlist after the playback has stopped.
+
+________________________________________________________________________________________________________
+## Auto fullscreen on playback
+
+```
+<onload>Skin.SetBool(StartPlayerFullscreen)</onload>
+```
+
+This will force "action(fullscreen)" once a playback has been started.
+
+________________________________________________________________________________________________________
+## PVR channel logo for recordings with thumbs
+
+```
+$INFO[Window(home).Property(Player.ChannelLogo)]
+```
+
+Returns the channel logo of the playing recording. Useful for recordings that have a thumbnail but you want to display the channel logo instead on the video OSD.
+
+________________________________________________________________________________________________________
+## EmbuaryPlayerAudioTracks boolean
+
+```
+!String.IsEmpty(EmbuaryPlayerAudioTracks)
+```
+
+Returns true if the currently playing video / stream has multiple audio tracks. Useful if you want to display a button to toggle the audio track, but only if multiple are available.
+
+
 
 # Utilities
 
-## "Run from home"
+## "Play item"
 ```
-RunScript(script.embuary.helper,action=playfromhome,item='$ESCINFO[ListItem.Filenameandpath]')
+RunScript(script.embuary.helper,action=playitem,item='$ESCINFO[ListItem.Filenameandpath]')
 ```
 
 Closes all dialogs and goes back to the home window. Once home is active it starts the playback of the provided file.
@@ -31,16 +69,7 @@ If the dialog was activated from a media window like MyVideoNav.xml:
 2. "Container.Update($path)" is called
 
 ________________________________________________________________________________________________________
-## Automatically clear playlist
-
-```
-<onload>Skin.SetBool(EmbuaryHelperClearPlaylist)</onload>
-```
-
-This enables the script background service to clear the playlist after the playback has stopped.
-
-________________________________________________________________________________________________________
-## Reset container positionsd
+## Reset container positions
 
 ```
 <onload>RunScript(script.embuary.helper,action=resetposition,container=200||201||202)</onload>
@@ -235,11 +264,13 @@ plugin://script.embuary.helper/?info=getsimilar&amp;type=tvshow&amp;dbid=$INFO[L
 ________________________________________________________________________________________________________
 ## Seasonal widgets
 
-Helper to return movies/episodes for Christmas or Halloween.
+Helper to return movies/episodes for Christmas, Halloween or Star Wars day.
 
 Example:
 ```
 	<variable name="SeasonalSpecial">
+		<value condition="System.Date(05-04,05-05) + Window.IsVisible(home)">plugin://script.embuary.helper/?info=getseasonal&amp;list=starwars&amp;limit=15&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
+		<value condition="System.Date(05-04,05-05) + Window.IsVisible(1120)">plugin://script.embuary.helper/?info=getseasonal&amp;list=starwars&amp;type=movie&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
 		<value condition="System.Date(12-01,12-27) + Window.IsVisible(home)">plugin://script.embuary.helper/?info=getseasonal&amp;list=xmas&amp;limit=15&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
 		<value condition="System.Date(12-01,12-27) + Window.IsVisible(1120)">plugin://script.embuary.helper/?info=getseasonal&amp;list=xmas&amp;type=movie&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
 		<value condition="System.Date(12-01,12-27) + Window.IsVisible(1121)">plugin://script.embuary.helper/?info=getseasonal&amp;list=xmas&amp;type=tvshow&amp;reload=$INFO[Window(home).Property(EmbuaryWidgetUpdate)]</value>
