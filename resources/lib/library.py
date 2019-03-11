@@ -89,14 +89,7 @@ def parse_movies(li, item, searchstring=False, append=False):
 
 	hasVideo = False
 
-	''' Python 2<->3 compatibility
-	'''
-	try:
-		iterator = item['streamdetails'].iteritems()
-	except AttributeError:
-		iterator = item['streamdetails'].items()
-
-	for key, value in iterator:
+	for key, value in iter(item['streamdetails'].items()):
 		for stream in value:
 			if 'video' in key:
 				hasVideo = True
@@ -253,14 +246,7 @@ def parse_episodes(li, item, append=False):
 
 	hasVideo = False
 
-	''' Python 2<->3 compatibility
-	'''
-	try:
-		iterator = item['streamdetails'].iteritems()
-	except AttributeError:
-		iterator = item['streamdetails'].items()
-
-	for key, value in iterator:
+	for key, value in iter(item['streamdetails'].items()):
 		for stream in value:
 			if 'video' in key:
 				hasVideo = True

@@ -1,12 +1,12 @@
 #!/usr/bin/python
-# coding: utf8
+# coding: utf-8
 
 ########################
 
 import xbmc
 import xbmcaddon
 import xbmcgui
-import simplejson
+import json
 
 ########################
 
@@ -186,7 +186,7 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     if params is not None:
         json_string['params'].update(params)
 
-    json_string = simplejson.dumps(json_string)
+    json_string = json.dumps(json_string)
 
     result = xbmc.executeJSONRPC(json_string)
 
@@ -197,7 +197,7 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     except NameError:
         pass
 
-    result = simplejson.loads(result)
+    result = json.loads(result)
 
     log('json-string: %s' % json_string, DEBUG)
     log('json-result: %s' % result, DEBUG)

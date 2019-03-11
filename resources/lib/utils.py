@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding: utf8
+# coding: utf-8
 
 ########################
 
@@ -7,7 +7,7 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
-import simplejson
+import json
 import random
 
 ''' Python 2<->3 compatibility
