@@ -225,7 +225,9 @@ def resetposition(params):
 
         try:
             current_item = int(xbmc.getInfoLabel('Container(%s).CurrentItem' % item))
-            execute('Control.Move(%s,-%s)' % (item,str(current_item)))
+            if current_item > 1:
+                current_item -= 1
+                execute('Control.Move(%s,-%s)' % (item,str(current_item)))
         except Exception:
             pass
 
