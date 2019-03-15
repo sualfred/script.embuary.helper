@@ -220,14 +220,20 @@ def gotopath(path,target='videos'):
 
 def resetposition(params):
     containers = params.get('container').split('||')
+    only_inactive_container = True if params.get('only') == 'inactive' else False
+    current_control =xbmc.getInfoLabel('System.CurrentControlID')
 
     for item in containers:
 
         try:
+            if current_control == item and only_inactive_container:
+                raise Exception
+
             current_item = int(xbmc.getInfoLabel('Container(%s).CurrentItem' % item))
             if current_item > 1:
                 current_item -= 1
                 execute('Control.Move(%s,-%s)' % (item,str(current_item)))
+
         except Exception:
             pass
 
