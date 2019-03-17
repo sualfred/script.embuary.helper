@@ -478,6 +478,62 @@ class PluginContent(object):
             append_items(self.li,json_query,type='movies',searchstring=joineddirectors)
 
 
+    # get items by actor
+    def get_items_by_actor(self):
+
+        json_query = json_call(self.method_details,
+                                properties=['title', 'cast'],
+                                params={self.param: int(self.dbid)}
+                                )
+
+        try:
+            cast = json_query['result'][self.key_details]['cast']
+            title = json_query['result'][self.key_details]['label']
+        except Exception:
+            log('Items by actor %s: No cast found')
+            return
+
+        cast_range=[]
+        i = 0
+        for actor in cast:
+            if i < 4:
+                cast_range.append(actor['name'])
+                i += 1
+            else:
+                break
+
+        random_actor = ''.join(random.sample(population=cast_range, k=1))
+        filter = {'and': [{'operator': 'is', 'field': 'actor', 'value': random_actor}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
+
+        movie_query = json_call('VideoLibrary.GetMovies',
+                                    properties=movie_properties,
+                                    sort=self.sort_random,
+                                    query_filter=filter
+                                    )
+
+        try:
+            movie_query = movie_query['result']['movies']
+        except Exception:
+            log('Items by actor %s: No movies found' % random_actor)
+        else:
+            append_items(self.li,movie_query,type='movies',searchstring=random_actor)
+
+        tvshow_query = json_call('VideoLibrary.GetTVShows',
+                                    properties=tvshow_properties,
+                                    sort=self.sort_random,
+                                    query_filter=filter
+                                    )
+
+        try:
+            tvshow_query = tvshow_query['result']['tvshows']
+        except Exception:
+            log('Items by actor %s: No shows found' % random_actor)
+        else:
+            append_items(self.li,tvshow_query,type='tvshows',searchstring=random_actor)
+
+        random.shuffle(self.li)
+
+
     # because you watched xyz
     def get_similar(self):
 

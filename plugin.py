@@ -62,6 +62,8 @@ class Main:
             plugin.get_mediabygenre()
         elif self.info == 'getdirectedby':
             plugin.get_directed_by()
+        elif self.info == 'getitemsbyactor':
+            plugin.get_items_by_actor()
         elif self.info == 'getseasonal':
             plugin.get_seasonal()
         elif self.info == 'jumptoletter':
