@@ -5,6 +5,7 @@
 import xbmc
 import xbmcgui
 import time
+import json
 
 from resources.lib.helper import *
 
@@ -19,8 +20,9 @@ class KodiMonitor(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
 
-        if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange']:
+        if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd']:
             log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
+            self.data = json.loads(data)
 
         if method == 'Player.OnPlay':
             if not self.do_fullscreen_lock:
@@ -36,10 +38,12 @@ class KodiMonitor(xbmc.Monitor):
 
         if method == 'Player.OnStop':
             xbmc.sleep(3000)
-            if not PLAYER.isPlaying():
-                self.do_fullscreen_lock = False
-                self.clear_playlist()
+            if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
                 winprop('Player.ChannelLogo', clear=True)
+                self.do_fullscreen_lock = False
+
+        if method == 'Playlist.OnAdd':
+            self.clear_playlists()
 
 
     def refresh_widgets(self):
@@ -47,6 +51,19 @@ class KodiMonitor(xbmc.Monitor):
         timestr = time.strftime('%Y%m%d%H%M%S', time.gmtime())
         log('Refreshing widgets')
         execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:04,silent)' % timestr)
+
+
+    def clear_playlists(self):
+
+        if self.data['position'] == 0 and visible('Skin.HasSetting(ClearPlaylist)'):
+
+                if self.data['playlistid'] == 0:
+                    VIDEOPLAYLIST.clear()
+                    log('Music playlist has been filled. Clear existing video playlist')
+
+                elif self.data['playlistid'] == 1:
+                    MUSICPLAYLIST.clear()
+                    log('Video playlist has been filled. Clear existing music playlist')
 
 
     def get_audiotracks(self):
@@ -59,13 +76,6 @@ class KodiMonitor(xbmc.Monitor):
             winprop('EmbuaryPlayerAudioTracks.bool', True)
 
 
-    def clear_playlist(self):
-
-        if visible('Skin.HasSetting(EmbuaryHelperClearPlaylist)') and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138]:
-            execute('Playlist.Clear')
-            log('Playlist cleared')
-
-
     def do_fullscreen(self):
 
         xbmc.sleep(1000)
@@ -74,13 +84,14 @@ class KodiMonitor(xbmc.Monitor):
                 if xbmcgui.getCurrentWindowId() in [12005, 12006]:
                     self.do_fullscreen_lock = True
                     break
-                elif xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138]:
+                elif xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
                     execute('Dialog.Close(all,true)')
                     execute('action(fullscreen)')
                     self.do_fullscreen_lock = True
                     break
                 else:
                     xbmc.sleep(50)
+
 
     def get_channellogo(self):
 
