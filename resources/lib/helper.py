@@ -66,7 +66,7 @@ def remove_quotes(label):
 def execute(cmd):
 
     log('Execute: %s' % cmd)
-    xbmc.executebuiltin(cmd)
+    xbmc.executebuiltin(cmd, DEBUG)
 
 
 def visible(condition):
@@ -161,7 +161,6 @@ def get_channeldetails(channel_name):
         return
 
     return channel_details
-
 
 
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None):

@@ -20,15 +20,20 @@ class KodiMonitor(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
 
-        if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd']:
+        if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
             log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
             self.data = json.loads(data)
 
         if method == 'Player.OnPlay':
             if not self.do_fullscreen_lock:
                 self.do_fullscreen()
+
             if visible('String.StartsWith(Player.Filenameandpath,pvr://)'):
                 self.get_channellogo()
+
+            if PLAYER.isPlayingAudio():
+                self.get_songartworks()
+
 
         if method == 'Player.OnStop' or method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
             self.refresh_widgets()
@@ -100,4 +105,36 @@ class KodiMonitor(xbmc.Monitor):
             winprop('Player.ChannelLogo', channel_details['icon'])
         except Exception:
             winprop('Player.ChannelLogo', clear=True)
+
+    def get_songartworks(self):
+
+        try:
+            songdetails = json_call('AudioLibrary.GetSongDetails',
+                                properties=['art', 'albumid'],
+                                params={'songid': int(xbmc.getInfoLabel('MusicPlayer.DBID'))},
+                                )
+
+            songdetails = songdetails['result']['songdetails']
+
+            winprop('MusicPlayer.Cover', songdetails['art'].get('thumb', ''))
+            winprop('MusicPlayer.Fanart', songdetails['art'].get('fanart', ''))
+            winprop('MusicPlayer.Clearlogo', songdetails['art'].get('clearlogo', ''))
+
+        except Exception:
+            winprop('MusicPlayer.Cover', clear=True)
+            winprop('MusicPlayer.Fanart', clear=True)
+            winprop('MusicPlayer.Clearlogo', clear=True)
+
+        try:
+            albumdetails = json_call('AudioLibrary.GetAlbumDetails',
+                                properties=['art'],
+                                params={'albumid': int(songdetails['albumid'])},
+                                )
+
+            albumdetails = albumdetails['result']['albumdetails']
+
+            winprop('MusicPlayer.DiscArt', albumdetails['art'].get('discart', ''))
+
+        except Exception:
+            winprop('MusicPlayer.DiscArt', clear=True)
 
