@@ -329,7 +329,7 @@ class PlayCinema(object):
                 trailer_rating = str(round(trailer['rating'],1))
                 thumbnailImage = trailer['art'].get('landscape') or trailer['art'].get('fanart') or trailer['art'].get('poster', '')
 
-                listitem = xbmcgui.ListItem(trailer_title, thumbnailImage=thumbnailImage)
+                listitem = xbmcgui.ListItem(trailer_title)
                 listitem.setInfo('video', {'Title': trailer_title, 'mediatype': 'video', 'plot': trailer.get('plot', ''), 'year': trailer.get('year', ''), 'mpaa': trailer.get('mpaa', ''), 'rating': trailer_rating})
                 listitem.setArt({'thumb':thumbnailImage, 'clearlogo': trailer['art'].get('clearlogo', '')})
                 VIDEOPLAYLIST.add(url=trailer['trailer'], listitem=listitem, index=index)
@@ -343,8 +343,9 @@ class PlayCinema(object):
             if intro:
                 intro_title = '%s (Intro)' % (self.item_title)
 
-                listitem = xbmcgui.ListItem(intro_title, thumbnailImage='special://home/addons/script.embuary.helper/resources/trailer.jpg')
+                listitem = xbmcgui.ListItem(intro_title)
                 listitem.setInfo('video', {'Title': intro_title, 'mediatype': 'video'})
+                listitem.setArt({'thumb':'special://home/addons/script.embuary.helper/resources/trailer.jpg'})
                 VIDEOPLAYLIST.add(url=intro, listitem=listitem, index=index)
 
                 log('Play with cinema mode: Adding intro %s' % intro)

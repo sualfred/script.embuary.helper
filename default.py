@@ -16,7 +16,7 @@ class Main:
         if self.action:
             self.getactions()
         else:
-            xbmcgui.Dialog().ok('Error', 'This is a tool to provide features to a skin and requires skin integration.')
+            xbmcgui.Dialog().ok(ADDON.getLocalizedString(30000), ADDON.getLocalizedString(30001))
 
     def _parse_argv(self):
         args = sys.argv

@@ -8,8 +8,8 @@
 	<extension point="xbmc.python.pluginsource" library="plugin.py" />
 	<extension point="xbmc.service" library="service.py" />
 	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Embuary Helper Script</summary>
-		<description lang="en">Helper script to provide features and functions to the Embuary skin</description>
+		<summary lang="en_GB">Embuary Helper Script</summary>
+		<description lang="en_GB">Helper script to provide features and functions to the Embuary skin</description>
 		<platform>all</platform>
 		<license>GNU GENERAL PUBLIC LICENSE Version 2, June 1991</license>
 		<forum></forum>

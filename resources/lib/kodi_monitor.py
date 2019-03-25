@@ -116,6 +116,7 @@ class KodiMonitor(xbmc.Monitor):
         except Exception:
             winprop('Player.ChannelLogo', clear=True)
 
+
     def get_songartworks(self):
 
         log('Music playback detected. Fetching song artworks from database')
