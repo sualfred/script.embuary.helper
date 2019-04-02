@@ -74,7 +74,7 @@ class KodiMonitor(xbmc.Monitor):
     def get_audiotracks(self):
 
         xbmc.sleep(100)
-        log('Playback changed. Look for available audio streams.')
+        log('Look for available audio streams.')
 
         audiotracks = PLAYER.getAvailableAudioStreams()
         if len(audiotracks) > 1:
