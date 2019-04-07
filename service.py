@@ -20,8 +20,7 @@ KODIVERSION = get_kodiversion()
 
 log('Service started', force=True)
 
-task_interval = 300
-cache_interval = 150
+refresh_interval = 0
 bg_task_interval = 200
 bg_interval = 10
 master_lock = 'None'
@@ -77,20 +76,12 @@ while not MONITOR.abortRequested():
 		bg_interval += 10
 
 	# Refresh widgets
-	if task_interval >= 300:
+	if refresh_interval >= 600:
 		log('Update widget reload property')
 		winprop('EmbuaryWidgetUpdate', time.strftime('%Y%m%d%H%M%S', time.gmtime()))
-		task_interval = 0
+		refresh_interval = 0
 	else:
-		task_interval += 10
-
-	# Refresh cache
-	if cache_interval >= 150:
-		log('Update cache reload property')
-		winprop('EmbuaryCacheTime', time.strftime('%Y%m%d%H%M%S', time.gmtime()))
-		cache_interval = 0
-	else:
-		cache_interval += 10
+		refresh_interval += 10
 
 	MONITOR.waitForAbort(10)
 

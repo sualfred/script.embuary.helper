@@ -14,21 +14,22 @@ from resources.lib.helper import *
 class KodiMonitor(xbmc.Monitor):
 
     def __init__(self):
-        xbmc.Monitor.__init__(self)
         self.do_fullscreen_lock = False
+        self.has_PVR_prop = False
 
 
     def onNotification(self, sender, method, data):
 
+        log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
+
         if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
-            log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
             self.data = json.loads(data)
 
         if method == 'Player.OnPlay':
             if not self.do_fullscreen_lock:
                 self.do_fullscreen()
 
-            if visible('String.StartsWith(Player.Filenameandpath,pvr://) + !VideoPlayer.Content(livetv)'):
+            if visible('String.StartsWith(Player.Filenameandpath,pvr://)'):
                 self.get_channellogo()
 
             if PLAYER.isPlayingAudio() and visible('!String.IsEmpty(MusicPlayer.DBID)'):
@@ -44,8 +45,10 @@ class KodiMonitor(xbmc.Monitor):
         if method == 'Player.OnStop':
             xbmc.sleep(3000)
             if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
-                winprop('Player.ChannelLogo', clear=True)
                 self.do_fullscreen_lock = False
+
+                if self.has_PVR_prop:
+                    winprop('Player.ChannelLogo', clear=True)
 
         if method == 'Playlist.OnAdd':
             self.clear_playlists()
@@ -112,9 +115,11 @@ class KodiMonitor(xbmc.Monitor):
         channel_details = get_channeldetails(xbmc.getInfoLabel('VideoPlayer.ChannelName'))
         try:
             winprop('Player.ChannelLogo', channel_details['icon'])
+            self.has_PVR_prop = True
 
         except Exception:
             winprop('Player.ChannelLogo', clear=True)
+            self.has_PVR_prop = False
 
 
     def get_songartworks(self):
