@@ -32,7 +32,7 @@ class KodiMonitor(xbmc.Monitor):
             if visible('String.StartsWith(Player.Filenameandpath,pvr://)'):
                 self.get_channellogo()
 
-            if PLAYER.isPlayingAudio() and visible('!String.IsEmpty(MusicPlayer.DBID)'):
+            if PLAYER.isPlayingAudio() and visible('!String.IsEmpty(MusicPlayer.DBID) + String.IsEmpty(Player.Art(thumb))'):
                 self.get_songartworks()
 
 
@@ -124,7 +124,7 @@ class KodiMonitor(xbmc.Monitor):
 
     def get_songartworks(self):
 
-        log('Music playback detected. Fetching song artworks from database')
+        log('Music playback with no artworks detected. Trying to fetch them from the database.')
 
         try:
             songdetails = json_call('AudioLibrary.GetSongDetails',
@@ -133,15 +133,12 @@ class KodiMonitor(xbmc.Monitor):
                                 )
 
             songdetails = songdetails['result']['songdetails']
-
-            winprop('MusicPlayer.Cover', songdetails['art'].get('thumb', ''))
-            winprop('MusicPlayer.Fanart', songdetails['art'].get('fanart', ''))
-            winprop('MusicPlayer.Clearlogo', songdetails['art'].get('clearlogo', ''))
+            fanart = songdetails['art'].get('fanart', '')
+            thumb = songdetails['art'].get('thumb', '')
+            clearlogo = songdetails['art'].get('clearlogo', '')
 
         except Exception:
-            winprop('MusicPlayer.Cover', clear=True)
-            winprop('MusicPlayer.Fanart', clear=True)
-            winprop('MusicPlayer.Clearlogo', clear=True)
+            return
 
         try:
             albumdetails = json_call('AudioLibrary.GetAlbumDetails',
@@ -150,9 +147,13 @@ class KodiMonitor(xbmc.Monitor):
                                 )
 
             albumdetails = albumdetails['result']['albumdetails']
-
-            winprop('MusicPlayer.DiscArt', albumdetails['art'].get('discart', ''))
+            discart = albumdetails['art'].get('discart', '')
 
         except Exception:
-            winprop('MusicPlayer.DiscArt', clear=True)
+            pass
 
+
+        item = xbmcgui.ListItem()
+        item.setPath(xbmc.Player().getPlayingFile())
+        item.setArt({'thumb': thumb, 'fanart': fanart, 'clearlogo': clearlogo, 'discart': discart})
+        xbmc.Player().updateInfoTag(item)
