@@ -28,10 +28,6 @@ has_reloaded = False
 
 while not MONITOR.abortRequested():
 
-	# Get audio tracks for < Leia
-	if KODIVERSION < 18 and PLAYER.isPlayingVideo():
-		MONITOR.get_audiotracks()
-
 	# Workaround for login screen bug
 	if not has_reloaded:
 		if visible('System.HasLoginScreen + Skin.HasSetting(ReloadOnLogin)'):
