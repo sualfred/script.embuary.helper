@@ -5,7 +5,6 @@
 
 import xbmc
 import xbmcgui
-import time
 import random
 
 from resources.lib.helper import *
@@ -65,16 +64,14 @@ while not MONITOR.abortRequested():
 
 	# Set fanart property
 	if fanarts and bg_interval >=10:
-		random.shuffle(fanarts)
-		winprop('EmbuaryBackground', fanarts[0])
+		winprop('EmbuaryBackground', random.choice(fanarts))
 		bg_interval = 0
 	else:
 		bg_interval += 10
 
 	# Refresh widgets
 	if refresh_interval >= 600:
-		log('Update widget reload property')
-		winprop('EmbuaryWidgetUpdate', time.strftime('%Y%m%d%H%M%S', time.gmtime()))
+		reload_widgets()
 		refresh_interval = 0
 	else:
 		refresh_interval += 10

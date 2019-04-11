@@ -4,7 +4,6 @@
 
 import xbmc
 import xbmcgui
-import time
 import json
 
 from resources.lib.helper import *
@@ -20,9 +19,8 @@ class KodiMonitor(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
 
-        log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
-
         if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
+            log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
             self.data = json.loads(data)
 
         if method == 'Player.OnPlay':
@@ -35,9 +33,8 @@ class KodiMonitor(xbmc.Monitor):
             if PLAYER.isPlayingAudio() and visible('!String.IsEmpty(MusicPlayer.DBID) + String.IsEmpty(Player.Art(thumb))'):
                 self.get_songartworks()
 
-
         if method == 'Player.OnStop' or method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
-            self.refresh_widgets()
+            reload_widgets(True)
 
         if method == 'Player.OnAVChange':
             self.get_audiotracks()
@@ -52,13 +49,6 @@ class KodiMonitor(xbmc.Monitor):
 
         if method == 'Playlist.OnAdd':
             self.clear_playlists()
-
-
-    def refresh_widgets(self):
-
-        timestr = time.strftime('%Y%m%d%H%M%S', time.gmtime())
-        log('Refreshing widgets')
-        execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:04,silent)' % timestr)
 
 
     def clear_playlists(self):
