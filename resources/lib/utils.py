@@ -140,7 +140,7 @@ def playitem(params):
                     item={dbtype: int(dbid)}
                     )
     else:
-        execute('PlayMedia(%s)' % remove_quotes(params.get('item')))
+        execute('PlayMedia("%s")' % remove_quotes(params.get('item')))
 
 
 def playall(params):
