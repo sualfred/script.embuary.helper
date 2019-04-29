@@ -204,13 +204,18 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     return result
 
 
-def reload_widgets(delay=False):
+def reload_widgets(instant=False,force=True):
 
     log('Force widgets to refresh')
     timestamp = time.strftime('%Y%m%d%H%M%S', time.gmtime())
 
-    if delay:
-        execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:04,silent)' % timestamp)
-    else:
+    if instant:
         winprop('EmbuaryWidgetUpdate', timestamp)
+        return
+
+    execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:05,silent)' % timestamp)
+
+    if force:
+        execute('AlarmClock(WidgetForceRefresh1,SetProperty(EmbuaryForceWidgetUpdate,1,home),00:10,silent)')
+        execute('AlarmClock(WidgetForceRefresh2,ClearProperty(EmbuaryForceWidgetUpdate,home),00:11,silent)')
 

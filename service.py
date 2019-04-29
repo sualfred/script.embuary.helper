@@ -71,7 +71,7 @@ while not MONITOR.abortRequested():
 
 	# Refresh widgets
 	if refresh_interval >= 600:
-		reload_widgets()
+		reload_widgets(instant=True)
 		refresh_interval = 0
 	else:
 		refresh_interval += 10
