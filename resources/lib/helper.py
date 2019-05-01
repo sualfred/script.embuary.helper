@@ -74,6 +74,13 @@ def visible(condition):
 	return xbmc.getCondVisibility(condition)
 
 
+def clear_playlists():
+
+    log('Clearing existing playlists')
+    VIDEOPLAYLIST.clear()
+    MUSICPLAYLIST.clear()
+
+
 def grabfanart():
 
     fanarts = list()
