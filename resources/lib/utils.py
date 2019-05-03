@@ -103,9 +103,6 @@ def setkodisetting(params):
             value = True
         elif value.lower() == 'false':
             value = False
-        else:
-            log('SetKodiSetting: No valid value')
-            return
 
     json_call('Settings.SetSettingValue',
                 params={'setting': '%s' % settingname, 'value': value}
