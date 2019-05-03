@@ -21,29 +21,31 @@ from resources.lib.helper import *
 
 #################################################################################################
 
-class BlurImage(ImageFilter.Filter):
-    NAME = "GaussianBlur"
+BLUR_CONTAINER = xbmc.getInfoLabel('Skin.String(BlurContainer)') or 100000
+BLUR_RADIUS = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 3
 
-    def __init__(self,radius):
-        self.radius = radius
-
-    def filter(self,image):
-        return image.gaussian_blur(self.radius)
+#################################################################################################
 
 
-def image_filter(prop='listitem',radius=3,file=None,containerid='100000'):
+if not os.path.exists(ADDON_DATA_IMG_PATH):
+    log('Create missing image folder', force=True)
+    os.makedirs(ADDON_DATA_IMG_PATH)
 
-    if file is not None:
-        image = file
-    else:
-        image = xbmc.getInfoLabel('Control.GetLabel(%s)' % containerid)
+
+def image_filter(prop='listitem',file=None,radius=BLUR_RADIUS):
+
+    image = file if file is not None else xbmc.getInfoLabel('Control.GetLabel(%s)' % BLUR_CONTAINER)
+
+    try:
+        radius = int(radius)
+    except ValueError:
+        log('No valid radius defined for blurring')
+        return
 
     if image:
-        blur_prop = prop + '_blurred'
-        color_prop = prop + '_color'
         blurred_image, imagecolor = image_blur(image,radius)
-        winprop(blur_prop, blurred_image)
-        winprop(color_prop, imagecolor)
+        winprop(prop + '_blurred', blurred_image)
+        winprop(prop + '_color', imagecolor)
 
 
 def image_blur(image,radius):
@@ -70,7 +72,7 @@ def image_blur(image,radius):
                     image = urllib.unquote(image.replace('image://', ''))
                     if image.endswith('/'):
                         image = image[:-1]
-                    log('Copy image from source: ' + image)
+                    log('Copy image from source: ' + image, DEBUG)
                     xbmcvfs.copy(image, targetfile)
                     img = Image.open(targetfile)
                     break
@@ -150,3 +152,13 @@ def get_colors(img):
     log('Average Color: ' + imagecolor, DEBUG)
 
     return imagecolor
+
+
+class BlurImage(ImageFilter.Filter):
+    NAME = "GaussianBlur"
+
+    def __init__(self,radius):
+        self.radius = radius
+
+    def filter(self,image):
+        return image.gaussian_blur(self.radius)

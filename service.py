@@ -28,10 +28,6 @@ bg_interval = 10
 master_lock = 'None'
 has_reloaded = False
 
-if not os.path.exists(ADDON_DATA_IMG_PATH):
-	log('Create missing image folder', force=True)
-	os.makedirs(ADDON_DATA_IMG_PATH)
-
 while not MONITOR.abortRequested():
 
 	blurring = visible('Skin.HasSetting(BlurEnabled)')

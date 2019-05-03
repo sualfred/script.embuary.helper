@@ -21,6 +21,7 @@ except ImportError:
 from resources.lib.helper import *
 from resources.lib.library import *
 from resources.lib.json_map import *
+from resources.lib.image import *
 
 ########################
 
@@ -331,6 +332,11 @@ def txtfile(params):
     else:
         log('Cannot find %s' % path)
         winprop(prop, clear=True)
+
+
+def blurimg(params):
+
+    image_filter(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius'))
 
 
 class PlayCinema(object):
