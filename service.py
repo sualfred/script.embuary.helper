@@ -5,9 +5,7 @@
 
 import xbmc
 import xbmcgui
-import xbmcvfs
 import random
-import os
 
 from resources.lib.helper import *
 from resources.lib.image import *
