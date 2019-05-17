@@ -173,7 +173,7 @@ def get_channeldetails(channel_name):
     return channel_details
 
 
-def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None):
+def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None):
 
     json_string = {'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': {}}
 
@@ -188,6 +188,9 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
 
     if query_filter is not None:
         json_string['params']['filter'] = query_filter
+
+    if options is not None:
+        json_string['params']['options'] = options
 
     if item is not None:
         json_string['params']['item'] = item
@@ -208,7 +211,7 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
 
     result = json.loads(result)
 
-    log('json-string: %s' % json_string, DEBUG)
+    log('json-string: %s' % json_string)
     log('json-result: %s' % result, DEBUG)
 
     return result
