@@ -482,10 +482,11 @@ class PluginContent(object):
     # get items by actor
     def get_items_by_actor(self):
 
-        json_query = json_call(self.method_details,
-                                properties=['title', 'cast'],
-                                params={self.param: int(self.dbid)}
-                                )
+        if self.dbid:
+            json_query = json_call(self.method_details,
+                                    properties=['title', 'cast'],
+                                    params={self.param: int(self.dbid)}
+                                    )
 
         try:
             cast = json_query['result'][self.key_details]['cast']
@@ -495,7 +496,7 @@ class PluginContent(object):
                 raise Exception
 
         except Exception:
-            log('Items by actor %s: No cast found')
+            log('Items by actor: No cast found')
             return
 
         cast_range=[]
