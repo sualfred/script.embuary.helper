@@ -660,15 +660,25 @@ class PluginContent(object):
 
             if len(all_letters) > 1:
 
+                numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                alphabet = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+                letter_count = 0
                 first_number = False
-                for number in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
 
-                    if number in all_letters:
-                        first_number = number
+                for item in numbers:
+                    if item in all_letters:
+                        letter_count += 1
+                        first_number = item
                         break
 
-                for letter in ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-                               'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+                for item in alphabet:
+                    if item in all_letters:
+                        letter_count += 1
+
+                if letter_count < 2:
+                    return
+
+                for letter in alphabet:
 
                     li_item = xbmcgui.ListItem(label=letter)
 
