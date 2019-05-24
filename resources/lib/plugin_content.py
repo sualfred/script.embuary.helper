@@ -71,6 +71,8 @@ class PluginContent(object):
 
         starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks', 'Starwars', 'Kylo Ren', 'Yoda ', 'Chewbacca', 'Anakin Skywalker', 'Han Solo', 'r2-d2', 'bb-8', 'Millennium Falcon', 'Millenium Falke', 'Stormtrooper', 'Sturmtruppler']
 
+        startrek = ['Star Trek', 'Captain Kirk', 'Cpt. Kirk', 'James Kirk', 'James T. Kirk', 'James Tiberius Kirk', 'Jean-Luc Picard', 'Commander Spock', 'Deep Space Nine', 'Deep Space 9', 'Raumschiff Enterprise', 'Raumschiff Voyager', 'Klingonen', 'Klingons', 'Commander Data', 'Commander Geordi La Forge', 'Counselor Deanna Troi', 'William Thomas Riker', 'Captain Benjamin Sisko', 'Cpt. Benjamin Sisko', 'Captain Kathryn Janeway', 'Cpt. Kathryn Janeway']
+
         filters = []
 
         if self.params.get('list') == 'xmas':
@@ -87,6 +89,13 @@ class PluginContent(object):
         elif self.params.get('list') == 'starwars':
             use_episodes = False
             for keyword in starwars:
+                filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
+
+        elif self.params.get('list') == 'startrek':
+            use_episodes = False
+            for keyword in startrek:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
