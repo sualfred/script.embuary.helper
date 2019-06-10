@@ -71,8 +71,6 @@ class Main:
                 blurimg(self.params)
             elif action == 'txtfile':
                 txtfile(self.params)
-            elif action == 'hyperion':
-                hyperion_winscreencap(self.params)
 
 if __name__ == "__main__":
     Main()

@@ -297,18 +297,6 @@ def tvshow_details_by_season(params):
     winprop('tvshow.unwatchedepisodes', unwatchedepisodes)
 
 
-def hyperion_winscreencap(params):
-
-    port = params.get('port', '9192')
-    action = params.get('cmd').upper()
-    try:
-        response = urllib.urlopen('http://localhost:%s?command=%s&force=True' % (port,action))
-        response.read()
-        response.close()
-    except:
-        pass
-
-
 def txtfile(params):
 
     prop = params.get('property')
