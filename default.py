@@ -71,6 +71,8 @@ class Main:
                 blurimg(self.params)
             elif action == 'txtfile':
                 txtfile(self.params)
+            elif action == 'fontchange':
+                fontchange(self.params)
 
 if __name__ == "__main__":
     Main()
