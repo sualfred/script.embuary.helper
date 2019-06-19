@@ -336,6 +336,24 @@ def fontchange(params):
             break
 
 
+def togglewatched(params):
+    dbid = params.get('dbid')
+    dbtype = params.get('type')
+
+    if dbtype == 'movie':
+        method = 'VideoLibrary.SetMovieDetails'
+        key = 'movieid'
+    elif dbtype == 'episode':
+        method = 'VideoLibrary.SetEpisodeDetails'
+        key = 'episodeid'
+    elif dbtype == 'tvshow':
+        method = 'VideoLibrary.SetTVShowDetails'
+        key = 'tvshowid'
+
+    json_call(method,
+                params={key: int(dbid), 'playcount': int(params.get('playcount'))}
+                )
+
 class PlayCinema(object):
 
     def __init__(self, params):
