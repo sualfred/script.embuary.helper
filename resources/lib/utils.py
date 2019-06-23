@@ -336,9 +336,14 @@ def fontchange(params):
             break
 
 
-def togglewatched(params):
+def setinfo(params):
     dbid = params.get('dbid')
     dbtype = params.get('type')
+
+    try:
+        value = int(params.get('value'))
+    except Exception:
+        value = params.get('value')
 
     if dbtype == 'movie':
         method = 'VideoLibrary.SetMovieDetails'
@@ -351,7 +356,7 @@ def togglewatched(params):
         key = 'tvshowid'
 
     json_call(method,
-                params={key: int(dbid), 'playcount': int(params.get('playcount'))}
+                params={key: int(dbid), params.get('field'): value}
                 )
 
 class PlayCinema(object):

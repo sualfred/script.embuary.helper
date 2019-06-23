@@ -73,8 +73,8 @@ class Main:
                 txtfile(self.params)
             elif action == 'fontchange':
                 fontchange(self.params)
-            elif action == 'togglewatched':
-                togglewatched(self.params)
+            elif action == 'setinfo':
+                setinfo(self.params)
 
 if __name__ == "__main__":
     Main()
