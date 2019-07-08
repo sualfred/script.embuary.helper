@@ -332,18 +332,16 @@ def tvshow_details_by_season(params):
         log('Show details by season: Could not get TV show details')
         return
 
-    if int(details['episode']) > int(details['watchedepisodes']):
-        unwatchedepisodes = int(details['episode']) - int(details['watchedepisodes'])
-        unwatchedepisodes = str(unwatchedepisodes)
-    else:
-        unwatchedepisodes = '0'
+    episode = details['episode']
+    watchedepisodes = details['watchedepisodes']
+    unwatchedepisodes = get_unwatched(episode,watchedepisodes)
 
     winprop('tvshow.dbid', str(details['tvshowid']))
     winprop('tvshow.rating', str(round(details['rating'],1)))
     winprop('tvshow.seasons', str(details['season']))
-    winprop('tvshow.episodes', str(details['episode']))
-    winprop('tvshow.watchedepisodes', str(details['watchedepisodes']))
-    winprop('tvshow.unwatchedepisodes', unwatchedepisodes)
+    winprop('tvshow.episodes', str(episode))
+    winprop('tvshow.watchedepisodes', str(watchedepisodes))
+    winprop('tvshow.unwatchedepisodes', str(unwatchedepisodes))
 
 
 def txtfile(params):
