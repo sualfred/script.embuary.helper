@@ -475,8 +475,13 @@ class PlayCinema(object):
                     )
 
         log('Play with cinema mode: Grab your popcorn')
+
         execute('Dialog.Close(all,true)')
-        PLAYER.play(VIDEOPLAYLIST, startpos=0, windowed=False)
+
+        json_call('Player.Open',
+                item={'playlistid': 1, 'position': 0},
+                options={'shuffled': False}
+                )
 
     def get_trailers(self):
 
