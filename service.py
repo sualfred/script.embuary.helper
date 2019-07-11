@@ -7,6 +7,7 @@ import xbmc
 import xbmcgui
 import random
 
+from resources.lib.utils import split
 from resources.lib.helper import *
 from resources.lib.image import *
 from resources.lib.kodi_monitor import KodiMonitor
@@ -29,10 +30,18 @@ has_reloaded = False
 while not MONITOR.abortRequested():
 
 	blurring = visible('Skin.HasSetting(BlurEnabled)')
+	focus_monitor = visible('Skin.HasSetting(FocusMonitor)')
 
 	# Blur listitem fanart
 	if blurring:
 		image_filter()
+
+	# Focus monitor to split merged info labels by the default / seperator to properties
+	if focus_monitor and visible('Window.IsMedia'):
+		split({'value': xbmc.getInfoLabel('ListItem.Genre'), 'property': 'ListItem.Genre', 'separator': ' / '})
+		split({'value': xbmc.getInfoLabel('ListItem.Country'), 'property': 'ListItem.Country', 'separator': ' / '})
+		split({'value': xbmc.getInfoLabel('ListItem.Studio'), 'property': 'ListItem.Studio', 'separator': ' / '})
+		split({'value': xbmc.getInfoLabel('ListItem.Director'), 'property': 'ListItem.Director', 'separator': ' / '})
 
 	# Workaround for login screen bug
 	if not has_reloaded:
