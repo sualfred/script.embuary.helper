@@ -29,15 +29,12 @@ has_reloaded = False
 
 while not MONITOR.abortRequested():
 
-	blurring = visible('Skin.HasSetting(BlurEnabled)')
-	focus_monitor = visible('Skin.HasSetting(FocusMonitor)')
-
 	# Blur listitem fanart
-	if blurring:
+	if visible('Skin.HasSetting(BlurEnabled)'):
 		image_filter()
 
 	# Focus monitor to split merged info labels by the default / seperator to properties
-	if focus_monitor and visible('Window.IsMedia'):
+	if visible('Skin.HasSetting(FocusMonitor) + Window.IsMedia'):
 		split({'value': xbmc.getInfoLabel('ListItem.Genre'), 'property': 'ListItem.Genre', 'separator': ' / '})
 		split({'value': xbmc.getInfoLabel('ListItem.Country'), 'property': 'ListItem.Country', 'separator': ' / '})
 		split({'value': xbmc.getInfoLabel('ListItem.Studio'), 'property': 'ListItem.Studio', 'separator': ' / '})

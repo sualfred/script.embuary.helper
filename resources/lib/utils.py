@@ -412,13 +412,12 @@ def split(params):
     prop = params.get('property')
 
     i = 0
-    for delete in range(30):
-        winprop('%s.%s' % (prop,i), clear=True)
-        i += 1
-
-    i = 0
     for item in value.split(separator):
         winprop('%s.%s' % (prop,i), item)
+        i += 1
+
+    for item in range(i,30):
+        winprop('%s.%s' % (prop,i), clear=True)
         i += 1
 
 
