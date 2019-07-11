@@ -80,7 +80,7 @@ class Main:
             elif action == 'setinfo':
                 setinfo(self.params)
             elif action == 'restartservice':
-                winprop('ServiceRestart.bool', True)
+                execute('NotifyAll(%s, restart)' % ADDON_ID)
 
 if __name__ == "__main__":
     Main()

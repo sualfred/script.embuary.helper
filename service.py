@@ -20,9 +20,11 @@ KODIVERSION = get_kodiversion()
 ########################
 
 
-class Main:
+class Main(xbmc.Monitor):
 
 	def __init__(self):
+		self.restart = False
+
 		self.widget_refresh = 0
 		self.get_backgrounds = 200
 		self.set_background = 10
@@ -37,12 +39,16 @@ class Main:
 		self.start()
 
 
+	def onNotification(self, sender, method, data):
+		if ADDON_ID in sender and 'restart' in method:
+			self.restart = True
+
+
 	def stop(self):
 		log('Service stopped', force=True)
 
-		if winprop('ServiceRestart.bool'):
+		if self.restart:
 			log('Service is restarting', force=True)
-			winprop('ServiceRestart', clear=True)
 			DIALOG.notification(ADDON_ID, ADDON.getLocalizedString(30006))
 			self.__init__()
 
@@ -50,7 +56,7 @@ class Main:
 	def start(self):
 		log('Service started', force=True)
 
-		while not MONITOR.abortRequested() and not winprop('ServiceRestart.bool'):
+		while not MONITOR.abortRequested() and not self.restart:
 
 			# Focus monitor to split merged info labels by the default / seperator to properties
 			if self.focus_monitor:
