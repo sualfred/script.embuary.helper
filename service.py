@@ -21,10 +21,10 @@ KODIVERSION = get_kodiversion()
 
 log('Service started', force=True)
 
-refresh_interval = 0
-bg_task_interval = 200
-bg_interval = 10
-master_lock = 'None'
+widget_refresh = 0
+get_backgrounds = 200
+set_background = 10
+master_lock = None
 has_reloaded = False
 
 while not MONITOR.abortRequested():
@@ -49,7 +49,7 @@ while not MONITOR.abortRequested():
 
 	# Master lock reload logic for widgets
 	if visible('System.HasLocks'):
-		if master_lock == 'None':
+		if master_lock is None:
 			master_lock = True if visible('System.IsMaster') else False
 			log('Master mode: %s' % master_lock)
 
@@ -63,34 +63,33 @@ while not MONITOR.abortRequested():
 			master_lock = True
 			execute('ReloadSkin()')
 
-	elif not master_lock == 'None':
-		master_lock = 'None'
+	elif master_lock is not None:
+		master_lock = None
 
 	# Grab fanarts
-	if bg_task_interval >= 200:
+	if get_backgrounds >= 200:
 		log('Start new fanart grabber process')
 		fanarts = grabfanart()
-		bg_task_interval = 0
+		get_backgrounds = 0
 
 	else:
-		bg_task_interval += 1
+		get_backgrounds += 1
 
 	# Set fanart property
-	if fanarts and bg_interval >=10:
-		random_background = random.choice(fanarts)
-		winprop('EmbuaryBackground', random_background)
-		bg_interval = 0
+	if set_background >=10 and fanarts:
+		winprop('EmbuaryBackground', random.choice(fanarts))
+		set_background = 0
 
 	else:
-		bg_interval += 1
+		set_background += 1
 
 	# Refresh widgets
-	if refresh_interval >= 600:
+	if widget_refresh >= 600:
 		reload_widgets(instant=True)
-		refresh_interval = 0
+		widget_refresh = 0
 
 	else:
-		refresh_interval += 1
+		widget_refresh += 1
 
 	MONITOR.waitForAbort(1)
 
