@@ -16,7 +16,7 @@ class Main:
         if self.action:
             self.getactions()
         else:
-            xbmcgui.Dialog().ok(ADDON.getLocalizedString(30000), ADDON.getLocalizedString(30001))
+            DIALOG.ok(ADDON.getLocalizedString(30000), ADDON.getLocalizedString(30001))
 
     def _parse_argv(self):
         args = sys.argv
@@ -79,6 +79,8 @@ class Main:
                 split(self.params)
             elif action == 'setinfo':
                 setinfo(self.params)
+            elif action == 'restartservice':
+                winprop('ServiceRestart.bool', True)
 
 if __name__ == "__main__":
     Main()
