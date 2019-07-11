@@ -7,6 +7,7 @@ import xbmc
 import xbmcgui
 import random
 
+from resources.lib.utils import split
 from resources.lib.helper import *
 from resources.lib.image import *
 from resources.lib.kodi_monitor import KodiMonitor
@@ -18,76 +19,105 @@ KODIVERSION = get_kodiversion()
 
 ########################
 
-log('Service started', force=True)
 
-refresh_interval = 0
-bg_task_interval = 200
-bg_interval = 10
-master_lock = 'None'
-has_reloaded = False
+class Main:
 
-while not MONITOR.abortRequested():
+	def __init__(self):
+		self.widget_refresh = 0
+		self.get_backgrounds = 200
+		self.set_background = 10
 
-	blurring = visible('Skin.HasSetting(BlurEnabled)')
+		self.blur_background = True if visible('Skin.HasSetting(BlurEnabled)') else False
+		self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 2
+		self.focus_monitor = True if visible('Skin.HasSetting(FocusMonitor)') else False
 
-	# Blur listitem fanart
-	if blurring:
-		image_filter()
+		self.master_lock = None
+		self.login_reload = False
 
-	# Workaround for login screen bug
-	if not has_reloaded:
-		if visible('System.HasLoginScreen + Skin.HasSetting(ReloadOnLogin)'):
-			log('System has login screen enabled. Reload the skin to load all strings correctly.')
-			execute('ReloadSkin()')
-			has_reloaded = True
+		self.start()
 
-	# Master lock reload logic for widgets
-	if visible('System.HasLocks'):
-		if master_lock == 'None':
-			master_lock = True if visible('System.IsMaster') else False
-			log('Master mode: %s' % master_lock)
 
-		if master_lock == True and not visible('System.IsMaster'):
-			log('Left master mode. Reload skin.')
-			master_lock = False
-			execute('ReloadSkin()')
+	def stop(self):
+		log('Service stopped', force=True)
 
-		elif master_lock == False and visible('System.IsMaster'):
-			log('Entered master mode. Reload skin.')
-			master_lock = True
-			execute('ReloadSkin()')
+		if winprop('ServiceRestart.bool'):
+			log('Service is restarting', force=True)
+			winprop('ServiceRestart', clear=True)
+			DIALOG.notification(ADDON_ID, ADDON.getLocalizedString(30006))
+			self.__init__()
 
-	elif not master_lock == 'None':
-		master_lock = 'None'
 
-	# Grab fanarts
-	if bg_task_interval >= 200:
-		log('Start new fanart grabber process')
-		fanarts = grabfanart()
-		bg_task_interval = 0
+	def start(self):
+		log('Service started', force=True)
 
-	else:
-		bg_task_interval += 1
+		while not MONITOR.abortRequested() and not winprop('ServiceRestart.bool'):
 
-	# Set fanart property
-	if fanarts and bg_interval >=10:
-		random_background = random.choice(fanarts)
-		winprop('EmbuaryBackground', random_background)
-		bg_interval = 0
+			# Focus monitor to split merged info labels by the default / seperator to properties
+			if self.focus_monitor:
+				split({'value': xbmc.getInfoLabel('ListItem.Genre'), 'property': 'ListItem.Genre', 'separator': ' / '})
+				split({'value': xbmc.getInfoLabel('ListItem.Country'), 'property': 'ListItem.Country', 'separator': ' / '})
+				split({'value': xbmc.getInfoLabel('ListItem.Studio'), 'property': 'ListItem.Studio', 'separator': ' / '})
+				split({'value': xbmc.getInfoLabel('ListItem.Director'), 'property': 'ListItem.Director', 'separator': ' / '})
 
-	else:
-		bg_interval += 1
+			# Grab fanarts
+			if self.get_backgrounds >= 200:
+				log('Start new fanart grabber process')
+				fanarts = grabfanart()
+				self.get_backgrounds = 0
 
-	# Refresh widgets
-	if refresh_interval >= 600:
-		reload_widgets(instant=True)
-		refresh_interval = 0
+			else:
+				self.get_backgrounds += 1
 
-	else:
-		refresh_interval += 1
+			# Set fanart property
+			if self.set_background >=10 and fanarts:
+				winprop('EmbuaryBackground', random.choice(fanarts))
+				self.set_background = 0
 
-	MONITOR.waitForAbort(1)
+			else:
+				self.set_background += 1
 
-del MONITOR
+			# Blur backgrounds
+			if self.blur_background:
+				image_filter(radius=self.blur_radius)
 
-log('Service stopped', force=True)
+			# Refresh widgets
+			if self.widget_refresh >= 600:
+				reload_widgets(instant=True)
+				self.widget_refresh = 0
+
+			else:
+				self.widget_refresh += 1
+
+			# Workaround for login screen bug
+			if not self.login_reload:
+				if visible('System.HasLoginScreen + Skin.HasSetting(ReloadOnLogin)'):
+					log('System has login screen enabled. Reload the skin to load all strings correctly.')
+					execute('ReloadSkin()')
+					self.login_reload = True
+
+			# Master lock reload logic for widgets
+			if visible('System.HasLocks'):
+				if self.master_lock is None:
+					self.master_lock = True if visible('System.IsMaster') else False
+					log('Master mode: %s' % self.master_lock)
+
+				if self.master_lock == True and not visible('System.IsMaster'):
+					log('Left master mode. Reload skin.')
+					self.master_lock = False
+					execute('ReloadSkin()')
+
+				elif self.master_lock == False and visible('System.IsMaster'):
+					log('Entered master mode. Reload skin.')
+					self.master_lock = True
+					execute('ReloadSkin()')
+
+			elif self.master_lock is not None:
+				self.master_lock = None
+
+			MONITOR.waitForAbort(1)
+
+		self.stop()
+
+
+if __name__ == '__main__':
+    Main()

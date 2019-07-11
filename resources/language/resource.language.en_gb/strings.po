@@ -37,3 +37,7 @@ msgstr ""
 msgctxt "#30005"
 msgid "Changed font to"
 msgstr ""
+
+msgctxt "#30006"
+msgid "Service is restarting"
+msgstr ""

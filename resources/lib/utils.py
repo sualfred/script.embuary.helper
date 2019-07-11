@@ -42,8 +42,7 @@ def selectdialog(params):
             indexlist.append(i)
 
     if selectionlist:
-        select_dialog = xbmcgui.Dialog()
-        index = select_dialog.select(headertxt, selectionlist)
+        index = DIALOG.select(headertxt, selectionlist)
 
         if index > -1:
             value = xbmc.getInfoLabel('Window.Property(Dialog.%i.Builtin)' % (indexlist[index]))
@@ -59,9 +58,7 @@ def selectdialog(params):
 def dialogok(params):
     headertxt = remove_quotes(params.get('header', ''))
     bodytxt = remove_quotes(params.get('message', ''))
-    dialog = xbmcgui.Dialog()
-    dialog.ok(heading=headertxt, line1=bodytxt)
-    del dialog
+    DIALOG.ok(heading=headertxt, line1=bodytxt)
 
 
 def dialogyesno(params):
@@ -70,7 +67,7 @@ def dialogyesno(params):
     yesactions = params.get('yesaction', '').split('|')
     noactions = params.get('noaction', '').split('|')
 
-    if xbmcgui.Dialog().yesno(heading=headertxt, line1=bodytxt):
+    if DIALOG.yesno(heading=headertxt, line1=bodytxt):
         for action in yesactions:
             execute(action)
     else:
@@ -81,7 +78,7 @@ def dialogyesno(params):
 def textviewer(params):
     headertxt = remove_quotes(params.get('header', ''))
     bodytxt = remove_quotes(params.get('message', ''))
-    xbmcgui.Dialog().textviewer(headertxt, bodytxt)
+    DIALOG.textviewer(headertxt, bodytxt)
 
 
 def togglekodisetting(params):
@@ -358,7 +355,7 @@ def txtfile(params):
         if prop:
             winprop(prop,text)
         else:
-            xbmcgui.Dialog().textviewer(remove_quotes(params.get('header')),text)
+            DIALOG.textviewer(remove_quotes(params.get('header')),text)
 
     else:
         log('Cannot find %s' % path)
@@ -377,7 +374,7 @@ def fontchange(params):
 
         if value in str(locale.getdefaultlocale()):
             setkodisetting({'setting': 'lookandfeel.font', 'value': params.get('font')})
-            xbmcgui.Dialog().notification('%s %s' % (value.upper(),ADDON.getLocalizedString(30004)), '%s %s' % (ADDON.getLocalizedString(30005),font))
+            DIALOG.notification('%s %s' % (value.upper(),ADDON.getLocalizedString(30004)), '%s %s' % (ADDON.getLocalizedString(30005),font))
             log('Locale %s is not supported by default font. Change to %s.' % (value.upper(),font))
             break
 
@@ -404,6 +401,22 @@ def setinfo(params):
     json_call(method,
                 params={key: int(dbid), params.get('field'): value}
                 )
+
+
+def split(params):
+    value =  remove_quotes(params.get('value'))
+    separator = remove_quotes(params.get('separator'))
+    prop = params.get('property')
+
+    i = 0
+    for item in value.split(separator):
+        winprop('%s.%s' % (prop,i), item)
+        i += 1
+
+    for item in range(i,30):
+        winprop('%s.%s' % (prop,i), clear=True)
+        i += 1
+
 
 class PlayCinema(object):
 
