@@ -405,6 +405,23 @@ def setinfo(params):
                 params={key: int(dbid), params.get('field'): value}
                 )
 
+
+def split(params):
+    value =  remove_quotes(params.get('value'))
+    separator = remove_quotes(params.get('separator'))
+    prop = params.get('property')
+
+    i = 0
+    for delete in range(30):
+        winprop('%s.%s' % (prop,i), clear=True)
+        i += 1
+
+    i = 0
+    for item in value.split(separator):
+        winprop('%s.%s' % (prop,i), item)
+        i += 1
+
+
 class PlayCinema(object):
 
     def __init__(self, params):

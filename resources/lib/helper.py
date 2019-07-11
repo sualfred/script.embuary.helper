@@ -121,7 +121,6 @@ def winprop(key, value=None, clear=False, window_id=10000):
 
     if clear:
 
-        log('Clear prop: %s' % key)
         window.clearProperty(key.replace('.json', '').replace('.bool', ''))
 
     elif value is not None:

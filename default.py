@@ -75,6 +75,8 @@ class Main:
                 txtfile(self.params)
             elif action == 'fontchange':
                 fontchange(self.params)
+            elif action == 'split':
+                split(self.params)
             elif action == 'setinfo':
                 setinfo(self.params)
 
