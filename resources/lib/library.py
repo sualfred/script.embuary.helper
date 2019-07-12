@@ -14,14 +14,13 @@ from resources.lib.helper import *
 def append_items(li, json_query, type, searchstring=False, append=True):
 
 	for item in json_query:
-
-		if type == 'movies' or type == 'movie':
+		if type == 'movie':
 			parse_movies(li, item, searchstring, append)
-		elif type ==  'tvshows' or type == 'tvshow':
+		elif type ==  'tvshow':
 			parse_tvshows(li, item, searchstring, append)
-		elif type == 'seasons' or type == 'season':
+		elif type == 'season':
 			parse_seasons(li, item, append)
-		elif type == 'episodes' or type == 'episode':
+		elif type == 'episode':
 			parse_episodes(li, item, append)
 		elif type == 'genre':
 			parse_genre(li, item, append)
@@ -35,6 +34,7 @@ def _get_cast(castData):
 	for castmember in castData:
 		listCast.append(castmember['name'])
 		listCastAndRole.append((castmember['name'], castmember['role']))
+
 	return [listCast, listCastAndRole]
 
 
@@ -43,6 +43,7 @@ def _get_first_item(item):
 		item = item[0]
 	else:
 		item = ''
+
 	return item
 
 
@@ -51,6 +52,7 @@ def _get_joined_items(item):
 		item = ' / '.join(item)
 	else:
 		item = ''
+
 	return item
 
 
