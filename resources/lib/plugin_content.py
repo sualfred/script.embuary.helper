@@ -138,7 +138,7 @@ class PluginContent(object):
             except Exception:
                 log('Movies by seasonal keyword: No movies found.')
             else:
-                append_items(self.li,json_query,type='movies')
+                append_items(self.li,json_query,type='movie')
 
         if not self.dbtype or self.dbtype == 'tvshow':
             if use_episodes:
@@ -152,7 +152,7 @@ class PluginContent(object):
                 except Exception:
                     log('Episodes by seasonal keyword: No episodes found.')
                 else:
-                    append_items(self.li,json_query,type='episodes')
+                    append_items(self.li,json_query,type='episode')
 
             else:
                 json_query = json_call('VideoLibrary.GetTVShows',
@@ -165,7 +165,7 @@ class PluginContent(object):
                 except Exception:
                     log('TV shows by seasonal keyword: No shows found.')
                 else:
-                    append_items(self.li,json_query,type='tvshows')
+                    append_items(self.li,json_query,type='tvshow')
 
         random.shuffle(self.li)
 
@@ -201,7 +201,7 @@ class PluginContent(object):
         except Exception:
             log('Get seasons by TV show: No seasons found')
         else:
-            append_items(self.li,season_query,type='seasons')
+            append_items(self.li,season_query,type='season')
 
 
     # get more episodes from the same season
@@ -234,7 +234,7 @@ class PluginContent(object):
         except Exception:
             log('Get more episodes by season: No episodes found')
         else:
-            append_items(self.li,episode_query,type='episodes')
+            append_items(self.li,episode_query,type='episode')
 
 
     # get nextup
@@ -271,7 +271,7 @@ class PluginContent(object):
                 except Exception:
                     log('Get next up episodes: No next episodes found for %s' % episode['title'])
                 else:
-                    append_items(self.li,episode_details,type='episodes')
+                    append_items(self.li,episode_details,type='episode')
 
 
     # get mixed recently added tvshows/episodes
@@ -317,7 +317,7 @@ class PluginContent(object):
                 except Exception:
                     log('Get new media: Error fetching by episode details')
                 else:
-                    append_items(self.li,episode_query,type='episodes')
+                    append_items(self.li,episode_query,type='episode')
 
             else:
                 tvshow_query = json_call('VideoLibrary.GetTVShowDetails',
@@ -329,7 +329,7 @@ class PluginContent(object):
                 except Exception:
                     log('Get new media: Error fetching by TV show details')
                 else:
-                    append_items(self.li,[tvshow_query],type='tvshows')
+                    append_items(self.li,[tvshow_query],type='tvshow')
 
 
     # media by genre
@@ -415,7 +415,7 @@ class PluginContent(object):
             except Exception:
                 log('In progress media: No movies found.')
             else:
-                append_items(self.li,json_query,type='movies')
+                append_items(self.li,json_query,type='movie')
 
         if not self.dbtype or self.dbtype == 'tvshow':
             json_query = json_call('VideoLibrary.GetEpisodes',
@@ -427,7 +427,7 @@ class PluginContent(object):
             except Exception:
                 log('In progress media: No episodes found.')
             else:
-                append_items(self.li,json_query,type='episodes')
+                append_items(self.li,json_query,type='episode')
 
 
     # genres
