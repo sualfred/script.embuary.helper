@@ -384,7 +384,7 @@ class PluginContent(object):
                 except Exception:
                     log('Movies by genre %s: No movies found.' % genre)
                 else:
-                    append_items(self.li,json_query,type='movies',searchstring=genre)
+                    append_items(self.li,json_query,type='movie',searchstring=genre)
 
             if not self.dbtype or self.dbtype == 'tvshow':
                 json_query = json_call('VideoLibrary.GetTVShows',
@@ -397,7 +397,7 @@ class PluginContent(object):
                 except Exception:
                     log('TV shows by genre %s: No shows found.' % genre)
                 else:
-                    append_items(self.li,json_query,type='tvshows',searchstring=genre)
+                    append_items(self.li,json_query,type='tvshow',searchstring=genre)
 
             random.shuffle(self.li)
 
@@ -503,7 +503,7 @@ class PluginContent(object):
         except Exception:
             log('Movies by director %s: No additional movies found' % joineddirectors)
         else:
-            append_items(self.li,json_query,type='movies',searchstring=joineddirectors)
+            append_items(self.li,json_query,type='movie',searchstring=joineddirectors)
 
 
     # get items by actor
@@ -549,7 +549,7 @@ class PluginContent(object):
         except Exception:
             log('Items by actor %s: No movies found' % random_actor)
         else:
-            append_items(self.li,movie_query,type='movies',searchstring=random_actor)
+            append_items(self.li,movie_query,type='movie',searchstring=random_actor)
 
         tvshow_query = json_call('VideoLibrary.GetTVShows',
                                     properties=tvshow_properties,
@@ -562,7 +562,7 @@ class PluginContent(object):
         except Exception:
             log('Items by actor %s: No shows found' % random_actor)
         else:
-            append_items(self.li,tvshow_query,type='tvshows',searchstring=random_actor)
+            append_items(self.li,tvshow_query,type='tvshow',searchstring=random_actor)
 
         random.shuffle(self.li)
 
@@ -645,9 +645,9 @@ class PluginContent(object):
             return
 
         if self.dbtype == 'movie':
-            append_items(self.li,json_query,type='movies',searchstring=title)
+            append_items(self.li,json_query,type='movie',searchstring=title)
         elif self.dbtype == 'tvshow':
-            append_items(self.li,json_query,type='tvshows',searchstring=title)
+            append_items(self.li,json_query,type='tvshow',searchstring=title)
 
 
     # cast
