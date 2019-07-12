@@ -79,6 +79,8 @@ class Main:
             plugin.get_seasonal()
         elif self.info == 'jumptoletter':
             plugin.jumptoletter()
+        elif self.info == 'bydbid':
+            plugin.get_bydbid()
 
         xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
