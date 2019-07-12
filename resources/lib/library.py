@@ -29,13 +29,13 @@ def append_items(li, json_query, type, searchstring=False, append=True):
 
 
 def _get_cast(castData):
-	listCast = []
-	listCastAndRole = []
+	listcast = []
+	listcastandrole = []
 	for castmember in castData:
-		listCast.append(castmember['name'])
-		listCastAndRole.append((castmember['name'], castmember['role']))
+		listcast.append(castmember['name'])
+		listcastandrole.append((castmember['name'], castmember['role']))
 
-	return [listCast, listCastAndRole]
+	return [listcast, listcastandrole]
 
 
 def _get_first_item(item):
@@ -80,37 +80,39 @@ def parse_movies(li, item, searchstring=False, append=False):
 	writer = item.get('writer', '')
 
 	li_item = xbmcgui.ListItem(item['title'])
-	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
-											'OriginalTitle': item['originaltitle'],
-											'Year': item['year'],
-											'Genre': _get_joined_items(genre),
-											'Studio': _get_joined_items(studio),
-											'Country': _get_joined_items(country),
-											'Director': _get_joined_items(director),
-											'Writer': _get_joined_items(writer),
-											'Plot': item['plot'],
-											'PlotOutline': item['plotoutline'],
+	li_item.setInfo(type='Video', infoLabels={'title': item['title'],
+											'originaltitle': item['originaltitle'],
+											'sorttitle': item['sorttitle'],
+											'year': item['year'],
+											'genre': _get_joined_items(genre),
+											'studio': _get_joined_items(studio),
+											'country': _get_joined_items(country),
+											'director': _get_joined_items(director),
+											'writer': _get_joined_items(writer),
+											'plot': item['plot'],
+											'plotOutline': item['plotoutline'],
 											'dbid': item['movieid'],
 											'imdbnumber': item['imdbnumber'],
-											'Tagline': item['tagline'],
-											'Rating': str(float(item['rating'])),
-											'Votes': item['votes'],
-											'MPAA': item['mpaa'],
+											'tagline': item['tagline'],
+											'rating': str(float(item['rating'])),
+											'userrating': str(float(item['userrating'])),
+											'votes': item['votes'],
+											'mpaa': item['mpaa'],
 											'lastplayed': item['lastplayed'],
-											'Cast': cast[0],
-											'CastAndRole': cast[1],
+											'cast': cast[0],
+											'castandrole': cast[1],
 											'mediatype': 'movie',
-											'Trailer': item['trailer'],
-											'Path': item['file'],
-											'Playcount': item['playcount']})
+											'trailer': item['trailer'],
+											'path': item['file'],
+											'playcount': item['playcount']})
 	li_item.setProperty('resumetime', str(item['resume']['position']))
 	li_item.setProperty('totaltime', str(item['resume']['total']))
 
-	_set_unique_properties(li_item,genre,'Genre')
-	_set_unique_properties(li_item,studio,'Studio')
-	_set_unique_properties(li_item,country,'Country')
-	_set_unique_properties(li_item,director,'Director')
-	_set_unique_properties(li_item,writer,'Writer')
+	_set_unique_properties(li_item,genre,'genre')
+	_set_unique_properties(li_item,studio,'studio')
+	_set_unique_properties(li_item,country,'country')
+	_set_unique_properties(li_item,director,'director')
+	_set_unique_properties(li_item,writer,'writer')
 
 	li_item.setArt(item['art'])
 	li_item.setIconImage('DefaultVideo.png')
@@ -141,7 +143,6 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 
 	genre = item.get('genre', '')
 	studio = item.get('studio', '')
-	country = item.get('country', '')
 
 	dbid = item['tvshowid']
 	season = item['season']
@@ -157,35 +158,38 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 		item['file'] = 'plugin://script.embuary.helper/?action=jumptoshow&dbid=%s' % dbid
 
 	li_item = xbmcgui.ListItem(item['title'])
-	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
-											'Year': item['year'],
-											'Genre': _get_joined_items(genre),
-											'Studio': _get_joined_items(studio),
-											'Country': _get_joined_items(country),
-											'Plot': item['plot'],
-											'Rating': str(float(item['rating'])),
-											'Votes': item['votes'],
-											'Premiered': item['premiered'],
-											'MPAA': item['mpaa'],
-											'Cast': cast[0],
-											'CastAndRole': cast[1],
+	li_item.setInfo(type='Video', infoLabels={'title': item['title'],
+											'year': item['year'],
+											'tvshowtitle': item['title'],
+											'sorttitle': item['sorttitle'],
+											'originaltitle': item['originaltitle'],
+											'genre': _get_joined_items(genre),
+											'studio': _get_joined_items(studio),
+											'plot': item['plot'],
+											'rating': str(float(item['rating'])),
+											'userrating': str(float(item['userrating'])),
+											'votes': item['votes'],
+											'premiered': item['premiered'],
+											'mpaa': item['mpaa'],
+											'cast': cast[0],
+											'castandrole': cast[1],
 											'mediatype': 'tvshow',
 											'dbid': dbid,
 											'season': season,
 											'episode': episode,
-											'tvshowtitle': item['title'],
 											'imdbnumber': item['imdbnumber'],
-											'Path': item['file'],
-											'DateAdded': item['dateadded'],
-											'Playcount': item['playcount']})
-	li_item.setProperty('TotalSeasons', str(season))
-	li_item.setProperty('TotalEpisodes', str(episode))
-	li_item.setProperty('WatchedEpisodes', str(watchedepisodes))
-	li_item.setProperty('UnwatchedEpisodes', str(unwatchedepisodes))
+											'lastplayed': item['lastplayed'],
+											'path': item['file'],
+											'duration': item['runtime'],
+											'dateadded': item['dateadded'],
+											'playcount': item['playcount']})
+	li_item.setProperty('Totalseasons', str(season))
+	li_item.setProperty('Totalepisodes', str(episode))
+	li_item.setProperty('Watchedepisodes', str(watchedepisodes))
+	li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
 
-	_set_unique_properties(li_item,genre,'Genre')
-	_set_unique_properties(li_item,studio,'Studio')
-	_set_unique_properties(li_item,country,'Country')
+	_set_unique_properties(li_item,genre,'genre')
+	_set_unique_properties(li_item,studio,'studio')
 
 	li_item.setArt(item['art'])
 	li_item.setIconImage('DefaultVideo.png')
@@ -220,7 +224,7 @@ def parse_seasons(li, item, append=False):
 		file = 'plugin://script.embuary.helper/?action=jumptoseason&dbid=%s&season=%s' % (tvshowdbid, season)
 
 	li_item = xbmcgui.ListItem(title)
-	li_item.setInfo(type='Video', infoLabels={'Title': title,
+	li_item.setInfo(type='Video', infoLabels={'title': title,
 											'season': season,
 											'episode': episode,
 											'tvshowtitle': item['showtitle'],
@@ -229,8 +233,8 @@ def parse_seasons(li, item, append=False):
 											'dbid': item['seasonid']})
 	li_item.setArt(item['art'])
 	li_item.setArt({'fanart': item['art'].get('tvshow.fanart', '')})
-	li_item.setProperty('WatchedEpisodes', str(watchedepisodes))
-	li_item.setProperty('UnwatchedEpisodes', str(unwatchedepisodes))
+	li_item.setProperty('Watchedepisodes', str(watchedepisodes))
+	li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
 	li_item.setProperty('IsSpecial', special)
 	li_item.setIconImage('DefaultVideo.png')
 
@@ -247,27 +251,34 @@ def parse_episodes(li, item, append=False):
 	writer = item.get('writer', '')
 
 	li_item = xbmcgui.ListItem(item['title'])
-	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
-											'Episode': item['episode'],
-											'Season': item['season'],
-											'Premiered': item['firstaired'],
-											'Dbid': item['episodeid'],
-											'Plot': item['plot'],
-											'TVshowTitle': item['showtitle'],
+	li_item.setInfo(type='Video', infoLabels={'title': item['title'],
+											'episode': item['episode'],
+											'season': item['season'],
+											'premiered': item['firstaired'],
+											'dbid': item['episodeid'],
+											'plot': item['plot'],
+											'specialsortseason': item['specialsortseason'],
+											'specialsortepisode': item['specialsortepisode'],
+											'tvshowtitle': item['showtitle'],
+											'productioncode': item['productioncode'],
+											'originaltitle': item['originaltitle'],
 											'lastplayed': item['lastplayed'],
-											'Rating': str(float(item['rating'])),
-											'Playcount': item['playcount'],
-											'Director': _get_joined_items(director),
-											'Writer': _get_joined_items(writer),
-											'Cast': cast[0],
-											'Path': item['file'],
-											'CastAndRole': cast[1],
+											'rating': str(float(item['rating'])),
+											'userrating': str(float(item['userrating'])),
+											'votes': item['votes'],
+											'playcount': item['playcount'],
+											'director': _get_joined_items(director),
+											'writer': _get_joined_items(writer),
+											'cast': cast[0],
+											'path': item['file'],
+											'dateadded': item['dateadded'],
+											'castandrole': cast[1],
 											'mediatype': 'episode'})
 	li_item.setProperty('resumetime', str(item['resume']['position']))
 	li_item.setProperty('totaltime', str(item['resume']['total']))
 
-	_set_unique_properties(li_item,director,'Director')
-	_set_unique_properties(li_item,writer,'Writer')
+	_set_unique_properties(li_item,director,'director')
+	_set_unique_properties(li_item,writer,'writer')
 
 	li_item.setArt({'fanart': item['art'].get('tvshow.fanart', ''), 'clearlogo': item['art'].get('tvshow.clearlogo', ''), 'landscape': item['art'].get('tvshow.landscape', ''), 'clearart': item['art'].get('tvshow.clearart', '')})
 	li_item.setArt(item['art'])
@@ -307,11 +318,11 @@ def parse_cast(li,item,append=False):
 def parse_genre(li,item,append=False):
 
 	li_item = xbmcgui.ListItem(item['label'])
-	li_item.setInfo(type='Video', infoLabels={'Title': item['label'],
+	li_item.setInfo(type='Video', infoLabels={'title': item['label'],
 											'dbid': str(item['genreid']),
-											'Path': item['file']})
+											'path': item['file']})
 	li_item.setArt(item['art'])
-	li_item.setIconImage('DefaultGenre.png')
+	li_item.setIconImage('Defaultgenre.png')
 
 	if append:
 		li.append((item['file'], li_item, True))
