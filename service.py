@@ -59,6 +59,10 @@ class Main(xbmc.Monitor):
 
 		while not MONITOR.abortRequested() and not self.restart:
 
+			# Get audio tracks for < Leia
+			if KODIVERSION < 18 and PLAYER.isPlayingVideo():
+				MONITOR.get_audiotracks()
+
 			# Focus monitor to split merged info labels by the default / seperator to properties
 			if self.focus_monitor:
 				split({'value': xbmc.getInfoLabel('ListItem.Genre'), 'property': 'ListItem.Genre', 'separator': ' / '})
