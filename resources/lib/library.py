@@ -15,13 +15,13 @@ def append_items(li, json_query, type, searchstring=False, append=True):
 
 	for item in json_query:
 
-		if type == 'movies':
+		if type == 'movies' or type == 'movie':
 			parse_movies(li, item, searchstring, append)
-		elif type ==  'tvshows':
+		elif type ==  'tvshows' or type == 'tvshow':
 			parse_tvshows(li, item, searchstring, append)
-		elif type == 'seasons':
+		elif type == 'seasons' or type == 'season':
 			parse_seasons(li, item, append)
-		elif type == 'episodes':
+		elif type == 'episodes' or type == 'episode':
 			parse_episodes(li, item, append)
 		elif type == 'genre':
 			parse_genre(li, item, append)
@@ -54,18 +54,38 @@ def _get_joined_items(item):
 	return item
 
 
+def _set_unique_properties(li_item,item,prop):
+	try:
+		i = 0
+		for value in item:
+			li_item.setProperty('%s.%s' % (prop,i), value)
+			i += 1
+	except Exception:
+		pass
+
+	return li_item
+
+
 def parse_movies(li, item, searchstring=False, append=False):
 
 	if 'cast' in item:
 		cast = _get_cast(item['cast'])
 
+	genre = item.get('genre', '')
+	studio = item.get('studio', '')
+	country = item.get('country', '')
+	director = item.get('director', '')
+	writer = item.get('writer', '')
+
 	li_item = xbmcgui.ListItem(item['title'])
 	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
 											'OriginalTitle': item['originaltitle'],
 											'Year': item['year'],
-											'Genre': _get_joined_items(item.get('genre', '')),
-											'Studio': _get_first_item(item.get('studio', '')),
-											'Country': _get_first_item(item.get('country', '')),
+											'Genre': _get_joined_items(genre),
+											'Studio': _get_joined_items(studio),
+											'Country': _get_joined_items(country),
+											'Director': _get_joined_items(director),
+											'Writer': _get_joined_items(writer),
 											'Plot': item['plot'],
 											'PlotOutline': item['plotoutline'],
 											'dbid': item['movieid'],
@@ -83,6 +103,13 @@ def parse_movies(li, item, searchstring=False, append=False):
 											'Playcount': item['playcount']})
 	li_item.setProperty('resumetime', str(item['resume']['position']))
 	li_item.setProperty('totaltime', str(item['resume']['total']))
+
+	_set_unique_properties(li_item,genre,'Genre')
+	_set_unique_properties(li_item,studio,'Studio')
+	_set_unique_properties(li_item,country,'Country')
+	_set_unique_properties(li_item,director,'Director')
+	_set_unique_properties(li_item,writer,'Writer')
+
 	li_item.setArt(item['art'])
 	li_item.setIconImage('DefaultVideo.png')
 
@@ -110,6 +137,10 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 	if 'cast' in item:
 		cast = _get_cast(item['cast'])
 
+	genre = item.get('genre', '')
+	studio = item.get('studio', '')
+	country = item.get('country', '')
+
 	dbid = item['tvshowid']
 	season = item['season']
 	episode = item['episode']
@@ -126,9 +157,9 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 	li_item = xbmcgui.ListItem(item['title'])
 	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
 											'Year': item['year'],
-											'Genre': _get_joined_items(item.get('genre', '')),
-											'Studio': _get_first_item(item.get('studio', '')),
-											'Country': _get_first_item(item.get('country', '')),
+											'Genre': _get_joined_items(genre),
+											'Studio': _get_joined_items(studio),
+											'Country': _get_joined_items(country),
 											'Plot': item['plot'],
 											'Rating': str(float(item['rating'])),
 											'Votes': item['votes'],
@@ -149,6 +180,11 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 	li_item.setProperty('TotalEpisodes', str(episode))
 	li_item.setProperty('WatchedEpisodes', str(watchedepisodes))
 	li_item.setProperty('UnwatchedEpisodes', str(unwatchedepisodes))
+
+	_set_unique_properties(li_item,genre,'Genre')
+	_set_unique_properties(li_item,studio,'Studio')
+	_set_unique_properties(li_item,country,'Country')
+
 	li_item.setArt(item['art'])
 	li_item.setIconImage('DefaultVideo.png')
 
@@ -205,6 +241,9 @@ def parse_episodes(li, item, append=False):
 	if 'cast' in item:
 		cast = _get_cast(item['cast'])
 
+	director = item.get('director', '')
+	writer = item.get('writer', '')
+
 	li_item = xbmcgui.ListItem(item['title'])
 	li_item.setInfo(type='Video', infoLabels={'Title': item['title'],
 											'Episode': item['episode'],
@@ -216,14 +255,18 @@ def parse_episodes(li, item, append=False):
 											'lastplayed': item['lastplayed'],
 											'Rating': str(float(item['rating'])),
 											'Playcount': item['playcount'],
-											'Director': _get_joined_items(item.get('director', '')),
-											'Writer': _get_joined_items(item.get('writer', '')),
+											'Director': _get_joined_items(director),
+											'Writer': _get_joined_items(writer),
 											'Cast': cast[0],
 											'Path': item['file'],
 											'CastAndRole': cast[1],
 											'mediatype': 'episode'})
 	li_item.setProperty('resumetime', str(item['resume']['position']))
 	li_item.setProperty('totaltime', str(item['resume']['total']))
+
+	_set_unique_properties(li_item,director,'Director')
+	_set_unique_properties(li_item,writer,'Writer')
+
 	li_item.setArt({'fanart': item['art'].get('tvshow.fanart', ''), 'clearlogo': item['art'].get('tvshow.clearlogo', ''), 'landscape': item['art'].get('tvshow.landscape', ''), 'clearart': item['art'].get('tvshow.clearart', '')})
 	li_item.setArt(item['art'])
 	li_item.setIconImage('DefaultTVShows.png')

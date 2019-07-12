@@ -59,6 +59,23 @@ class PluginContent(object):
         self.title_filter = {'operator': 'is', 'field': 'title', 'value': self.dbtitle}
 
 
+    # by dbid
+    def get_bydbid(self):
+
+        json_query = json_call(self.method_details,
+                                properties=self.properties,
+                                params={self.param: int(self.dbid)}
+                                )
+
+        try:
+            result = json_query['result'][self.key_details]
+        except Exception as error:
+            log('Get by DBID: No result found: %s' % error)
+            return
+
+        append_items(self.li,[result],type=self.dbtype)
+
+
     # season widgets
     def get_seasonal(self):
 

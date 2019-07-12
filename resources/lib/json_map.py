@@ -66,6 +66,7 @@ tvshow_properties = [
 					'rating',
 					'votes',
 					'genre',
+					'country',
 					'episode',
 					'season',
 					'mpaa',
