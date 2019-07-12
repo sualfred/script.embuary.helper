@@ -453,11 +453,11 @@ class PlayCinema(object):
 
                 trailer_title = '%s (%s)' % (trailer['title'], xbmc.getLocalizedString(20410))
                 trailer_rating = str(round(trailer['rating'],1))
-                thumbnailImage = trailer['art'].get('landscape') or trailer['art'].get('fanart') or trailer['art'].get('poster', '')
+                trailer_thumb = trailer['art'].get('landscape') or trailer['art'].get('fanart') or trailer['art'].get('poster', '')
 
                 listitem = xbmcgui.ListItem(trailer_title)
                 listitem.setInfo('video', {'Title': trailer_title, 'mediatype': 'video', 'plot': trailer.get('plot', ''), 'year': trailer.get('year', ''), 'mpaa': trailer.get('mpaa', ''), 'rating': trailer_rating})
-                listitem.setArt({'thumb':thumbnailImage, 'clearlogo': trailer['art'].get('clearlogo', '')})
+                listitem.setArt({'thumb': trailer_thumb, 'clearlogo': trailer['art'].get('clearlogo', '')})
                 VIDEOPLAYLIST.add(url=trailer['trailer'], listitem=listitem, index=index)
 
                 log('Play with cinema mode: Adding trailer %s' % trailer_title)

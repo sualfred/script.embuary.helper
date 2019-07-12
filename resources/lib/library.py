@@ -115,7 +115,7 @@ def parse_movies(li, item, searchstring=False, append=False):
 	_set_unique_properties(li_item,writer,'writer')
 
 	li_item.setArt(item['art'])
-	li_item.setIconImage('DefaultVideo.png')
+	li_item.setArt({'icon': 'DefaultVideo.png'})
 
 	hasVideo = False
 
@@ -192,7 +192,7 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 	_set_unique_properties(li_item,studio,'studio')
 
 	li_item.setArt(item['art'])
-	li_item.setIconImage('DefaultVideo.png')
+	li_item.setArt({'icon': 'DefaultVideo.png'})
 
 	if searchstring:
 		li_item.setProperty('searchstring', searchstring)
@@ -232,11 +232,10 @@ def parse_seasons(li, item, append=False):
 											'mediatype': 'season',
 											'dbid': item['seasonid']})
 	li_item.setArt(item['art'])
-	li_item.setArt({'fanart': item['art'].get('tvshow.fanart', '')})
+	li_item.setArt({'icon': 'DefaultVideo.png', 'fanart': item['art'].get('tvshow.fanart', '')})
 	li_item.setProperty('Watchedepisodes', str(watchedepisodes))
 	li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
 	li_item.setProperty('IsSpecial', special)
-	li_item.setIconImage('DefaultVideo.png')
 
 	if append:
 		li.append((file, li_item, folder))
@@ -277,9 +276,8 @@ def parse_episodes(li, item, append=False):
 	_set_unique_properties(li_item,director,'director')
 	_set_unique_properties(li_item,writer,'writer')
 
-	li_item.setArt({'fanart': item['art'].get('tvshow.fanart', ''), 'clearlogo': item['art'].get('tvshow.clearlogo', ''), 'landscape': item['art'].get('tvshow.landscape', ''), 'clearart': item['art'].get('tvshow.clearart', '')})
+	li_item.setArt({'icon': 'DefaultTVShows.png', 'fanart': item['art'].get('tvshow.fanart', ''), 'clearlogo': item['art'].get('tvshow.clearlogo', ''), 'landscape': item['art'].get('tvshow.landscape', ''), 'clearart': item['art'].get('tvshow.clearart', '')})
 	li_item.setArt(item['art'])
-	li_item.setIconImage('DefaultTVShows.png')
 
 	hasVideo = False
 
@@ -305,8 +303,7 @@ def parse_cast(li,item,append=False):
 	li_item = xbmcgui.ListItem(item['name'])
 	li_item.setLabel(item['name'])
 	li_item.setLabel2(item['role'])
-	li_item.setThumbnailImage(item.get('thumbnail', ''))
-	li_item.setIconImage('DefaultActor.png')
+	li_item.setArt({'icon': 'DefaultActor.png', 'thumb': item.get('thumbnail', '')})
 
 	if append:
 		li.append(('', li_item, False))
@@ -319,7 +316,7 @@ def parse_genre(li,item,append=False):
 											'dbid': str(item['genreid']),
 											'path': item['file']})
 	li_item.setArt(item['art'])
-	li_item.setIconImage('Defaultgenre.png')
+	li_item.setArt({'icon': 'DefaultGenre.png'})
 
 	if append:
 		li.append((item['file'], li_item, True))

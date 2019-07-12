@@ -451,12 +451,12 @@ class PluginContent(object):
                             query_filter={'operator': 'is', 'field': 'genre', 'value': genre['label']}
                             )
             posters = {}
-            index=0
+            index = 0
             try:
                 for art in genre_items['result'][self.key_items]:
                     poster = 'poster.%s' % index
                     posters[poster] = art['art'].get('poster', '')
-                    index+=1
+                    index += 1
             except Exception:
                 pass
 
