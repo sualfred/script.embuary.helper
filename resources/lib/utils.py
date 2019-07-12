@@ -427,33 +427,29 @@ class PlayCinema(object):
 
         self.dbid = params.get('dbid')
         self.dbtype = params.get('type')
-        self.item_title = remove_quotes(params.get('title'))
 
-        if not self.dbid or not self.item_title or not self.dbtype:
+        if not self.dbid or not self.dbtype:
             for i in range(30):
-
                 if xbmc.getInfoLabel('Container.ListItem.Label'):
                     break
                 xbmc.sleep(100)
 
             self.dbid = xbmc.getInfoLabel('Container.ListItem.DBID')
-            self.item_title = xbmc.getInfoLabel('Container.ListItem.Label')
             self.dbtype = xbmc.getInfoLabel('Container.ListItem.DBTYPE')
 
-        if self.dbid and self.item_title and self.dbtype:
-            log('Play with cinema mode: %s' % self.item_title)
+        if self.dbid and self.dbtype:
             self.run()
         else:
             log('Play with cinema mode: Not enough arguments')
 
 
     def run(self):
+        clear_playlists()
         index = 0
-        VIDEOPLAYLIST.clear()
 
         if self.trailer_count:
-            trailers = self.get_trailers()
-            for trailer in trailers:
+            movies = self.get_trailers()
+            for trailer in movies:
 
                 trailer_title = '%s (%s)' % (trailer['title'], xbmc.getLocalizedString(20410))
                 trailer_rating = str(round(trailer['rating'],1))
@@ -471,10 +467,8 @@ class PlayCinema(object):
         if self.intro_path:
             intro = self.get_intros()
             if intro:
-                intro_title = '%s (Intro)' % (self.item_title)
-
-                listitem = xbmcgui.ListItem(intro_title)
-                listitem.setInfo('video', {'Title': intro_title, 'mediatype': 'video'})
+                listitem = xbmcgui.ListItem('Intro')
+                listitem.setInfo('video', {'Title': 'Intro', 'mediatype': 'video'})
                 listitem.setArt({'thumb':'special://home/addons/script.embuary.helper/resources/trailer.jpg'})
                 VIDEOPLAYLIST.add(url=intro, listitem=listitem, index=index)
 
@@ -497,32 +491,30 @@ class PlayCinema(object):
                 )
 
     def get_trailers(self):
-
             movies = json_call('VideoLibrary.GetMovies',
                                 properties=movie_properties,
-                                query_filter={'field': 'playcount', 'operator': 'lessthan', 'value': '1'},
+                                query_filter={'and': [{'field': 'playcount', 'operator': 'lessthan', 'value': '1'},{'field': 'hastrailer', 'operator': 'true', 'value': []}]},
                                 sort={'method': 'random'}, limit=int(self.trailer_count)
                                 )
 
             try:
                 movies = movies['result']['movies']
             except KeyError:
+                log('Play with cinema mode: No unwatched movies with available trailer found')
                 return
 
             return movies
 
     def get_intros(self):
-
             dirs, files = xbmcvfs.listdir(self.intro_path)
 
             intros = []
             for file in files:
-                if file.endswith(('.mp4', '.mkv', '.mpg', '.mpeg', '.avi', '.wmv', '.mov', '.flv')):
+                if file.endswith(('.mp4', '.mkv', '.mpg', '.mpeg', '.avi', '.wmv', '.mov')):
                     intros.append(file)
 
             if intros:
-                random.shuffle(intros)
-                self.intro_path += intros[0]
-                return self.intro_path
+                return random.choice(self.intro_path)
 
-            return intros
+            log('Play with cinema mode: No intros found')
+            return
