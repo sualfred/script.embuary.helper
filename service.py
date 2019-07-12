@@ -28,6 +28,7 @@ class Main(xbmc.Monitor):
 		self.widget_refresh = 0
 		self.get_backgrounds = 200
 		self.set_background = 10
+		self.refresh_audiotracks = 10
 
 		self.blur_background = True if visible('Skin.HasSetting(BlurEnabled)') else False
 		self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 2
@@ -58,10 +59,6 @@ class Main(xbmc.Monitor):
 		log('Service started', force=True)
 
 		while not MONITOR.abortRequested() and not self.restart:
-
-			# Get audio tracks for < Leia
-			if KODIVERSION < 18 and PLAYER.isPlayingVideo():
-				MONITOR.get_audiotracks()
 
 			# Focus monitor to split merged info labels by the default / seperator to properties
 			if self.focus_monitor:
@@ -124,6 +121,17 @@ class Main(xbmc.Monitor):
 
 			elif self.master_lock is not None:
 				self.master_lock = None
+
+			# Get audio tracks for < Leia
+			if PLAYER.isPlayingVideo() and self.refresh_audiotracks >= 10:
+				MONITOR.get_audiotracks()
+				self.refresh_audiotracks = 0
+
+			elif PLAYER.isPlayingVideo():
+				self.refresh_audiotracks += 1
+
+			else:
+				self.refresh_audiotracks += 10
 
 			MONITOR.waitForAbort(1)
 

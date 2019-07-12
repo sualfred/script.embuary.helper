@@ -38,9 +38,6 @@ class KodiMonitor(xbmc.Monitor):
         if method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
             reload_widgets()
 
-        if method == 'Player.OnAVChange':
-            self.get_audiotracks()
-
         if method == 'Player.OnStop':
             xbmc.sleep(3000)
             if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
