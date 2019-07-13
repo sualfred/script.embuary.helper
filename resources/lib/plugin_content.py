@@ -444,10 +444,16 @@ class PluginContent(object):
     # inprogress media
     def get_inprogress(self):
 
+        filters = [self.inprogress_filter]
+        if self.tag:
+            filters.append(self.tag_filter)
+        filter = {'and': filters}
+
         if not self.dbtype or self.dbtype == 'movie':
             json_query = json_call('VideoLibrary.GetMovies',
                                 properties=movie_properties,
-                                query_filter=self.inprogress_filter
+                                sort=self.sort_lastplayed,
+                                query_filter=filter
                                 )
             try:
                 json_query = json_query['result']['movies']
@@ -459,7 +465,8 @@ class PluginContent(object):
         if not self.dbtype or self.dbtype == 'tvshow':
             json_query = json_call('VideoLibrary.GetEpisodes',
                                 properties=episode_properties,
-                                query_filter=self.inprogress_filter
+                                sort=self.sort_lastplayed,
+                                query_filter=filter
                                 )
             try:
                 json_query = json_query['result']['episodes']
