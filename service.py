@@ -50,7 +50,7 @@ class Main(xbmc.Monitor):
 		if self.restart:
 			log('Service is restarting', force=True)
 			xbmc.sleep(500) # Give Kodi time to set possible changed skin settings. Just to be sure to bypass race conditions on slower systems.
-			DIALOG.notification(ADDON_ID, ADDON.getLocalizedString(30006))
+			DIALOG.notification(ADDON_ID, ADDON.getLocalizedString(32006))
 			self.__init__()
 
 

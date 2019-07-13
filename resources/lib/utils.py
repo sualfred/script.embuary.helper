@@ -374,7 +374,7 @@ def fontchange(params):
 
         if value in str(locale.getdefaultlocale()):
             setkodisetting({'setting': 'lookandfeel.font', 'value': params.get('font')})
-            DIALOG.notification('%s %s' % (value.upper(),ADDON.getLocalizedString(30004)), '%s %s' % (ADDON.getLocalizedString(30005),font))
+            DIALOG.notification('%s %s' % (value.upper(),ADDON.getLocalizedString(32004)), '%s %s' % (ADDON.getLocalizedString(32005),font))
             log('Locale %s is not supported by default font. Change to %s.' % (value.upper(),font))
             break
 

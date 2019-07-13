@@ -5,7 +5,9 @@
 		<import addon="script.module.pil" version="1.1.7"/>
 	</requires>
 	<extension point="xbmc.python.script" library="default.py" />
-	<extension point="xbmc.python.pluginsource" library="plugin.py" />
+	<extension point="xbmc.python.pluginsource" library="plugin.py">
+	  <provides>video</provides>
+	</extension>
 	<extension point="xbmc.service" library="service.py" />
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en_GB">Embuary Helper Script</summary>

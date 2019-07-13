@@ -14,30 +14,55 @@ msgstr ""
 "Language: en_GB\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgctxt "#30000"
+msgctxt "#32000"
 msgid "Error"
 msgstr ""
 
-msgctxt "#30001"
+msgctxt "#32001"
 msgid "This is a tool to provide features to a skin and requires skin integration."
 msgstr ""
 
-msgctxt "#30002"
+msgctxt "#32002"
 msgid "Enable logging"
 msgstr ""
 
-msgctxt "#30003"
+msgctxt "#32003"
 msgid "Enable debug logging"
 msgstr ""
 
-msgctxt "#30004"
+msgctxt "#32004"
 msgid "detected"
 msgstr ""
 
-msgctxt "#30005"
+msgctxt "#32005"
 msgid "Changed font to"
 msgstr ""
 
-msgctxt "#30006"
+msgctxt "#32006"
 msgid "Service is restarting"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32007"
+msgid "Suggestions based on random watched item"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32008"
+msgid "Next up"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32009"
+msgid "Suggestions by random genre"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32010"
+msgid "Mix of recently added episodes and shows"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32011"
+msgid "All media"
 msgstr ""
