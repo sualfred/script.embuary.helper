@@ -22,7 +22,13 @@ except ImportError:
 from resources.lib.helper import *
 from resources.lib.library import *
 from resources.lib.json_map import *
-from resources.lib.image import *
+
+# Disable image function for TVOS if ImportError
+try:
+    from resources.lib.image import *
+    PIL_supported = True
+except ImportError:
+    PIL_supported = False
 
 ########################
 
@@ -363,8 +369,8 @@ def txtfile(params):
 
 
 def blurimg(params):
-
-    image_filter(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius'))
+    if PIL_supported:
+        image_filter(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius'))
 
 
 def fontchange(params):

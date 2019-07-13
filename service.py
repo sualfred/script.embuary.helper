@@ -9,8 +9,14 @@ import random
 
 from resources.lib.utils import split
 from resources.lib.helper import *
-from resources.lib.image import *
 from resources.lib.kodi_monitor import KodiMonitor
+
+# Disable image function for TVOS if ImportError
+try:
+	from resources.lib.image import *
+	PIL_supported = True
+except ImportError:
+	PIL_supported = False
 
 ########################
 
@@ -85,7 +91,7 @@ class Main(xbmc.Monitor):
 				self.set_background += 1
 
 			# Blur backgrounds
-			if self.blur_background:
+			if self.blur_background and PIL_supported:
 				image_filter(radius=self.blur_radius)
 
 			# Refresh widgets
