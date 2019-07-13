@@ -84,6 +84,8 @@ class Main:
             plugin.jumptoletter()
         elif self.info == 'bydbid':
             plugin.get_bydbid()
+        elif self.info == 'byargs':
+            plugin.get_byargs()
 
         xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))

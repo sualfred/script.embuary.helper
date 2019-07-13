@@ -103,6 +103,7 @@ def parse_movies(li, item, searchstring=False, append=False):
 											'castandrole': cast[1],
 											'mediatype': 'movie',
 											'trailer': item['trailer'],
+											'dateadded': item['dateadded'],
 											'path': item['file'],
 											'playcount': item['playcount']})
 	li_item.setProperty('resumetime', str(item['resume']['position']))

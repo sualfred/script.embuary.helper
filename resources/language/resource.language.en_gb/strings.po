@@ -66,3 +66,8 @@ msgstr ""
 msgctxt "#32011"
 msgid "All media"
 msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32012"
+msgid "Recommended by rating"
+msgstr ""
