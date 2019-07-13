@@ -4,6 +4,7 @@
 ########################
 
 import random
+import json
 
 from resources.lib.helper import *
 from resources.lib.library import *
@@ -74,6 +75,44 @@ class PluginContent(object):
             return
 
         append_items(self.li,[result],type=self.dbtype)
+
+
+    # by custom args
+    def get_byargs(self):
+
+        limit = self.limit or None
+        filter_args = self.params.get('filter_args') or None
+        sort_args = self.params.get('sort_args') or None
+
+        if sort_args:
+            sort_args = json.loads(sort_args)
+
+        if limit:
+            limit = int(limit)
+
+        filters = []
+        if filter_args is not None:
+            filters.append(json.loads(filter_args))
+        if self.tag:
+            filters.append(self.tag_filter)
+        if filters:
+            filter = {'and': filters}
+        else:
+            filter = None
+
+        json_query = json_call(self.method_item,
+                                properties=self.properties,
+                                sort=sort_args, limit=limit,
+                                query_filter=filter
+                                )
+
+        try:
+            result = json_query['result'][self.key_items]
+        except Exception as error:
+            log('Get by args: No result found: %s' % error)
+            return
+
+        append_items(self.li,result,type=self.dbtype)
 
 
     # season widgets
