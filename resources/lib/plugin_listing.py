@@ -67,11 +67,11 @@ def encode_url(**kwargs):
 	return '{0}?{1}'.format(sys.argv[0], urlencode(kwargs))
 
 
-def add_item(category,name,url):
+def add_item(category,name,url,icon='special://home/addons/script.embuary.helper/resources/icon.png'):
 	label = '%s: %s' % (category, name)
 	list_item = xbmcgui.ListItem(label=label)
 	list_item.setInfo('video', {'title': label, 'mediatype': 'video'})
-	list_item.setArt({'icon': 'DefaultFolder.png','thumb': 'special://home/addons/script.embuary.helper/resources/icon.png'})
+	list_item.setArt({'icon': 'DefaultFolder.png','thumb': icon})
 	xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, True)
 
 
@@ -98,18 +98,19 @@ def listing():
 	for prop in range(30):
 		tag = winprop('emby.wnodes.%s.cleantitle' % i)
 		database = winprop('emby.wnodes.%s.type' % i)
+		icon = 'special://home/addons/plugin.video.emby/icon.png'
 
 		if database == 'movies':
 			for widget in emby_movie_widgets:
 				url = get_url(widget,tag)
 				category = 'Emby %s "%s"' % (xbmc.getLocalizedString(342), tag)
-				add_item(category,widget['name'],url)
+				add_item(category,widget['name'],url,icon)
 
 		if database == 'tvshows':
 			for widget in emby_tvshow_widgets:
 				url = get_url(widget,tag)
 				category = 'Emby %s "%s"' % (xbmc.getLocalizedString(20343), tag)
-				add_item(category,widget['name'],url)
+				add_item(category,widget['name'],url,icon)
 
 		i += 1
 
