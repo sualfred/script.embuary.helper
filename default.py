@@ -16,7 +16,7 @@ class Main:
         if self.action:
             self.getactions()
         else:
-            DIALOG.ok(ADDON.getLocalizedString(30000), ADDON.getLocalizedString(30001))
+            DIALOG.ok(ADDON.getLocalizedString(32000), ADDON.getLocalizedString(32001))
 
     def _parse_argv(self):
         args = sys.argv

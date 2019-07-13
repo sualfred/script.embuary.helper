@@ -12,6 +12,7 @@ except ImportError:
     import urllib.parse as urlparse
 
 from resources.lib.helper import *
+from resources.lib.plugin_listing import *
 from resources.lib.plugin_content import *
 from resources.lib.plugin_utils import *
 
@@ -25,8 +26,10 @@ class Main:
         self.action = self.params.get('action')
         if self.info:
             self.getinfos()
-        if self.action:
+        elif self.action:
             self.actions()
+        else:
+            listing()
 
     def _parse_argv(self):
 
