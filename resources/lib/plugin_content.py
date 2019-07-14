@@ -87,9 +87,6 @@ class PluginContent(object):
         if sort_args:
             sort_args = json.loads(sort_args)
 
-        if limit:
-            limit = int(limit)
-
         filters = []
         if filter_args is not None:
             filters.append(json.loads(filter_args))
@@ -161,10 +158,7 @@ class PluginContent(object):
 
         filter = {'or': filters}
 
-        if self.limit:
-            limit = int(self.limit)
-        else:
-            limit = 25
+        limit = self.limit or 25
 
         if not self.dbtype or self.dbtype == 'movie':
             json_query = json_call('VideoLibrary.GetMovies',

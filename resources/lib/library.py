@@ -90,7 +90,7 @@ def parse_movies(li, item, searchstring=False, append=False):
 											'director': _get_joined_items(director),
 											'writer': _get_joined_items(writer),
 											'plot': item['plot'],
-											'plotOutline': item['plotoutline'],
+											'plotoutline': item['plotoutline'],
 											'dbid': item['movieid'],
 											'imdbnumber': item['imdbnumber'],
 											'tagline': item['tagline'],

@@ -190,7 +190,7 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
         json_string['params']['properties'] = properties
 
     if limit is not None:
-        json_string['params']['limits'] = {'start': 0, 'end': limit}
+        json_string['params']['limits'] = {'start': 0, 'end': int(limit)}
 
     if sort is not None:
         json_string['params']['sort'] = sort
