@@ -29,7 +29,7 @@ class Main:
         elif self.action:
             self.actions()
         else:
-            listing()
+            self.listing()
 
     def _parse_argv(self):
 
@@ -51,6 +51,12 @@ class Main:
         except Exception:
             self.params = {}
 
+    def listing(self):
+        li = list()
+        plugin = PluginListing(self.params,li)
+
+        xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
+        xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
 
     def getinfos(self):
         li = list()
