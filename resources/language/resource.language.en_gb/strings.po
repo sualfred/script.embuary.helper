@@ -76,3 +76,8 @@ msgstr ""
 msgctxt "#32013"
 msgid "Continue watching"
 msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32014"
+msgid "Suggestions based on the last watched item"
+msgstr ""
