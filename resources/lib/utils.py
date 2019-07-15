@@ -172,9 +172,9 @@ def playfolder(params):
             return
 
         json_query = json_call('VideoLibrary.GetEpisodes',
-    	       					properties=episode_properties,
+                                properties=episode_properties,
                                 query_filter={'operator': 'is', 'field': 'season', 'value': '%s' % result['season']},
-    							params={'tvshowid': int(result['tvshowid'])}
+                                params={'tvshowid': int(result['tvshowid'])}
                                 )
     else:
         json_query = json_call('VideoLibrary.GetEpisodes',
