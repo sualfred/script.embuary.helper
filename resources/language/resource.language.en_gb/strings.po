@@ -71,3 +71,8 @@ msgstr ""
 msgctxt "#32012"
 msgid "Recommended by rating"
 msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32013"
+msgid "Continue watching"
+msgstr ""
