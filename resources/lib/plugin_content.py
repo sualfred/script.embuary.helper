@@ -22,6 +22,7 @@ class PluginContent(object):
         self.tag = remove_quotes(params.get('tag'))
         self.unwatched = remove_quotes(params.get('unwatched'))
         self.limit = remove_quotes(params.get('limit'))
+        self.retry_count = 1
         self.li = li
 
         if self.dbtype == 'movie':
@@ -432,6 +433,9 @@ class PluginContent(object):
                 else:
                     append_items(self.li,json_query,type='tvshow',searchstring=genre)
 
+            if not self.li:
+                self._retry('get_mediabygenre')
+
             random.shuffle(self.li)
 
 
@@ -512,7 +516,7 @@ class PluginContent(object):
 
 
     # get movies by director
-    def get_directed_by(self):
+    def get_directedby(self):
 
         if self.dbid:
             json_query = json_call('VideoLibrary.GetMovieDetails',
@@ -542,12 +546,14 @@ class PluginContent(object):
             json_query = json_query['result']['movies']
         except Exception:
             log('Movies by director %s: No additional movies found' % joineddirectors)
-        else:
-            append_items(self.li,json_query,type='movie',searchstring=joineddirectors)
+            self._retry('get_directedby')
+            return
+
+        append_items(self.li,json_query,type='movie',searchstring=joineddirectors)
 
 
     # get items by actor
-    def get_items_by_actor(self):
+    def get_itemsbyactor(self):
 
         if self.dbid:
             json_query = json_call(self.method_details,
@@ -603,6 +609,9 @@ class PluginContent(object):
             log('Items by actor %s: No shows found' % random_actor)
         else:
             append_items(self.li,tvshow_query,type='tvshow',searchstring=random_actor)
+
+        if not self.li:
+            self._retry('get_itemsbyactor')
 
         random.shuffle(self.li)
 
@@ -682,13 +691,13 @@ class PluginContent(object):
             json_query = json_query['result'][self.key_items]
         except KeyError:
             log('Get similar: No matching items found')
+            self._retry('get_similar')
             return
 
         if self.dbtype == 'movie':
             append_items(self.li,json_query,type='movie',searchstring=title)
         elif self.dbtype == 'tvshow':
             append_items(self.li,json_query,type='tvshow',searchstring=title)
-
 
     # cast
     def get_cast(self):
@@ -719,7 +728,6 @@ class PluginContent(object):
             return
 
         append_items(self.li,cast,type='cast')
-
 
     # jump to letter
     def jumptoletter(self):
@@ -769,4 +777,16 @@ class PluginContent(object):
                         if not self.params.get('showall') == 'false':
                             self.li.append((li_path, li_item, False))
 
+
+    # retry loop
+    def _retry(self,type):
+        log('Retry to get content (%s)' % str(self.retry_count))
+
+        if self.retry_count < 5:
+            self.retry_count += 1
+            getattr(self, type)()
+
+        else:
+            log('No content found. Stop retrying.')
+            self.retry_count = 1
 

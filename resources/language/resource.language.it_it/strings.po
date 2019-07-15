@@ -3,88 +3,88 @@
 # Addon id: script.embuary.helper
 # Addon Provider: sualfred
 # Translators:
-# sualfred <su4lfred@gmail.com>, 2019
+# Andrea Matesi <andreamatesi@gmail.com>, 2019
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Embuary Helper\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2019-07-14 05:59+0000\n"
-"Last-Translator: sualfred <su4lfred@gmail.com>, 2019\n"
-"Language-Team: German (Germany) (https://www.transifex.com/sualfred/teams/80018/de_DE/)\n"
+"Last-Translator: Andrea Matesi <andreamatesi@gmail.com>, 2019\n"
+"Language-Team: Italian (Italy) (https://www.transifex.com/sualfred/teams/80018/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de_DE\n"
+"Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#32000"
 msgid "Error"
-msgstr "Fehler"
+msgstr "Errore"
 
 msgctxt "#32001"
 msgid ""
 "This is a tool to provide features to a skin and requires skin integration."
 msgstr ""
-"Dieses Tool stellt Features für Skins bereit und eine benötigt Skin-"
-"Integration."
+"L'oggetto offre funzionalità ad una skin e richiede l'integrazione "
+"all'interno di una skin"
 
 msgctxt "#32002"
 msgid "Enable logging"
-msgstr "Aktiviere Logging"
+msgstr "Attiva logging"
 
 msgctxt "#32003"
 msgid "Enable debug logging"
-msgstr "Aktiviere Debug-Logging"
+msgstr "Attiva debug logging"
 
 msgctxt "#32004"
 msgid "detected"
-msgstr "erkannt"
+msgstr "rilevato"
 
 msgctxt "#32005"
 msgid "Changed font to"
-msgstr "Wechsle Schriftart zu"
+msgstr "Font cambiato a"
 
 msgctxt "#32006"
 msgid "Service is restarting"
-msgstr "Service wird neugestartet"
+msgstr "Riavvio del servizio"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32007"
 msgid "Suggestions based on random watched item"
-msgstr "Vorschläge basierend auf zufälligen gesehenen Video"
+msgstr "Suggerimenti casuali per oggetti visti di recente"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32008"
 msgid "Next up"
-msgstr "Als nächstes"
+msgstr "Prossimo"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32009"
 msgid "Suggestions by random genre"
-msgstr "Vorschläge basierend auf zufälligen Genre"
+msgstr "Suggerimenti casuali per genere"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32010"
 msgid "Mix of recently added episodes and shows"
-msgstr "Mischung aus kürzlich hinzugefügten Episoden und Serien"
+msgstr "Mix per show ed episodi aggiunti di recente"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32011"
 msgid "All media"
-msgstr "Alle Medien"
+msgstr "Tutti i media"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32012"
 msgid "Recommended by rating"
-msgstr "Empfohlen nach Bewertung"
+msgstr "Raccomandazioni basate sul rating"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32013"
 msgid "Continue watching"
-msgstr "Weiterschauen"
+msgstr ""
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32014"
 msgid "Suggestions based on the last watched item"
-msgstr "Vorschläge basierend auf dem zuletzt gesehenen Video"
+msgstr ""

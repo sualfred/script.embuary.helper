@@ -3,88 +3,86 @@
 # Addon id: script.embuary.helper
 # Addon Provider: sualfred
 # Translators:
-# sualfred <su4lfred@gmail.com>, 2019
+# Michał Sawicz <michal@sawicz.net>, 2019
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Embuary Helper\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2019-07-14 05:59+0000\n"
-"Last-Translator: sualfred <su4lfred@gmail.com>, 2019\n"
-"Language-Team: German (Germany) (https://www.transifex.com/sualfred/teams/80018/de_DE/)\n"
+"Last-Translator: Michał Sawicz <michal@sawicz.net>, 2019\n"
+"Language-Team: Polish (Poland) (https://www.transifex.com/sualfred/teams/80018/pl_PL/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
 msgctxt "#32000"
 msgid "Error"
-msgstr "Fehler"
+msgstr "Błąd"
 
 msgctxt "#32001"
 msgid ""
 "This is a tool to provide features to a skin and requires skin integration."
-msgstr ""
-"Dieses Tool stellt Features für Skins bereit und eine benötigt Skin-"
-"Integration."
+msgstr "To narzędzie wspomaga skóry i wymaga jej integracji."
 
 msgctxt "#32002"
 msgid "Enable logging"
-msgstr "Aktiviere Logging"
+msgstr "Włącz dziennik zdarzeń"
 
 msgctxt "#32003"
 msgid "Enable debug logging"
-msgstr "Aktiviere Debug-Logging"
+msgstr "Włącz dziennik debugowania"
 
 msgctxt "#32004"
 msgid "detected"
-msgstr "erkannt"
+msgstr "wykryto"
 
 msgctxt "#32005"
 msgid "Changed font to"
-msgstr "Wechsle Schriftart zu"
+msgstr "Zmieniono czcionkę na"
 
 msgctxt "#32006"
 msgid "Service is restarting"
-msgstr "Service wird neugestartet"
+msgstr "Usługa jest uruchamiana ponownie"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32007"
 msgid "Suggestions based on random watched item"
-msgstr "Vorschläge basierend auf zufälligen gesehenen Video"
+msgstr "Sugestie na podstawie losowej obejrzanej pozycji"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32008"
 msgid "Next up"
-msgstr "Als nächstes"
+msgstr "Następny"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32009"
 msgid "Suggestions by random genre"
-msgstr "Vorschläge basierend auf zufälligen Genre"
+msgstr "Sugestie na podstawie losowego gatunku"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32010"
 msgid "Mix of recently added episodes and shows"
-msgstr "Mischung aus kürzlich hinzugefügten Episoden und Serien"
+msgstr "Miks ostatnio dodanych odcinków i seriali"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32011"
 msgid "All media"
-msgstr "Alle Medien"
+msgstr "Wszystkie media"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32012"
 msgid "Recommended by rating"
-msgstr "Empfohlen nach Bewertung"
+msgstr "Sugerowane na podstawie ocen"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32013"
 msgid "Continue watching"
-msgstr "Weiterschauen"
+msgstr ""
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32014"
 msgid "Suggestions based on the last watched item"
-msgstr "Vorschläge basierend auf dem zuletzt gesehenen Video"
+msgstr ""
