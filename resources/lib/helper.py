@@ -86,6 +86,11 @@ def clear_playlists():
     MUSICPLAYLIST.clear()
 
 
+def gotopath(path,target='videos'):
+    execute('Dialog.Close(all,true)')
+    execute('Container.Update(%s)' % path) if visible('Window.IsMedia') else execute('ActivateWindow(%s,%s,return)' % (target,path))
+
+
 def grabfanart():
 
     fanarts = list()

@@ -199,18 +199,18 @@ def playfolder(params):
 def playall(params):
     clear_playlists()
 
-    dbid = params.get('id')
+    container = params.get('id')
     method = params.get('method')
 
     playlistid = 0 if params.get('type') == 'music' else 1
     shuffled = True if method == 'shuffle' else False
 
     if method == 'fromhere':
-        method = 'Container(%s).ListItemNoWrap' % dbid
+        method = 'Container(%s).ListItemNoWrap' % container
     else:
-        method = 'Container(%s).ListItemAbsolute' % dbid
+        method = 'Container(%s).ListItemAbsolute' % container
 
-    for i in range(int(xbmc.getInfoLabel('Container(%s).NumItems' % dbid))):
+    for i in range(int(xbmc.getInfoLabel('Container(%s).NumItems' % container))):
 
         if visible('String.IsEqual(%s(%s).DBType,movie)' % (method,i)):
             media_type = 'movie'
@@ -244,15 +244,15 @@ def playall(params):
 def playrandom(params):
     clear_playlists()
 
-    dbid = params.get('id')
+    container = params.get('id')
 
-    i = random.randint(1,int(xbmc.getInfoLabel('Container(%s).NumItems' % dbid)))
+    i = random.randint(1,int(xbmc.getInfoLabel('Container(%s).NumItems' % container)))
 
-    if visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,movie)' % (dbid,i)):
+    if visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,movie)' % (container,i)):
         media_type = 'movie'
-    elif visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,episode)' % (dbid,i)):
+    elif visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,episode)' % (container,i)):
         media_type = 'episode'
-    elif visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,song)' % (dbid,i)):
+    elif visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,song)' % (container,i)):
         media_type = 'song'
     else:
         media_type = None
@@ -279,11 +279,6 @@ def jumptoshow_by_episode(params):
 
 def goto(params):
     gotopath(remove_quotes(params.get('path')),params.get('target'))
-
-
-def gotopath(path,target='videos'):
-    execute('Dialog.Close(all,true)')
-    execute('Container.Update(%s)' % path) if visible('Window.IsMedia') else execute('ActivateWindow(%s,%s,return)' % (target,path))
 
 
 def resetposition(params):
@@ -382,11 +377,12 @@ def fontchange(params):
 def setinfo(params):
     dbid = params.get('dbid')
     dbtype = params.get('type')
+    value = params.get('value')
 
     try:
-        value = int(params.get('value'))
+        value = int(value)
     except Exception:
-        value = params.get('value')
+        pass
 
     if dbtype == 'movie':
         method = 'VideoLibrary.SetMovieDetails'
