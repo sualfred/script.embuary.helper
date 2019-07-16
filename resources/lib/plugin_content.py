@@ -330,13 +330,7 @@ class PluginContent(object):
 
         for tvshow in json_query:
 
-            totalepisodes = tvshow['episode']
-            watchedepisodes = tvshow['watchedepisodes']
-
-            if totalepisodes > watchedepisodes:
-                unwatchedepisodes = int(totalepisodes) - int(watchedepisodes)
-            else:
-                unwatchedepisodes = 0
+            unwatchedepisodes = get_unwatched(tvshow['episode'],tvshow['watchedepisodes'])
 
             if unwatchedepisodes == 1:
                 episode_query = json_call('VideoLibrary.GetEpisodes',
@@ -699,6 +693,7 @@ class PluginContent(object):
         elif self.dbtype == 'tvshow':
             append_items(self.li,json_query,type='tvshow',searchstring=title)
 
+
     # cast
     def get_cast(self):
 
@@ -728,6 +723,7 @@ class PluginContent(object):
             return
 
         append_items(self.li,cast,type='cast')
+
 
     # jump to letter
     def jumptoletter(self):
