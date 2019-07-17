@@ -30,13 +30,11 @@ MUSICPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 ########################
 
 def get_kodiversion():
-
     build = xbmc.getInfoLabel('System.BuildVersion')
     return int(build[:2])
 
 
 def log(txt,loglevel=NOTICE,force=False):
-
     if ((loglevel == NOTICE or loglevel == WARNING) and ADDON.getSettingBool('log')) or (loglevel == DEBUG and ADDON.getSettingBool('debuglog')) or force:
 
         ''' Python 2 requires to decode stuff at first
@@ -56,7 +54,6 @@ def log(txt,loglevel=NOTICE,force=False):
 
 
 def remove_quotes(label):
-
     if not label:
         return ''
 
@@ -69,13 +66,11 @@ def remove_quotes(label):
 
 
 def execute(cmd):
-
     log('Execute: %s' % cmd)
     xbmc.executebuiltin(cmd, DEBUG)
 
 
 def visible(condition):
-
     return xbmc.getCondVisibility(condition)
 
 
@@ -92,7 +87,6 @@ def gotopath(path,target='videos'):
 
 
 def grabfanart():
-
     fanarts = list()
 
     movie_query = json_call('VideoLibrary.GetMovies',
@@ -123,7 +117,6 @@ def grabfanart():
 
 
 def winprop(key, value=None, clear=False, window_id=10000):
-
     window = xbmcgui.Window(window_id)
 
     if clear:
@@ -158,7 +151,6 @@ def winprop(key, value=None, clear=False, window_id=10000):
 
 
 def get_channeldetails(channel_name):
-
     channel_details = {}
 
     channels = json_call('PVR.GetChannels',
@@ -188,7 +180,6 @@ def get_unwatched(episode,watchedepisodes):
 
 
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None):
-
     json_string = {'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': {}}
 
     if properties is not None:
@@ -232,7 +223,6 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
 
 
 def reload_widgets(instant=False,force=True):
-
     log('Force widgets to refresh')
     timestamp = time.strftime('%Y%m%d%H%M%S', time.gmtime())
 

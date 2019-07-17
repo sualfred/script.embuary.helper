@@ -156,7 +156,7 @@ def parse_tvshows(li, item, searchstring=False, append=False):
         item['file'] = 'videodb://tvshows/titles/%s/' % dbid
     else:
         folder = False
-        item['file'] = 'plugin://script.embuary.helper/?action=jumptoshow&dbid=%s' % dbid
+        item['file'] = 'plugin://script.embuary.helper/?action=folderjump&type=tvshow&dbid=%s' % dbid
 
     li_item = xbmcgui.ListItem(item['title'])
     li_item.setInfo(type='Video', infoLabels={'title': item['title'],
@@ -222,7 +222,7 @@ def parse_seasons(li, item, append=False):
         file = 'videodb://tvshows/titles/%s/%s/' % (tvshowdbid, season)
     else:
         folder = False
-        file = 'plugin://script.embuary.helper/?action=jumptoseason&dbid=%s&season=%s' % (tvshowdbid, season)
+        file = 'plugin://script.embuary.helper/?action=folderjump&type=season&dbid=%s&season=%s' % (tvshowdbid, season)
 
     li_item = xbmcgui.ListItem(title)
     li_item.setInfo(type='Video', infoLabels={'title': title,
