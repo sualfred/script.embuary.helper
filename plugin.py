@@ -14,7 +14,7 @@ except ImportError:
 from resources.lib.helper import *
 from resources.lib.plugin_listing import *
 from resources.lib.plugin_content import *
-from resources.lib.plugin_utils import *
+from resources.lib.plugin_actions import *
 
 ########################
 
@@ -30,6 +30,7 @@ class Main:
             self.actions()
         else:
             self.listing()
+
 
     def _parse_argv(self):
 
@@ -51,12 +52,14 @@ class Main:
         except Exception:
             self.params = {}
 
+
     def listing(self):
         li = list()
         plugin = PluginListing(self.params,li)
 
         xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
+
 
     def getinfos(self):
         li = list()
@@ -97,12 +100,13 @@ class Main:
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
 
     def actions(self):
+        plugin = PluginActions(self.params)
+
         if self.action == 'smsjump':
-            smsjump(self.params)
-        elif self.action == 'jumptoshow':
-            jumptoshow(self.params)
-        elif self.action == 'jumptoseason':
-            jumptoseason(self.params)
+            plugin.smsjump()
+        elif self.action == 'folderjump':
+            plugin.folderjump()
+
 
 if __name__ == '__main__':
     Main()
