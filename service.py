@@ -13,10 +13,10 @@ from resources.lib.kodi_monitor import KodiMonitor
 
 # Disable image function for TVOS if ImportError
 try:
-	from resources.lib.image import *
-	PIL_supported = True
+    from resources.lib.image import *
+    PIL_supported = True
 except ImportError:
-	PIL_supported = False
+    PIL_supported = False
 
 ########################
 
@@ -31,10 +31,10 @@ class Main(xbmc.Monitor):
     def __init__(self):
         self.restart = False
 
-		self.widget_refresh = 0
-		self.get_backgrounds = 200
-		self.set_background = 10
-		self.refresh_audiotracks = 10
+        self.widget_refresh = 0
+        self.get_backgrounds = 200
+        self.set_background = 10
+        self.refresh_audiotracks = 10
 
         self.blur_background = True if visible('Skin.HasSetting(BlurEnabled)') else False
         self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 2
@@ -91,9 +91,9 @@ class Main(xbmc.Monitor):
             else:
                 self.set_background += 1
 
-			# Blur backgrounds
-			if self.blur_background and PIL_supported:
-				image_filter(radius=self.blur_radius)
+            # Blur backgrounds
+            if self.blur_background and PIL_supported:
+                image_filter(radius=self.blur_radius)
 
             # Refresh widgets
             if self.widget_refresh >= 600:
@@ -129,18 +129,18 @@ class Main(xbmc.Monitor):
             elif self.master_lock is not None:
                 self.master_lock = None
 
-			# Get audio tracks for < Leia
-			if PLAYER.isPlayingVideo() and self.refresh_audiotracks >= 10:
-				MONITOR.get_audiotracks()
-				self.refresh_audiotracks = 0
+            # Get audio tracks for < Leia
+            if PLAYER.isPlayingVideo() and self.refresh_audiotracks >= 10:
+                MONITOR.get_audiotracks()
+                self.refresh_audiotracks = 0
 
-			elif PLAYER.isPlayingVideo():
-				self.refresh_audiotracks += 1
+            elif PLAYER.isPlayingVideo():
+                self.refresh_audiotracks += 1
 
-			else:
-				self.refresh_audiotracks += 10
+            else:
+                self.refresh_audiotracks += 10
 
-			MONITOR.waitForAbort(1)
+            MONITOR.waitForAbort(1)
 
         self.stop()
 
