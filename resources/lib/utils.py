@@ -404,19 +404,20 @@ def split(params):
     prop = params.get('property')
     separator = remove_quotes(params.get('separator'))
 
-    if separator:
-        value = value.split(separator)
-    else:
-        value = value.splitlines()
+    if value:
+        if separator:
+            value = value.split(separator)
+        else:
+            value = value.splitlines()
 
-    i = 0
-    for item in value:
-        winprop('%s.%s' % (prop,i), item)
-        i += 1
+        i = 0
+        for item in value:
+            winprop('%s.%s' % (prop,i), item)
+            i += 1
 
-    for item in range(i,30):
-        winprop('%s.%s' % (prop,i), clear=True)
-        i += 1
+        for item in range(i,30):
+            winprop('%s.%s' % (prop,i), clear=True)
+            i += 1
 
 
 def lookforfile(params):
