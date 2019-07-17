@@ -441,7 +441,6 @@ def lookforfile(params):
 class PlayCinema(object):
 
     def __init__(self, params):
-
         self.trailer_count = xbmc.getInfoLabel('Skin.String(TrailerCount)') if not xbmc.getInfoLabel('Skin.String(TrailerCount)') == '0' else ''
         self.intro_path = xbmc.getInfoLabel('Skin.String(IntroPath)')
 
@@ -516,6 +515,7 @@ class PlayCinema(object):
                 options={'shuffled': False}
                 )
 
+
     def get_trailers(self):
 
             movies = json_call('VideoLibrary.GetMovies',
@@ -531,6 +531,7 @@ class PlayCinema(object):
 
             return movies
 
+
     def get_intros(self):
 
             dirs, files = xbmcvfs.listdir(self.intro_path)
@@ -541,8 +542,7 @@ class PlayCinema(object):
                     intros.append(file)
 
             if intros:
-                random.shuffle(intros)
-                self.intro_path += intros[0]
-                return self.intro_path
+                url = '%s%s' % (self.intro_path,random.choice(intros))
+                return url
 
             return intros
