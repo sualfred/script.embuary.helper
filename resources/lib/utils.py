@@ -420,6 +420,18 @@ def split(params):
         i += 1
 
 
+def lookforfile(params):
+    file = remove_quotes(params.get('file'))
+    prop = params.get('prop','FileExists')
+
+    if xbmcvfs.exists(file):
+        winprop('%s.bool' % prop, True)
+        log('File exists: %s' % file)
+    else:
+        winprop(prop, clear=True)
+        log('File does not exist: %s' % file)
+
+
 class PlayCinema(object):
 
     def __init__(self, params):
