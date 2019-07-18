@@ -15,9 +15,9 @@ import locale
 ''' Python 2<->3 compatibility
 '''
 try:
-    import urllib2 as urllib
+    from urllib import quote
 except ImportError:
-    import urllib.request as urllib
+    from urllib.parse import quote
 
 from resources.lib.helper import *
 from resources.lib.library import *
@@ -28,6 +28,12 @@ from resources.lib.image import *
 
 def restartservice(params):
     execute('NotifyAll(%s, restart)' % ADDON_ID)
+
+
+def encode(params):
+    string = remove_quotes(params.get('string'))
+    prop = params.get('prop','EncodedString')
+    winprop(prop,quote(string))
 
 
 def createselect(params):
