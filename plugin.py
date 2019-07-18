@@ -63,6 +63,12 @@ class Main:
     def getinfos(self):
         li = list()
         plugin = PluginContent(self.params,li)
+        clearprop = self.params.get('clearprop')
+        clearprop_clear = False
+
+        if clearprop and winprop('%s.bool' % clearprop):
+            winprop('%s.bool' % clearprop, True)
+            clearprop_clear = True
 
         if self.info == 'getcast':
             plugin.get_cast()
@@ -97,6 +103,11 @@ class Main:
 
         xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
+
+        if clearprop_clear:
+            xbmc.sleep(500)
+            winprop(clearprop, clear=True)
+
 
     def actions(self):
         plugin = PluginActions(self.params)
