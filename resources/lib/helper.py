@@ -75,7 +75,6 @@ def visible(condition):
 
 
 def clear_playlists():
-
     log('Clearing existing playlists')
     VIDEOPLAYLIST.clear()
     MUSICPLAYLIST.clear()
@@ -120,25 +119,21 @@ def winprop(key, value=None, clear=False, window_id=10000):
     window = xbmcgui.Window(window_id)
 
     if clear:
-
         window.clearProperty(key.replace('.json', '').replace('.bool', ''))
 
     elif value is not None:
 
         if key.endswith('.json'):
-
             key = key.replace('.json', '')
             value = json.dumps(value)
 
         elif key.endswith('.bool'):
-
             key = key.replace('.bool', '')
             value = 'true' if value else 'false'
 
         window.setProperty(key, value)
 
     else:
-
         result = window.getProperty(key.replace('.json', '').replace('.bool', ''))
 
         if result:
