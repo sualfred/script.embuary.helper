@@ -66,8 +66,8 @@ msgstr "Vorschläge basierend auf zufälligen Genre"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32010"
-msgid "Mix of recently added episodes and shows"
-msgstr "Mischung aus kürzlich hinzugefügten Episoden und Serien"
+msgid "Recently added episodes and shows"
+msgstr "Kürzlich hinzugefügte Episoden und Serien"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32011"
@@ -88,3 +88,8 @@ msgstr "Weiterschauen"
 msgctxt "#32014"
 msgid "Suggestions based on the last watched item"
 msgstr "Vorschläge basierend auf dem zuletzt gesehenen Video"
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32015"
+msgid "Recently added unwatched episodes and shows"
+msgstr "Kürzlich hinzugefügte ungesehene Episoden und Serien"
