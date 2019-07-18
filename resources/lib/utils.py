@@ -32,7 +32,11 @@ except ImportError:
 
 ########################
 
-def selectdialog(params):
+def restartservice(params):
+    execute('NotifyAll(%s, restart)' % ADDON_ID)
+
+
+def createselect(params):
     selectionlist = []
     indexlist = []
     headertxt = remove_quotes(params.get('header', ''))
@@ -307,7 +311,7 @@ def resetposition(params):
             pass
 
 
-def tvshow_details_by_season(params):
+def details_by_season(params):
     season_query = json_call('VideoLibrary.GetSeasonDetails',
                         properties=season_properties,
                         params={'seasonid': int(params.get('dbid'))}

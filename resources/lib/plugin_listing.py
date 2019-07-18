@@ -6,7 +6,6 @@
 import sys
 import xbmc
 import xbmcgui
-import xbmcplugin
 
 ''' Python 2<->3 compatibility
 '''
