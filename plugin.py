@@ -82,10 +82,7 @@ class Main:
 
 
     def _queryitems(self,plugin,action):
-        try:
-            getattr(plugin,action.lower())()
-        except Exception as error:
-            log('Function "%s" not found: %s' % (action,error), force=True)
+        getattr(plugin,action.lower())()
 
 
     def _additems(self,li):
