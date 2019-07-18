@@ -62,7 +62,7 @@ class PluginContent(object):
 
 
     # by dbid
-    def get_bydbid(self):
+    def getbydbid(self):
 
         json_query = json_call(self.method_details,
                                 properties=self.properties,
@@ -79,7 +79,7 @@ class PluginContent(object):
 
 
     # by custom args
-    def get_byargs(self):
+    def getbyargs(self):
 
         limit = self.limit or None
         filter_args = self.params.get('filter_args') or None
@@ -114,7 +114,7 @@ class PluginContent(object):
 
 
     # season widgets
-    def get_seasonal(self):
+    def getseasonal(self):
 
         xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays', 'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann', 'heilige nacht',
                 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig', 'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce',
@@ -205,7 +205,7 @@ class PluginContent(object):
 
 
     # get seasons
-    def get_seasons(self):
+    def getseasons(self):
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
                             properties=['title'], limit=1,
@@ -239,7 +239,7 @@ class PluginContent(object):
 
 
     # get more episodes from the same season
-    def get_seasonepisodes(self):
+    def getseasonepisodes(self):
 
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
@@ -272,7 +272,7 @@ class PluginContent(object):
 
 
     # get nextup
-    def get_nextup(self):
+    def getnextup(self):
 
         filters = [self.inprogress_filter]
         if self.tag:
@@ -309,7 +309,7 @@ class PluginContent(object):
 
 
     # get mixed recently added tvshows/episodes
-    def get_newshows(self):
+    def getnewshows(self):
 
         filters = [self.unplayed_filter]
         if self.tag:
@@ -361,7 +361,7 @@ class PluginContent(object):
 
 
     # media by genre
-    def get_mediabygenre(self):
+    def getbygenre(self):
 
         genre = remove_quotes(self.params.get('genre'))
 
@@ -428,13 +428,13 @@ class PluginContent(object):
                     append_items(self.li,json_query,type='tvshow',searchstring=genre)
 
             if not self.li:
-                self._retry('get_mediabygenre')
+                self._retry('getbygenre')
 
             random.shuffle(self.li)
 
 
     # inprogress media
-    def get_inprogress(self):
+    def getinprogress(self):
 
         filters = [self.inprogress_filter]
         if self.tag:
@@ -469,7 +469,7 @@ class PluginContent(object):
 
 
     # genres
-    def get_genre(self):
+    def getgenre(self):
 
         json_query = json_call('VideoLibrary.GetGenres',
                             sort={'method': 'label'},
@@ -510,7 +510,7 @@ class PluginContent(object):
 
 
     # get movies by director
-    def get_directedby(self):
+    def getdirectedby(self):
 
         if self.dbid:
             json_query = json_call('VideoLibrary.GetMovieDetails',
@@ -540,14 +540,14 @@ class PluginContent(object):
             json_query = json_query['result']['movies']
         except Exception:
             log('Movies by director %s: No additional movies found' % joineddirectors)
-            self._retry('get_directedby')
+            self._retry('getdirectedby')
             return
 
         append_items(self.li,json_query,type='movie',searchstring=joineddirectors)
 
 
     # get items by actor
-    def get_itemsbyactor(self):
+    def getitemsbyactor(self):
 
         if self.dbid:
             json_query = json_call(self.method_details,
@@ -605,13 +605,13 @@ class PluginContent(object):
             append_items(self.li,tvshow_query,type='tvshow',searchstring=random_actor)
 
         if not self.li:
-            self._retry('get_itemsbyactor')
+            self._retry('getitemsbyactor')
 
         random.shuffle(self.li)
 
 
     # because you watched xyz
-    def get_similar(self):
+    def getsimilar(self):
 
         ''' Based on show or movie of the database
         '''
@@ -685,7 +685,7 @@ class PluginContent(object):
             json_query = json_query['result'][self.key_items]
         except KeyError:
             log('Get similar: No matching items found')
-            self._retry('get_similar')
+            self._retry('getsimilar')
             return
 
         if self.dbtype == 'movie':
@@ -695,7 +695,7 @@ class PluginContent(object):
 
 
     # cast
-    def get_cast(self):
+    def getcast(self):
 
         if self.dbtitle:
             json_query = json_call(self.method_item,

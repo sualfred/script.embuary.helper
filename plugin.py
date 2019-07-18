@@ -54,15 +54,11 @@ class Main:
 
     def listing(self):
         li = list()
-        plugin = PluginListing(self.params,li)
-
-        xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
-        xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
+        PluginListing(self.params,li)
+        self._additems(li)
 
 
     def getinfos(self):
-        li = list()
-        plugin = PluginContent(self.params,li)
         clearprop = self.params.get('clearprop')
         clearprop_clear = False
 
@@ -70,39 +66,10 @@ class Main:
             winprop('%s.bool' % clearprop, True)
             clearprop_clear = True
 
-        if self.info == 'getcast':
-            plugin.get_cast()
-        elif self.info == 'getsimilar':
-            plugin.get_similar()
-        elif self.info == 'getgenre':
-            plugin.get_genre()
-        elif self.info == 'getinprogress':
-            plugin.get_inprogress()
-        elif self.info == 'getnewshows':
-            plugin.get_newshows()
-        elif self.info == 'getnextup':
-            plugin.get_nextup()
-        elif self.info == 'getseasonepisodes':
-            plugin.get_seasonepisodes()
-        elif self.info == 'getseasons':
-            plugin.get_seasons()
-        elif self.info == 'getbygenre':
-            plugin.get_mediabygenre()
-        elif self.info == 'getdirectedby':
-            plugin.get_directedby()
-        elif self.info == 'getitemsbyactor':
-            plugin.get_itemsbyactor()
-        elif self.info == 'getseasonal':
-            plugin.get_seasonal()
-        elif self.info == 'jumptoletter':
-            plugin.jumptoletter()
-        elif self.info == 'bydbid':
-            plugin.get_bydbid()
-        elif self.info == 'byargs':
-            plugin.get_byargs()
-
-        xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
-        xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
+        li = list()
+        plugin = PluginContent(self.params,li)
+        self._queryitems(plugin,self.info)
+        self._additems(li)
 
         if clearprop_clear:
             xbmc.sleep(500)
@@ -111,11 +78,19 @@ class Main:
 
     def actions(self):
         plugin = PluginActions(self.params)
+        self._queryitems(plugin,self.action)
 
-        if self.action == 'smsjump':
-            plugin.smsjump()
-        elif self.action == 'folderjump':
-            plugin.folderjump()
+
+    def _queryitems(self,plugin,action):
+        try:
+            getattr(plugin,action.lower())()
+        except Exception as error:
+            log('Function "%s" not found: %s' % (action,error), force=True)
+
+
+    def _additems(self,li):
+        xbmcplugin.addDirectoryItems(int(sys.argv[1]), li)
+        xbmcplugin.endOfDirectory(handle=int(sys.argv[1]))
 
 
 if __name__ == '__main__':
