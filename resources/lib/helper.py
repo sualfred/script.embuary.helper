@@ -8,6 +8,7 @@ import xbmcaddon
 import xbmcgui
 import json
 import time
+import datetime
 import os
 
 ########################
@@ -63,6 +64,13 @@ def remove_quotes(label):
             label = label[1:-1]
 
     return label
+
+
+def get_date(date_time):
+    date_time_obj = datetime.datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
+    date_obj = date_time_obj.date()
+
+    return date_obj
 
 
 def execute(cmd):

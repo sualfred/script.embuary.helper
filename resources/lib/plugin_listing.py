@@ -40,7 +40,8 @@ movies = [
 tvshows = [
         {'name': ADDON.getLocalizedString(32013), 'action': 'getinprogress'},
         {'name': ADDON.getLocalizedString(32008), 'action': 'getnextup'},
-        {'name': ADDON.getLocalizedString(32010), 'action': 'getnewshows'},
+        {'name': ADDON.getLocalizedString(32015), 'action': 'getnewshows'},
+        {'name': ADDON.getLocalizedString(32010), 'action': 'getnewshows', 'showall': 'true'},
         {'name': ADDON.getLocalizedString(32007), 'action': 'getsimilar'},
         {'name': ADDON.getLocalizedString(32014), 'action': 'getsimilar', 'pos': '0'},
         {'name': ADDON.getLocalizedString(32009), 'action': 'getbygenre'},
@@ -61,7 +62,8 @@ emby_movies = [
 emby_tvshows = [
         {'name': ADDON.getLocalizedString(32013), 'action': 'getinprogress'},
         {'name': ADDON.getLocalizedString(32008), 'action': 'getnextup'},
-        {'name': ADDON.getLocalizedString(32010), 'action': 'getnewshows'},
+        {'name': ADDON.getLocalizedString(32015), 'action': 'getnewshows'},
+        {'name': ADDON.getLocalizedString(32010), 'action': 'getnewshows', 'showall': 'true'},
         {'name': ADDON.getLocalizedString(32007), 'action': 'getsimilar'},
         {'name': ADDON.getLocalizedString(32014), 'action': 'getsimilar', 'pos': '0'},
         {'name': ADDON.getLocalizedString(32009), 'action': 'getbygenre'},
@@ -118,7 +120,7 @@ class PluginListing(object):
 
 
     def _get_url(self,widget):
-        return self._encode_url(info=widget['action'], type=self.cat_type, tag=self.tag, pos=widget.get('pos',''), filter_args=widget.get('filter',''), sort_args=widget.get('sort',''), limit=widget.get('limit',''))
+        return self._encode_url(info=widget['action'], type=self.cat_type, tag=self.tag, pos=widget.get('pos',''), filter_args=widget.get('filter',''), sort_args=widget.get('sort',''), limit=widget.get('limit',''), showall=widget.get('showall',''))
 
 
     def _encode_url(self,**kwargs):

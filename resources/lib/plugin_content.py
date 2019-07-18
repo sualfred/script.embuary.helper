@@ -308,13 +308,19 @@ class PluginContent(object):
                     append_items(self.li,episode_details,type='episode')
 
 
-    # get mixed recently added tvshows/episodes
+    # get recently added episodes of unwatched shows
     def getnewshows(self):
 
-        filters = [self.unplayed_filter]
-        if self.tag:
-            filters.append(self.tag_filter)
-        filter = {'and': filters}
+        show_all = True if self.params.get('showall') == 'true' else False
+
+        if show_all:
+            filter = self.tag_filter if self.tag else None
+
+        else:
+            filters = [self.unplayed_filter]
+            if self.tag:
+                filters.append(self.tag_filter)
+            filter = {'and': filters}
 
         json_query = json_call('VideoLibrary.GetTVShows',
                         properties=tvshow_properties,
@@ -329,35 +335,63 @@ class PluginContent(object):
             return
 
         for tvshow in json_query:
+            try:
+                unwatchedepisodes = get_unwatched(tvshow['episode'],tvshow['watchedepisodes'])
 
-            unwatchedepisodes = get_unwatched(tvshow['episode'],tvshow['watchedepisodes'])
+                if show_all:
+                    ''' All recently added episodes. Watched state is ignored and only items added of the same date
+                        will be grouped.
+                    '''
+                    episode_query = json_call('VideoLibrary.GetEpisodes',
+                                            properties=episode_properties,
+                                            sort=self.sort_recent, limit=2,
+                                            params={'tvshowid': int(tvshow['tvshowid'])}
+                                            )
 
-            if unwatchedepisodes == 1:
-                episode_query = json_call('VideoLibrary.GetEpisodes',
-                            properties=episode_properties,
-                            sort=self.sort_recent,limit=1,
-                            query_filter=self.unplayed_filter,
-                            params={'tvshowid': int(tvshow['tvshowid'])}
-                            )
-
-                try:
                     episode_query = episode_query['result']['episodes']
-                except Exception:
-                    log('Get new media: Error fetching by episode details')
-                else:
+
+                    try:
+                        if not get_date(episode_query[0]['dateadded']) == get_date(episode_query[1]['dateadded']):
+                            raise Exception
+                        append_tvshow = True
+
+                    except Exception:
+                        append_tvshow = False
+                        append_items(self.li,[episode_query[0]],type='episode')
+
+                elif unwatchedepisodes == 1:
+                    ''' Recently added episodes based on unwatched or in progress TV shows. Episodes will be grouped
+                        if more than one unwatched episode is available.
+                    '''
+                    episode_query = json_call('VideoLibrary.GetEpisodes',
+                                            properties=episode_properties,
+                                            sort=self.sort_recent,limit=1,
+                                            query_filter=self.unplayed_filter,
+                                            params={'tvshowid': int(tvshow['tvshowid'])}
+                                            )
+
+                    episode_query = episode_query['result']['episodes']
+
+                    append_tvshow = False
                     append_items(self.li,episode_query,type='episode')
 
-            else:
-                tvshow_query = json_call('VideoLibrary.GetTVShowDetails',
-                            properties=tvshow_properties,
-                            params={'tvshowid': int(tvshow['tvshowid'])}
-                            )
-                try:
-                    tvshow_query = tvshow_query['result']['tvshowdetails']
-                except Exception:
-                    log('Get new media: Error fetching by TV show details')
                 else:
+                    append_tvshow = True
+
+                ''' Group episodes to show if more than one valid episode is available
+                '''
+                if append_tvshow:
+                    tvshow_query = json_call('VideoLibrary.GetTVShowDetails',
+                                            properties=tvshow_properties,
+                                            params={'tvshowid': int(tvshow['tvshowid'])}
+                                            )
+
+                    tvshow_query = tvshow_query['result']['tvshowdetails']
                     append_items(self.li,[tvshow_query],type='tvshow')
+
+            except Exception as error:
+                log('Get new media: Not able to parse data for show %s - %s' % (tvshow,error))
+                pass
 
 
     # media by genre

@@ -59,7 +59,7 @@ msgstr ""
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32010"
-msgid "Mix of recently added episodes and shows"
+msgid "Recently added episodes and shows"
 msgstr ""
 
 #: /resources/lib/plugin_listing.py
@@ -80,4 +80,9 @@ msgstr ""
 #: /resources/lib/plugin_listing.py
 msgctxt "#32014"
 msgid "Suggestions based on the last watched item"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32015"
+msgid "Recently added unwatched episodes and shows"
 msgstr ""
