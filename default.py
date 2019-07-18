@@ -44,11 +44,8 @@ class Main:
             PlayCinema(self.params)
 
         else:
-            try:
-                util = globals()[action]
-                util(self.params)
-            except Exception as error:
-                log('Function "%s" not found: %s' % (action,error), force=True)
+            util = globals()[action]
+            util(self.params)
 
 
 if __name__ == "__main__":
