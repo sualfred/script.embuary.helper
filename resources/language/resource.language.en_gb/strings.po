@@ -39,7 +39,7 @@ msgid "Changed font to"
 msgstr ""
 
 msgctxt "#32006"
-msgid "Service is restarting"
+msgid "Applying changes"
 msgstr ""
 
 #: /resources/lib/plugin_listing.py
@@ -85,4 +85,9 @@ msgstr ""
 #: /resources/lib/plugin_listing.py
 msgctxt "#32015"
 msgid "Recently added unwatched episodes and shows"
+msgstr ""
+
+#: /resources/settings.xml
+msgctxt "#32016"
+msgid "Enable service module"
 msgstr ""

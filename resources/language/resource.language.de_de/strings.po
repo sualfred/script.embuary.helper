@@ -46,8 +46,8 @@ msgid "Changed font to"
 msgstr "Wechsle Schriftart zu"
 
 msgctxt "#32006"
-msgid "Service is restarting"
-msgstr "Service wird neugestartet"
+msgid "Applying changes"
+msgstr "Änderungen werden übernommen"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32007"
