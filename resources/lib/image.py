@@ -10,12 +10,7 @@ import hashlib
 import os
 from PIL import ImageFilter,Image,ImageOps
 
-''' Python 2<->3 compatibility
-'''
-try:
-    import urllib2 as urllib
-except ImportError:
-    import urllib.request as urllib
+import urllib2 as urllib
 
 from resources.lib.helper import *
 

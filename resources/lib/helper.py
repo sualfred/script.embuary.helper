@@ -21,8 +21,6 @@ ADDON_DATA_IMG_PATH = os.path.join(xbmc.translatePath("special://profile/addon_d
 NOTICE = xbmc.LOGNOTICE
 WARNING = xbmc.LOGWARNING
 DEBUG = xbmc.LOGDEBUG
-LOG_ENABLED = True if ADDON.getSetting('log') == 'true' else False
-DEBUGLOG_ENABLED = True if ADDON.getSetting('debuglog') == 'true' else False
 
 DIALOG = xbmcgui.Dialog()
 
@@ -38,7 +36,7 @@ def get_kodiversion():
 
 
 def log(txt,loglevel=NOTICE,force=False):
-    if ((loglevel == NOTICE or loglevel == WARNING) and LOG_ENABLED) or (loglevel == DEBUG and DEBUGLOG_ENABLED) or force:
+    if ((loglevel == NOTICE or loglevel == WARNING) and get_bool(ADDON.getSetting('log'))) or (loglevel == DEBUG and get_bool(ADDON.getSetting('debuglog'))) or force:
 
         ''' Python 2 requires to decode stuff at first
         '''

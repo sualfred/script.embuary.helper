@@ -12,12 +12,7 @@ import random
 import os
 import locale
 
-''' Python 2<->3 compatibility
-'''
-try:
-    from urllib import quote
-except ImportError:
-    from urllib.parse import quote
+from urllib import quote
 
 from resources.lib.helper import *
 from resources.lib.library import *
