@@ -5,6 +5,7 @@
 
 import random
 import json
+import xbmcvfs
 
 from resources.lib.helper import *
 from resources.lib.library import *
@@ -109,6 +110,29 @@ class PluginContent(object):
             return
 
         append_items(self.li,result,type=self.dbtype)
+
+
+    # resource helper
+    def getresourceimages(self):
+        container = self.params.get('id')
+        container_numitems = xbmc.getInfoLabel('Container(%s).NumItems')
+
+        resource_addon = self.params.get('addon')
+        resource_dir = xbmc.translatePath('resource://%s/' % resource_addon)
+
+        dirs, files = xbmcvfs.listdir(resource_dir)
+
+        i = 0
+        for item in range(int(container_numitems)):
+            label = xbmc.getInfoLabel('Container(%s).ListItemAbsolute(%s).Label' % (container,str(i)))
+            label = '%s.png' % label
+
+            if label in files:
+                list_item = xbmcgui.ListItem(label=label)
+                list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,label)})
+                self.li.append(('', list_item, False))
+
+            i += 1
 
 
     # season widgets

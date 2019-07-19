@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="128">
-        <setting label="14092" type="lsep"/>
+        <setting label="19099" type="lsep"/>
 		<setting id="service" label="32016" type="bool" default="true"/>
+        <setting label="14092" type="lsep"/>
 		<setting id="log" label="32002" type="bool" default="false"/>
 		<setting id="debuglog" label="32003" type="bool" default="false"/>
 	</category>
