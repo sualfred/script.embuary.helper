@@ -375,14 +375,21 @@ def blurimg(params):
 
 def fontchange(params):
     font = params.get('font')
+    fallback_locales = params.get('locales').split('+')
 
-    for value in params.get('locales').split('+'):
+    try:
+        defaultlocale = locale.getdefaultlocale()
+        shortlocale = defaultlocale[0][3:].lower()
 
-        if value in str(locale.getdefaultlocale()):
-            setkodisetting({'setting': 'lookandfeel.font', 'value': params.get('font')})
-            DIALOG.notification('%s %s' % (value.upper(),ADDON.getLocalizedString(32004)), '%s %s' % (ADDON.getLocalizedString(32005),font))
-            log('Locale %s is not supported by default font. Change to %s.' % (value.upper(),font))
-            break
+        for value in fallback_locales:
+            if value == shortlocale:
+                setkodisetting({'setting': 'lookandfeel.font', 'value': params.get('font')})
+                DIALOG.notification('%s %s' % (value.upper(),ADDON.getLocalizedString(32004)), '%s %s' % (ADDON.getLocalizedString(32005),font))
+                log('Locale %s is not supported by default font. Change to %s.' % (value.upper(),font))
+                break
+
+    except Exception:
+        log('Auto font change: No system locale found')
 
 
 def setinfo(params):
@@ -441,6 +448,15 @@ def lookforfile(params):
     else:
         winprop(prop, clear=True)
         log('File does not exist: %s' % file)
+
+
+def getlocale(params):
+    try:
+        defaultlocale = locale.getdefaultlocale()
+        shortlocale = defaultlocale[0][3:].upper()
+        winprop('SystemLocale', shortlocale)
+    except Exception:
+        winprop('SystemLocale', clear=True)
 
 
 class PlayCinema(object):
