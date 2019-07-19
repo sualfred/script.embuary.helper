@@ -131,7 +131,7 @@ class PluginContent(object):
             filename = '%s.png' % item
 
             if filename in files:
-                list_item = xbmcgui.ListItem(label=filename)
+                list_item = xbmcgui.ListItem(label=item)
                 list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,filename)})
                 self.li.append(('', list_item, False))
 
