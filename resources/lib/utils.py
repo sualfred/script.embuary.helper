@@ -113,7 +113,10 @@ def setkodisetting(params):
     try:
         value = int(value)
     except Exception:
-        value = get_bool(value)
+        if value.lower() == 'true':
+            value = True
+        elif value.lower() == 'false':
+            value = False
 
     json_call('Settings.SetSettingValue',
                 params={'setting': '%s' % settingname, 'value': value}
