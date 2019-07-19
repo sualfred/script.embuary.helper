@@ -182,6 +182,16 @@ def get_unwatched(episode,watchedepisodes):
         return 0
 
 
+def get_bool(value,string='true'):
+    try:
+        if value.lower() == string:
+            return True
+        raise Exception
+
+    except Exception:
+        return False
+
+
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None):
     json_string = {'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': {}}
 

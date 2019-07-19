@@ -29,9 +29,9 @@ class Main(xbmc.Monitor):
         self.get_backgrounds = 200
         self.set_background = 10
 
-        self.blur_background = True if visible('Skin.HasSetting(BlurEnabled)') else False
+        self.blur_background = visible('Skin.HasSetting(BlurEnabled)')
         self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 2
-        self.focus_monitor = True if visible('Skin.HasSetting(FocusMonitor)') else False
+        self.focus_monitor = visible('Skin.HasSetting(FocusMonitor)')
 
         self.master_lock = None
         self.login_reload = False
@@ -106,7 +106,7 @@ class Main(xbmc.Monitor):
             # Master lock reload logic for widgets
             if visible('System.HasLocks'):
                 if self.master_lock is None:
-                    self.master_lock = True if visible('System.IsMaster') else False
+                    self.master_lock = visible('System.IsMaster')
                     log('Master mode: %s' % self.master_lock)
 
                 if self.master_lock == True and not visible('System.IsMaster'):
