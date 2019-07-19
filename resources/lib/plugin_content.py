@@ -114,25 +114,26 @@ class PluginContent(object):
 
     # resource helper
     def getresourceimages(self):
-        container = self.params.get('id')
-        container_numitems = xbmc.getInfoLabel('Container(%s).NumItems')
-
         resource_addon = self.params.get('addon')
         resource_dir = xbmc.translatePath('resource://%s/' % resource_addon)
 
+        string = remove_quotes(self.params.get('string'))
+        separator = remove_quotes(self.params.get('separator'))
+
+        if separator:
+            values = string.split(separator)
+        else:
+            values = string.splitlines()
+
         dirs, files = xbmcvfs.listdir(resource_dir)
 
-        i = 0
-        for item in range(int(container_numitems)):
-            label = xbmc.getInfoLabel('Container(%s).ListItemAbsolute(%s).Label' % (container,str(i)))
-            label = '%s.png' % label
+        for item in values:
+            filename = '%s.png' % item
 
-            if label in files:
-                list_item = xbmcgui.ListItem(label=label)
-                list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,label)})
+            if filename in files:
+                list_item = xbmcgui.ListItem(label=filename)
+                list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,filename)})
                 self.li.append(('', list_item, False))
-
-            i += 1
 
 
     # season widgets
