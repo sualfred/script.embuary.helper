@@ -23,6 +23,7 @@ KODIVERSION = get_kodiversion()
 class Main(xbmc.Monitor):
 
     def __init__(self):
+        self.service_enabled = ADDON.getSettingBool('service')
         self.restart = False
 
         self.widget_refresh = 0
@@ -36,7 +37,10 @@ class Main(xbmc.Monitor):
         self.master_lock = None
         self.login_reload = False
 
-        self.start()
+        if self.service_enabled:
+            self.start()
+        else:
+            self.keep_alive()
 
 
     def onNotification(self, sender, method, data):
@@ -44,18 +48,33 @@ class Main(xbmc.Monitor):
             self.restart = True
 
 
+    def onSettingsChanged(self):
+        log('Service: Addon setting changed', force=True)
+        self.restart = True
+
+
     def stop(self):
-        log('Service stopped', force=True)
+        if self.service_enabled:
+            log('Service: Stopped', force=True)
 
         if self.restart:
-            log('Service is restarting', force=True)
+            log('Service: Applying changes', force=True)
             xbmc.sleep(500) # Give Kodi time to set possible changed skin settings. Just to be sure to bypass race conditions on slower systems.
             DIALOG.notification(ADDON_ID, ADDON.getLocalizedString(32006))
             self.__init__()
 
 
+    def keep_alive(self):
+        log('Service: Disabled')
+
+        while not MONITOR.abortRequested() and not self.restart:
+            MONITOR.waitForAbort(1)
+
+        self.stop()
+
+
     def start(self):
-        log('Service started', force=True)
+        log('Service: Started', force=True)
 
         while not MONITOR.abortRequested() and not self.restart:
 
