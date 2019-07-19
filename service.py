@@ -29,7 +29,7 @@ KODIVERSION = get_kodiversion()
 class Main(xbmc.Monitor):
 
     def __init__(self):
-        self.service_enabled = ADDON.getSettingBool('service')
+        self.service_enabled = True if ADDON.getSetting('service') == 'true' else False
         self.restart = False
 
         self.widget_refresh = 0
