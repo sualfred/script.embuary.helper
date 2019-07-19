@@ -122,9 +122,10 @@ def setkodisetting(params):
                 params={'setting': '%s' % settingname, 'value': value}
                 )
 
+
 def toggleaddons(params):
     addonid = params.get('addonid').split('+')
-    enable = True if params.get('enable').lower() == 'true' else False
+    enable = get_bool(params.get('enable'))
 
     for addon in addonid:
 
@@ -168,7 +169,7 @@ def playfolder(params):
     clear_playlists()
 
     dbid = int(params.get('dbid'))
-    shuffled = True if params.get('shuffle') == 'true' else False
+    shuffled = get_bool(params.get('shuffle'))
 
     if params.get('type') == 'season':
         json_query = json_call('VideoLibrary.GetSeasonDetails',
@@ -219,7 +220,7 @@ def playall(params):
     method = params.get('method')
 
     playlistid = 0 if params.get('type') == 'music' else 1
-    shuffled = True if method == 'shuffle' else False
+    shuffled = get_bool(method,'shuffle')
 
     if method == 'fromhere':
         method = 'Container(%s).ListItemNoWrap' % container
@@ -299,7 +300,7 @@ def goto(params):
 
 def resetposition(params):
     containers = params.get('container').split('||')
-    only_inactive_container = True if params.get('only') == 'inactive' else False
+    only_inactive_container = get_bool(params.get('only'),'inactive')
     current_control =xbmc.getInfoLabel('System.CurrentControlID')
 
     for item in containers:

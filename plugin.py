@@ -68,7 +68,7 @@ class Main:
 
         li = list()
         plugin = PluginContent(self.params,li)
-        self._queryitems(plugin,self.info)
+        self._execute(plugin,self.info)
         self._additems(li)
 
         if clearprop_clear:
@@ -78,10 +78,10 @@ class Main:
 
     def actions(self):
         plugin = PluginActions(self.params)
-        self._queryitems(plugin,self.action)
+        self._execute(plugin,self.action)
 
 
-    def _queryitems(self,plugin,action):
+    def _execute(self,plugin,action):
         getattr(plugin,action.lower())()
 
 

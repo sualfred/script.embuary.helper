@@ -63,7 +63,6 @@ class PluginContent(object):
 
     # by dbid
     def getbydbid(self):
-
         json_query = json_call(self.method_details,
                                 properties=self.properties,
                                 params={self.param: int(self.dbid)}
@@ -80,7 +79,6 @@ class PluginContent(object):
 
     # by custom args
     def getbyargs(self):
-
         limit = self.limit or None
         filter_args = self.params.get('filter_args') or None
         sort_args = self.params.get('sort_args') or None
@@ -115,7 +113,6 @@ class PluginContent(object):
 
     # season widgets
     def getseasonal(self):
-
         xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays', 'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann', 'heilige nacht',
                 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig', 'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce',
                 'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun']
@@ -123,31 +120,35 @@ class PluginContent(object):
         horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas', 'borzalom', 'hryllingi', 'ホラー', 'siaubas', 'verschrikking', 'skrekk', 'przerażenie', 'groază',
                 'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах']
 
-        starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks', 'Starwars', 'Kylo Ren', 'Yoda ', 'Chewbacca', 'Anakin Skywalker', 'Han Solo', 'r2-d2', 'bb-8', 'Millennium Falcon', 'Millenium Falke', 'Stormtrooper', 'Sturmtruppler']
+        starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks', 'Starwars', 'Kylo Ren', 'Yoda ', 'Chewbacca', 'Anakin Skywalker', 'Han Solo', 'r2-d2', 'bb-8',
+                    'Millennium Falcon', 'Millenium Falke', 'Stormtrooper', 'Sturmtruppler']
 
-        startrek = ['Star Trek', 'Captain Kirk', 'Cpt. Kirk', 'James Kirk', 'James T. Kirk', 'James Tiberius Kirk', 'Jean-Luc Picard', 'Commander Spock', 'Deep Space Nine', 'Deep Space 9', 'Raumschiff Enterprise', 'Raumschiff Voyager', 'Klingonen', 'Klingons', 'Commander Data', 'Commander Geordi La Forge', 'Counselor Deanna Troi', 'William Thomas Riker', 'Captain Benjamin Sisko', 'Cpt. Benjamin Sisko', 'Captain Kathryn Janeway', 'Cpt. Kathryn Janeway']
+        startrek = ['Star Trek', 'Captain Kirk', 'Cpt. Kirk', 'James Kirk', 'James T. Kirk', 'James Tiberius Kirk', 'Jean-Luc Picard', 'Commander Spock', 'Deep Space Nine', 'Deep Space 9',
+                    'Raumschiff Enterprise', 'Raumschiff Voyager', 'Klingonen', 'Klingons', 'Commander Data', 'Commander Geordi La Forge', 'Counselor Deanna Troi', 'William Thomas Riker',
+                    'Captain Benjamin Sisko', 'Cpt. Benjamin Sisko', 'Captain Kathryn Janeway', 'Cpt. Kathryn Janeway']
 
         filters = []
+        list_type = self.params.get('list')
 
-        if self.params.get('list') == 'xmas':
+        if list_type == 'xmas':
             use_episodes = True
             for keyword in xmas:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
 
-        elif self.params.get('list') == 'horror':
+        elif list_type == 'horror':
             use_episodes = False
             for keyword in horror:
                 filters.append({'operator': 'contains', 'field': 'genre', 'value': keyword})
 
-        elif self.params.get('list') == 'starwars':
+        elif list_type == 'starwars':
             use_episodes = False
             for keyword in starwars:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
 
-        elif self.params.get('list') == 'startrek':
+        elif list_type == 'startrek':
             use_episodes = False
             for keyword in startrek:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
@@ -240,7 +241,6 @@ class PluginContent(object):
 
     # get more episodes from the same season
     def getseasonepisodes(self):
-
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
                             properties=['title'], limit=1,
@@ -273,7 +273,6 @@ class PluginContent(object):
 
     # get nextup
     def getnextup(self):
-
         filters = [self.inprogress_filter]
         if self.tag:
             filters.append(self.tag_filter)
@@ -310,8 +309,7 @@ class PluginContent(object):
 
     # get recently added episodes of unwatched shows
     def getnewshows(self):
-
-        show_all = True if self.params.get('showall') == 'true' else False
+        show_all = get_bool(self.params.get('showall'))
 
         if show_all:
             filter = self.tag_filter if self.tag else None
@@ -337,6 +335,7 @@ class PluginContent(object):
         for tvshow in json_query:
             try:
                 unwatchedepisodes = get_unwatched(tvshow['episode'],tvshow['watchedepisodes'])
+                append_tvshow = False
 
                 if show_all:
                     ''' All recently added episodes. Watched state is ignored and only items added of the same date
@@ -356,7 +355,6 @@ class PluginContent(object):
                         append_tvshow = True
 
                     except Exception:
-                        append_tvshow = False
                         append_items(self.li,[episode_query[0]],type='episode')
 
                 elif unwatchedepisodes == 1:
@@ -371,8 +369,6 @@ class PluginContent(object):
                                             )
 
                     episode_query = episode_query['result']['episodes']
-
-                    append_tvshow = False
                     append_items(self.li,episode_query,type='episode')
 
                 else:
@@ -396,7 +392,6 @@ class PluginContent(object):
 
     # media by genre
     def getbygenre(self):
-
         genre = remove_quotes(self.params.get('genre'))
 
         if not genre:
@@ -469,7 +464,6 @@ class PluginContent(object):
 
     # inprogress media
     def getinprogress(self):
-
         filters = [self.inprogress_filter]
         if self.tag:
             filters.append(self.tag_filter)
@@ -504,7 +498,6 @@ class PluginContent(object):
 
     # genres
     def getgenre(self):
-
         json_query = json_call('VideoLibrary.GetGenres',
                             sort={'method': 'label'},
                             params={'type': self.dbtype}
@@ -545,7 +538,6 @@ class PluginContent(object):
 
     # get movies by director
     def getdirectedby(self):
-
         if self.dbid:
             json_query = json_call('VideoLibrary.GetMovieDetails',
                                 properties=['title', 'director'],
@@ -582,7 +574,6 @@ class PluginContent(object):
 
     # get items by actor
     def getitemsbyactor(self):
-
         if self.dbid:
             json_query = json_call(self.method_details,
                                     properties=['title', 'cast'],
@@ -646,7 +637,6 @@ class PluginContent(object):
 
     # because you watched xyz
     def getsimilar(self):
-
         ''' Based on show or movie of the database
         '''
         if self.dbid:
@@ -730,7 +720,6 @@ class PluginContent(object):
 
     # cast
     def getcast(self):
-
         if self.dbtitle:
             json_query = json_call(self.method_item,
                                 properties=['cast'],
@@ -761,7 +750,6 @@ class PluginContent(object):
 
     # jump to letter
     def jumptoletter(self):
-
         if xbmc.getInfoLabel('Container.NumItems'):
 
             all_letters = []

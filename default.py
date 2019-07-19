@@ -38,13 +38,11 @@ class Main:
 
 
     def getactions(self):
-        action = self.action
-
-        if action == 'playcinema':
+        if self.action == 'playcinema':
             PlayCinema(self.params)
 
         else:
-            util = globals()[action]
+            util = globals()[self.action]
             util(self.params)
 
 
