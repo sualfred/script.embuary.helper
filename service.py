@@ -24,6 +24,7 @@ class Main(xbmc.Monitor):
 
     def __init__(self):
         self.service_enabled = ADDON.getSettingBool('service')
+        self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or 0.5
         self.restart = False
 
         self.widget_refresh = 0
@@ -68,15 +69,17 @@ class Main(xbmc.Monitor):
         log('Service: Disabled')
 
         while not MONITOR.abortRequested() and not self.restart:
-            MONITOR.waitForAbort(1)
+            MONITOR.waitForAbort(5)
 
         self.stop()
 
 
     def start(self):
         log('Service: Started', force=True)
+        service_interval = float(self.service_interval)
 
         while not MONITOR.abortRequested() and not self.restart:
+            log('bla')
 
             # Focus monitor to split merged info labels by the default / seperator to properties
             if self.focus_monitor:
@@ -93,7 +96,7 @@ class Main(xbmc.Monitor):
                 self.get_backgrounds = 0
 
             else:
-                self.get_backgrounds += 1
+                self.get_backgrounds += service_interval
 
             # Set fanart property
             if self.set_background >=10 and fanarts:
@@ -101,7 +104,7 @@ class Main(xbmc.Monitor):
                 self.set_background = 0
 
             else:
-                self.set_background += 1
+                self.set_background += service_interval
 
             # Blur backgrounds
             if self.blur_background:
@@ -113,7 +116,7 @@ class Main(xbmc.Monitor):
                 self.widget_refresh = 0
 
             else:
-                self.widget_refresh += 1
+                self.widget_refresh += service_interval
 
             # Workaround for login screen bug
             if not self.login_reload:
@@ -141,7 +144,7 @@ class Main(xbmc.Monitor):
             elif self.master_lock is not None:
                 self.master_lock = None
 
-            MONITOR.waitForAbort(1)
+            MONITOR.waitForAbort(service_interval)
 
         self.stop()
 
