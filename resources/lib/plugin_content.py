@@ -130,12 +130,12 @@ class PluginContent(object):
         dirs, files = xbmcvfs.listdir(resource_dir)
 
         for item in values:
-            filename = '%s.png' % item
-
-            if filename in files:
-                list_item = xbmcgui.ListItem(label=item)
-                list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,filename)})
-                self.li.append(('', list_item, False))
+            for filename in ['%s.jpg' % item, '%s.png' % item]:
+                if filename in files:
+                    list_item = xbmcgui.ListItem(label=item)
+                    list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,filename)})
+                    self.li.append(('', list_item, False))
+                    break
 
 
     # season widgets
