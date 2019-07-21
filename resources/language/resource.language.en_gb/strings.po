@@ -103,11 +103,6 @@ msgid "Default blurring radius"
 msgstr ""
 
 #: /resources/settings.xml
-msgctxt "#32019"
-msgid "Misc"
-msgstr ""
-
-#: /resources/settings.xml
 msgctxt "#32020"
 msgid "Misc."
 msgstr ""
