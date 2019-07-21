@@ -127,13 +127,12 @@ class PluginContent(object):
         else:
             values = string.splitlines()
 
-        dirs, files = xbmcvfs.listdir(resource_dir)
-
         for item in values:
             for filename in ['%s.jpg' % item, '%s.png' % item]:
-                if filename in files:
+                filepath = resource_dir + filename
+                if xbmcvfs.exists(filepath):
                     list_item = xbmcgui.ListItem(label=item)
-                    list_item.setArt({'icon': 'resource://%s/%s' % (resource_addon,filename)})
+                    list_item.setArt({'icon': filepath})
                     self.li.append(('', list_item, False))
                     break
 
