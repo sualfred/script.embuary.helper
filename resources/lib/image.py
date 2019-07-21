@@ -22,7 +22,7 @@ from resources.lib.helper import *
 #################################################################################################
 
 BLUR_CONTAINER = xbmc.getInfoLabel('Skin.String(BlurContainer)') or 100000
-BLUR_RADIUS = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 2
+BLUR_RADIUS = xbmc.getInfoLabel('Skin.String(BlurRadius)') or ADDON.getSetting('blur_radius')
 
 #################################################################################################
 

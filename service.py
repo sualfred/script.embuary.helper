@@ -24,7 +24,7 @@ class Main(xbmc.Monitor):
 
     def __init__(self):
         self.service_enabled = ADDON.getSettingBool('service')
-        self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or 0.5
+        self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or ADDON.getSetting('service_interval')
         self.restart = False
 
         self.widget_refresh = 0
@@ -32,7 +32,7 @@ class Main(xbmc.Monitor):
         self.set_background = 10
 
         self.blur_background = visible('Skin.HasSetting(BlurEnabled)')
-        self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or 2
+        self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or ADDON.getSetting('blur_radius')
         self.focus_monitor = visible('Skin.HasSetting(FocusMonitor)')
 
         self.master_lock = None
@@ -79,7 +79,6 @@ class Main(xbmc.Monitor):
         service_interval = float(self.service_interval)
 
         while not MONITOR.abortRequested() and not self.restart:
-            log('bla')
 
             # Focus monitor to split merged info labels by the default / seperator to properties
             if self.focus_monitor:
