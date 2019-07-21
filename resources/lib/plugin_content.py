@@ -64,13 +64,14 @@ class PluginContent(object):
 
     # by dbid
     def getbydbid(self):
-        json_query = json_call(self.method_details,
+        try:
+            json_query = json_call(self.method_details,
                                 properties=self.properties,
                                 params={self.param: int(self.dbid)}
                                 )
 
-        try:
             result = json_query['result'][self.key_details]
+
         except Exception as error:
             log('Get by DBID: No result found: %s' % error)
             return
@@ -97,14 +98,15 @@ class PluginContent(object):
         else:
             filter = None
 
-        json_query = json_call(self.method_item,
+        try:
+            json_query = json_call(self.method_item,
                                 properties=self.properties,
                                 sort=sort_args, limit=limit,
                                 query_filter=filter
                                 )
 
-        try:
             result = json_query['result'][self.key_items]
+
         except Exception as error:
             log('Get by args: No result found: %s' % error)
             return
