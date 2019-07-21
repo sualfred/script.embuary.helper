@@ -54,21 +54,10 @@ class Main:
 
 
     def getinfos(self):
-        clearprop = self.params.get('clearprop')
-        clearprop_clear = False
-
-        if clearprop and winprop('%s.bool' % clearprop):
-            winprop('%s.bool' % clearprop, True)
-            clearprop_clear = True
-
         li = list()
         plugin = PluginContent(self.params,li)
         self._execute(plugin,self.info)
         self._additems(li)
-
-        if clearprop_clear:
-            xbmc.sleep(500)
-            winprop(clearprop, clear=True)
 
 
     def actions(self):
