@@ -513,7 +513,7 @@ def getlocale(params):
 class PlayCinema(object):
 
     def __init__(self, params):
-        self.trailer_count = xbmc.getInfoLabel('Skin.String(TrailerCount)') if not xbmc.getInfoLabel('Skin.String(TrailerCount)') == '0' else ''
+        self.trailer_count = xbmc.getInfoLabel('Skin.String(TrailerCount)') if xbmc.getInfoLabel('Skin.String(TrailerCount)') != '0' else False
         self.intro_path = xbmc.getInfoLabel('Skin.String(IntroPath)')
 
         self.dbid = params.get('dbid')

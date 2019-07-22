@@ -44,14 +44,14 @@ def image_filter(prop='listitem',file=None,radius=BLUR_RADIUS):
         return
 
     if image:
-        if not image == OLD_IMAGE:
+        if image == OLD_IMAGE:
+            log('Image blurring: Image has not changed. Skip %s.' % image, DEBUG)
+        else:
             log('Image blurring: Image changed. Blur %s.' % image, DEBUG)
             OLD_IMAGE = image
             blurred_image, imagecolor = image_blur(image,radius)
             winprop(prop + '_blurred', blurred_image)
             winprop(prop + '_color', imagecolor)
-        else:
-            log('Image blurring: Image has not changed. Skip %s.' % image, DEBUG)
 
 
 def image_blur(image,radius):
