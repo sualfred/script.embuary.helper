@@ -192,7 +192,7 @@ def get_bool(value,string='true'):
         return False
 
 
-def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None):
+def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None,limits=None):
     json_string = {'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': {}}
 
     if properties is not None:
@@ -209,6 +209,9 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
 
     if options is not None:
         json_string['params']['options'] = options
+
+    if limits is not None:
+        json_string['params']['limits'] = limits
 
     if item is not None:
         json_string['params']['item'] = item

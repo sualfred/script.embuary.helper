@@ -28,7 +28,7 @@ def append_items(li, json_query, type, searchstring=False, append=True):
             parse_cast(li, item, append)
 
 
-def _get_cast(castData):
+def get_cast(castData):
     listcast = []
     listcastandrole = []
     for castmember in castData:
@@ -38,7 +38,7 @@ def _get_cast(castData):
     return [listcast, listcastandrole]
 
 
-def _get_first_item(item):
+def get_first_item(item):
     if len(item) > 0:
         item = item[0]
     else:
@@ -47,7 +47,7 @@ def _get_first_item(item):
     return item
 
 
-def _get_joined_items(item):
+def get_joined_items(item):
     if len(item) > 0:
         item = ' / '.join(item)
     else:
@@ -71,7 +71,7 @@ def _set_unique_properties(li_item,item,prop):
 def parse_movies(li, item, searchstring=False, append=False):
 
     if 'cast' in item:
-        cast = _get_cast(item['cast'])
+        cast = get_cast(item['cast'])
 
     genre = item.get('genre', '')
     studio = item.get('studio', '')
@@ -84,11 +84,11 @@ def parse_movies(li, item, searchstring=False, append=False):
                                             'originaltitle': item['originaltitle'],
                                             'sorttitle': item['sorttitle'],
                                             'year': item['year'],
-                                            'genre': _get_joined_items(genre),
-                                            'studio': _get_joined_items(studio),
-                                            'country': _get_joined_items(country),
-                                            'director': _get_joined_items(director),
-                                            'writer': _get_joined_items(writer),
+                                            'genre': get_joined_items(genre),
+                                            'studio': get_joined_items(studio),
+                                            'country': get_joined_items(country),
+                                            'director': get_joined_items(director),
+                                            'writer': get_joined_items(writer),
                                             'plot': item['plot'],
                                             'plotoutline': item['plotoutline'],
                                             'dbid': item['movieid'],
@@ -141,7 +141,7 @@ def parse_movies(li, item, searchstring=False, append=False):
 def parse_tvshows(li, item, searchstring=False, append=False):
 
     if 'cast' in item:
-        cast = _get_cast(item['cast'])
+        cast = get_cast(item['cast'])
 
     genre = item.get('genre', '')
     studio = item.get('studio', '')
@@ -165,8 +165,8 @@ def parse_tvshows(li, item, searchstring=False, append=False):
                                             'tvshowtitle': item['title'],
                                             'sorttitle': item['sorttitle'],
                                             'originaltitle': item['originaltitle'],
-                                            'genre': _get_joined_items(genre),
-                                            'studio': _get_joined_items(studio),
+                                            'genre': get_joined_items(genre),
+                                            'studio': get_joined_items(studio),
                                             'plot': item['plot'],
                                             'rating': str(float(item['rating'])),
                                             'userrating': str(float(item['userrating'])),
@@ -247,7 +247,7 @@ def parse_seasons(li, item, append=False):
 def parse_episodes(li, item, append=False):
 
     if 'cast' in item:
-        cast = _get_cast(item['cast'])
+        cast = get_cast(item['cast'])
 
     director = item.get('director', '')
     writer = item.get('writer', '')
@@ -266,8 +266,8 @@ def parse_episodes(li, item, append=False):
                                             'userrating': str(float(item['userrating'])),
                                             'votes': item['votes'],
                                             'playcount': item['playcount'],
-                                            'director': _get_joined_items(director),
-                                            'writer': _get_joined_items(writer),
+                                            'director': get_joined_items(director),
+                                            'writer': get_joined_items(writer),
                                             'cast': cast[0],
                                             'path': item['file'],
                                             'dateadded': item['dateadded'],
