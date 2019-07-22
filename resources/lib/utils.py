@@ -31,6 +31,27 @@ def restartservice(params):
     execute('NotifyAll(%s, restart)' % ADDON_ID)
 
 
+def settimer(params):
+    actions = remove_quotes(params.get('do'))
+    time = params.get('time','50')
+    delay = params.get('delay')
+    busydialog = get_bool(params.get('busydialog','true'))
+
+    if busydialog:
+        execute('ActivateWindow(busydialog)')
+
+    xbmc.sleep(int(time))
+    execute('Dialog.Close(all,true)')
+
+    while visible('Window.IsVisible(busydialog)'):
+        xbmc.sleep(10)
+
+    for action in actions.split('||'):
+        execute(action)
+        if delay:
+            xbmc.sleep(int(delay))
+
+
 def encode(params):
     string = remove_quotes(params.get('string'))
     prop = params.get('prop','EncodedString')
