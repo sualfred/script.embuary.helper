@@ -809,17 +809,22 @@ class PluginContent(object):
                     if letter == '#' and first_number:
                         li_path = 'plugin://script.embuary.helper/?action=smsjump&letter=0'
                         li_item.setProperty('IsNumber', first_number)
-                        self.li.append((li_path, li_item, False))
+                        append = True
 
                     elif letter in all_letters:
                         li_path = 'plugin://script.embuary.helper/?action=smsjump&letter=%s' % letter
-                        self.li.append((li_path, li_item, False))
+                        append = True
 
-                    else:
+                    elif get_bool(self.params.get('showall','true')):
                         li_path = ''
                         li_item.setProperty('NotAvailable', 'true')
-                        if not self.params.get('showall') == 'false':
-                            self.li.append((li_path, li_item, False))
+                        append = True
+
+                    else:
+                        append = False
+
+                    if append:
+                        self.li.append((li_path, li_item, False))
 
 
     # retry loop
