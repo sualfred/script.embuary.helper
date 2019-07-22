@@ -11,8 +11,7 @@ import json
 import random
 import os
 import locale
-
-from urllib import quote
+import urllib
 
 from resources.lib.helper import *
 from resources.lib.library import *
@@ -55,7 +54,13 @@ def settimer(params):
 def encode(params):
     string = remove_quotes(params.get('string'))
     prop = params.get('prop','EncodedString')
-    winprop(prop,quote(string))
+    winprop(prop,urllib.quote(string))
+
+
+def decode(params):
+    string = remove_quotes(params.get('string'))
+    prop = params.get('prop','DecodedString')
+    winprop(prop,urllib.unquote(string))
 
 
 def createselect(params):
