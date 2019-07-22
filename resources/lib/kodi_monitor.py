@@ -20,7 +20,6 @@ class KodiMonitor(xbmc.Monitor):
 
 
     def onNotification(self, sender, method, data):
-
         if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
             log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
             self.data = json.loads(data)
@@ -184,13 +183,14 @@ class KodiMonitor(xbmc.Monitor):
                 if art in ['clearlogo','tvshow.clearlogo','landscape','tvshow.landscape','poster','tvshow.poster','clearart','tvshow.clearart','banner','tvshow.banner']:
                     winprop('VideoPlayer.Next.Art(%s)' % art, arts[art])
 
-            runtime = nextitem.get('runtime')
-            if runtime:
-                minutes = int(runtime) / 60
-                winprop('VideoPlayer.Next.Duration', str(datetime.timedelta(seconds=int(runtime))))
-                winprop('VideoPlayer.Next.Duration(m)', str(minutes))
+            try:
+                runtime = int(nextitem.get('runtime'))
+                minutes = runtime / 60
+                winprop('VideoPlayer.Next.Duration(m)', str(round(minutes)))
+                winprop('VideoPlayer.Next.Duration', str(datetime.timedelta(seconds=runtime)))
                 winprop('VideoPlayer.Next.Duration(s)', str(runtime))
-            else:
+
+            except Exception:
                 winprop('VideoPlayer.Next.Duration', clear=True)
                 winprop('VideoPlayer.Next.Duration(m)', clear=True)
                 winprop('VideoPlayer.Next.Duration(s)', clear=True)
@@ -211,33 +211,11 @@ class KodiMonitor(xbmc.Monitor):
             winprop('VideoPlayer.Next.Art(thumbnail)', nextitem.get('thumbnail',''))
 
         except Exception:
-            winprop('VideoPlayer.Next.Art(clearlogo)', clear=True)
-            winprop('VideoPlayer.Next.Art(tvshow.clearlogo)', clear=True)
-            winprop('VideoPlayer.Next.Art(landscape)', clear=True)
-            winprop('VideoPlayer.Next.Art(tvshow.landscape)', clear=True)
-            winprop('VideoPlayer.Next.Art(poster)', clear=True)
-            winprop('VideoPlayer.Next.Art(tvshow.poster)', clear=True)
-            winprop('VideoPlayer.Next.Art(clearart)', clear=True)
-            winprop('VideoPlayer.Next.Art(tvshow.clearart)', clear=True)
-            winprop('VideoPlayer.Next.Art(banner)', clear=True)
-            winprop('VideoPlayer.Next.Art(tvshow.banner)', clear=True)
-            winprop('VideoPlayer.Next.Duration', clear=True)
-            winprop('VideoPlayer.Next.Duration(m)', clear=True)
-            winprop('VideoPlayer.Next.Duration(s)', clear=True)
-            winprop('VideoPlayer.Next.Title', clear=True)
-            winprop('VideoPlayer.Next.TVShowTitle', clear=True)
-            winprop('VideoPlayer.Next.Genre', clear=True)
-            winprop('VideoPlayer.Next.Plot', clear=True)
-            winprop('VideoPlayer.Next.Tagline', clear=True)
-            winprop('VideoPlayer.Next.Season', clear=True)
-            winprop('VideoPlayer.Next.Episode', clear=True)
-            winprop('VideoPlayer.Next.Year', clear=True)
-            winprop('VideoPlayer.Next.Rating', clear=True)
-            winprop('VideoPlayer.Next.UserRating', clear=True)
-            winprop('VideoPlayer.Next.DBID', clear=True)
-            winprop('VideoPlayer.Next.DBType', clear=True)
-            winprop('VideoPlayer.Next.Art(fanart)', clear=True)
-            winprop('VideoPlayer.Next.Art(thumbnail)', clear=True)
+            for art in ['fanart','thumbnail','clearlogo','tvshow.clearlogo','landscape','tvshow.landscape','poster','tvshow.poster','clearart','tvshow.clearart','banner','tvshow.banner']:
+                winprop('VideoPlayer.Next.Art(%s)' % art, clear=True)
+
+            for info in ['Duration','Duration(m)','Duration(s)','Title','TVShowTitle','Genre','Plot','Tagline','Season','Episode','Year','Rating','UserRating','DBID','DBType']:
+                winprop('VideoPlayer.Next.%s' % info, clear=True)
 
 
     def get_songartworks(self):
