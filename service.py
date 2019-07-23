@@ -9,7 +9,7 @@ import random
 
 from resources.lib.utils import split
 from resources.lib.helper import *
-from resources.lib.kodi_monitor import KodiMonitor
+from resources.lib.player_monitor import PlayerMonitor
 
 # Disable image function for TVOS if ImportError
 try:
@@ -20,7 +20,7 @@ except ImportError:
 
 ########################
 
-MONITOR = KodiMonitor()
+MONITOR = PlayerMonitor()
 KODIVERSION = get_kodiversion()
 
 ########################
@@ -54,6 +54,9 @@ class Main(xbmc.Monitor):
     def onNotification(self, sender, method, data):
         if ADDON_ID in sender and 'restart' in method:
             self.restart = True
+
+        if method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
+            reload_widgets()
 
 
     def onSettingsChanged(self):
@@ -156,7 +159,7 @@ class Main(xbmc.Monitor):
                 self.refresh_audiotracks = 0
 
             elif PLAYER.isPlayingVideo():
-                self.refresh_audiotracks += 1
+                self.refresh_audiotracks += service_interval
 
             else:
                 self.refresh_audiotracks += 10
