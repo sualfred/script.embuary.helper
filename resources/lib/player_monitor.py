@@ -231,8 +231,7 @@ class PlayerMonitor(xbmc.Monitor):
             winprop('VideoPlayer.Next.Art(fanart)', nextitem.get('fanart',''))
             winprop('VideoPlayer.Next.Art(thumbnail)', nextitem.get('thumbnail',''))
 
-        except Exception as error:
-            log(error)
+        except Exception:
             for art in ['fanart','thumbnail','clearlogo','tvshow.clearlogo','landscape','tvshow.landscape','poster','tvshow.poster','clearart','tvshow.clearart','banner','tvshow.banner']:
                 winprop('VideoPlayer.Next.Art(%s)' % art, clear=True)
 
