@@ -224,10 +224,10 @@ class PlayerMonitor(xbmc.Monitor):
             winprop('VideoPlayer.Next.DBID', str(nextitem.get('id','')))
             winprop('VideoPlayer.Next.DBType', nextitem.get('type',''))
             winprop('VideoPlayer.Next.Art(fanart)', nextitem.get('fanart',''))
-            winprop('VideoPlayer.Next.Art(thumbnail)', nextitem.get('thumbnail',''))
+            winprop('VideoPlayer.Next.Art(thumb)', nextitem.get('thumbnail',''))
 
         except Exception:
-            for art in ['fanart','thumbnail','clearlogo','tvshow.clearlogo','landscape','tvshow.landscape','poster','tvshow.poster','clearart','tvshow.clearart','banner','tvshow.banner']:
+            for art in ['fanart','thumb','clearlogo','tvshow.clearlogo','landscape','tvshow.landscape','poster','tvshow.poster','clearart','tvshow.clearart','banner','tvshow.banner']:
                 winprop('VideoPlayer.Next.Art(%s)' % art, clear=True)
 
             for info in ['Duration','Duration(m)','Duration(s)','Title','TVShowTitle','Genre','Plot','Tagline','Season','Episode','Year','Rating','UserRating','DBID','DBType']:
