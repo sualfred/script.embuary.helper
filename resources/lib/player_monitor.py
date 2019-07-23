@@ -13,52 +13,70 @@ from resources.lib.library import get_joined_items
 
 ########################
 
-class KodiMonitor(xbmc.Monitor):
+class PlayerMonitor(xbmc.Monitor):
 
     def __init__(self):
         self.fullscreen_lock = False
+        self.nextitem_lock = False
+        self.pvr_playback = False
 
 
     def onNotification(self, sender, method, data):
-        if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
+        if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'Playlist.OnRemove', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
             log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
             self.data = json.loads(data)
 
+        ''' Clear music or video playlist based on player content.
+        '''
+        if method == 'Playlist.OnAdd':
+            self.clear_playlists()
+
+        ''' Get stuff when playback starts.
+        '''
         if method == 'Player.OnPlay':
             xbmc.stopSFX()
-            pvr_playback = visible('String.StartsWith(Player.Filenameandpath,pvr://)')
+            self.nextitem_lock = False
+            self.pvr_playback = visible('String.StartsWith(Player.Filenameandpath,pvr://)')
 
             if not self.fullscreen_lock:
                 self.do_fullscreen()
 
-            if pvr_playback:
+            if self.pvr_playback:
                 self.get_channellogo()
 
-            if PLAYER.isPlayingVideo() and not pvr_playback:
+            if PLAYER.isPlayingVideo() and not self.pvr_playback:
                 self.get_videoinfo()
                 self.get_nextitem(clear=True)
                 self.get_nextitem()
 
-            if PLAYER.isPlayingAudio() and not pvr_playback and visible('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
+            if PLAYER.isPlayingAudio() and not self.pvr_playback and visible('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
                 self.get_songartworks()
 
-        if method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
-            reload_widgets()
+        ''' Playlist changed. Fetch nextitem again.
+        '''
+        if method in ['Playlist.OnAdd', 'Playlist.OnRemove'] and PLAYER.isPlayingVideo() and not self.pvr_playback:
+            if not self.nextitem_lock or method == 'Playlist.OnRemove':
+                self.get_nextitem(clear=True)
+                self.get_nextitem()
+                self.nextitem_lock = True
 
+        ''' Check if multiple audio tracks are available.
+        '''
         if method == 'Player.OnAVChange':
             self.get_audiotracks()
 
+        ''' Playback stopped. Clean up.
+        '''
         if method == 'Player.OnStop':
             xbmc.sleep(3000)
             if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
                 self.fullscreen_lock = False
+                self.nextitem_lock = False
+                self.pvr_playback = False
                 self.get_nextitem(clear=True)
                 self.get_channellogo(clear=True)
                 self.get_audiotracks(clear=True)
                 self.get_videoinfo(clear=True)
-
-        if method == 'Playlist.OnAdd':
-            self.clear_playlists()
 
 
     def clear_playlists(self):
@@ -213,7 +231,8 @@ class KodiMonitor(xbmc.Monitor):
             winprop('VideoPlayer.Next.Art(fanart)', nextitem.get('fanart',''))
             winprop('VideoPlayer.Next.Art(thumbnail)', nextitem.get('thumbnail',''))
 
-        except Exception:
+        except Exception as error:
+            log(error)
             for art in ['fanart','thumbnail','clearlogo','tvshow.clearlogo','landscape','tvshow.landscape','poster','tvshow.poster','clearart','tvshow.clearart','banner','tvshow.banner']:
                 winprop('VideoPlayer.Next.Art(%s)' % art, clear=True)
 

@@ -10,11 +10,11 @@ import random
 from resources.lib.utils import split
 from resources.lib.helper import *
 from resources.lib.image import *
-from resources.lib.kodi_monitor import KodiMonitor
+from resources.lib.player_monitor import PlayerMonitor
 
 ########################
 
-MONITOR = KodiMonitor()
+MONITOR = PlayerMonitor()
 KODIVERSION = get_kodiversion()
 
 ########################
@@ -47,6 +47,9 @@ class Main(xbmc.Monitor):
     def onNotification(self, sender, method, data):
         if ADDON_ID in sender and 'restart' in method:
             self.restart = True
+
+        if method == 'VideoLibrary.OnUpdate' or method == 'AudioLibrary.OnUpdate':
+            reload_widgets()
 
 
     def onSettingsChanged(self):
