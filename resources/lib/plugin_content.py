@@ -4,7 +4,6 @@
 ########################
 
 import random
-import json
 import xbmcvfs
 
 from resources.lib.helper import *
@@ -82,15 +81,12 @@ class PluginContent(object):
     # by custom args
     def getbyargs(self):
         limit = self.limit or None
-        filter_args = self.params.get('filter_args') or None
-        sort_args = self.params.get('sort_args') or None
-
-        if sort_args:
-            sort_args = json.loads(sort_args)
+        filter_args = remove_quotes(self.params.get('filter_args')) or None
+        sort_args = remove_quotes(self.params.get('sort_args')) or None
 
         filters = []
         if filter_args is not None:
-            filters.append(json.loads(filter_args))
+            filters.append(eval(filter_args))
         if self.tag:
             filters.append(self.tag_filter)
         if filters:
@@ -98,12 +94,15 @@ class PluginContent(object):
         else:
             filter = None
 
+        if sort_args is not None:
+            sort_args = eval(sort_args)
+
         try:
             json_query = json_call(self.method_item,
-                                properties=self.properties,
-                                sort=sort_args, limit=limit,
-                                query_filter=filter
-                                )
+                                    properties=self.properties,
+                                    sort=sort_args, limit=limit,
+                                    query_filter=filter
+                                    )
 
             result = json_query['result'][self.key_items]
 
