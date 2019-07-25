@@ -98,3 +98,23 @@ msgstr "Kürzlich hinzugefügte ungesehene Episoden und Serien"
 msgctxt "#32016"
 msgid "Enable service module"
 msgstr "Aktiviere Servicemodul"
+
+#: /resources/settings.xml
+msgctxt "#32017"
+msgid "Service interval time"
+msgstr "Service Zeitintervall"
+
+#: /resources/settings.xml
+msgctxt "#32018"
+msgid "Default blurring radius"
+msgstr "Standard Radius des Weichzeichners"
+
+#: /resources/settings.xml
+msgctxt "#32020"
+msgid "Misc."
+msgstr "Sonstiges"
+
+#: /resources/settings.xml
+msgctxt "#32021"
+msgid "Background change interval"
+msgstr "Hintergrund-Wechselintervall"
