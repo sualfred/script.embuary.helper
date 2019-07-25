@@ -31,11 +31,13 @@ class Main(xbmc.Monitor):
     def __init__(self):
         self.service_enabled = get_bool(ADDON.getSetting('service'))
         self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or ADDON.getSetting('service_interval')
+        self.service_interval = float(self.service_interval)
         self.restart = False
 
         self.widget_refresh = 0
         self.get_backgrounds = 200
-        self.set_background = 10
+        self.set_background = xbmc.getInfoLabel('Skin.String(BackgroundInterval)') or ADDON.getSetting('background_interval')
+        self.set_background = int(self.set_background)
         self.refresh_audiotracks = 10
 
         self.blur_background = visible('Skin.HasSetting(BlurEnabled)')
@@ -86,11 +88,11 @@ class Main(xbmc.Monitor):
 
     def start(self):
         log('Service: Started', force=True)
-        service_interval = float(self.service_interval)
 
         while not MONITOR.abortRequested() and not self.restart:
 
-            # Focus monitor to split merged info labels by the default / seperator to properties
+            '''Focus monitor to split merged info labels by the default / seperator to properties
+            '''
             if self.focus_monitor:
                 split({'value': xbmc.getInfoLabel('ListItem.Genre'), 'property': 'ListItem.Genre', 'separator': ' / '})
                 split({'value': xbmc.getInfoLabel('ListItem.Country'), 'property': 'ListItem.Country', 'separator': ' / '})
@@ -98,43 +100,60 @@ class Main(xbmc.Monitor):
                 split({'value': xbmc.getInfoLabel('ListItem.Director'), 'property': 'ListItem.Director', 'separator': ' / '})
                 split({'value': xbmc.getInfoLabel('ListItem.Cast'), 'property': 'ListItem.Cast'})
 
-            # Grab fanarts
+            ''' Grab fanarts
+            '''
             if self.get_backgrounds >= 200:
                 log('Start new fanart grabber process')
-                fanarts = grabfanart()
+                movie_fanarts, tvshow_fanarts, artists_fanarts = self.grabfanart()
                 self.get_backgrounds = 0
 
             else:
-                self.get_backgrounds += service_interval
+                self.get_backgrounds += self.service_interval
 
-            # Set fanart property
-            if self.set_background >=10 and fanarts:
-                winprop('EmbuaryBackground', random.choice(fanarts))
+            ''' Set background properties
+            '''
+            if self.set_background >= 10:
+
+                if movie_fanarts or tvshow_fanarts or artists_fanarts:
+                    winprop('EmbuaryBackground', random.choice(movie_fanarts + tvshow_fanarts + artists_fanarts))
+                if movie_fanarts or tvshow_fanarts:
+                    winprop('EmbuaryBackgroundVideos', random.choice(movie_fanarts + tvshow_fanarts))
+                if movie_fanarts:
+                    winprop('EmbuaryBackgroundMovies', random.choice(movie_fanarts))
+                if tvshow_fanarts:
+                    winprop('EmbuaryBackgroundTVShows', random.choice(tvshow_fanarts))
+                if artists_fanarts:
+                    winprop('EmbuaryBackgroundMusic', random.choice(artists_fanarts))
+
                 self.set_background = 0
 
             else:
-                self.set_background += service_interval
+                self.set_background += self.service_interval
 
-            # Blur backgrounds
+            ''' Blur backgrounds
+            '''
             if self.blur_background and PIL_supported:
                 image_filter(radius=self.blur_radius)
 
-            # Refresh widgets
+            ''' Refresh widgets
+            '''
             if self.widget_refresh >= 600:
                 reload_widgets(instant=True)
                 self.widget_refresh = 0
 
             else:
-                self.widget_refresh += service_interval
+                self.widget_refresh += self.service_interval
 
-            # Workaround for login screen bug
+            ''' Workaround for login screen bug
+            '''
             if not self.login_reload:
                 if visible('System.HasLoginScreen + Skin.HasSetting(ReloadOnLogin)'):
                     log('System has login screen enabled. Reload the skin to load all strings correctly.')
                     execute('ReloadSkin()')
                     self.login_reload = True
 
-            # Master lock reload logic for widgets
+            ''' Master lock reload logic for widgets
+            '''
             if visible('System.HasLocks'):
                 if self.master_lock is None:
                     self.master_lock = visible('System.IsMaster')
@@ -159,14 +178,68 @@ class Main(xbmc.Monitor):
                 self.refresh_audiotracks = 0
 
             elif PLAYER.isPlayingVideo():
-                self.refresh_audiotracks += service_interval
+                self.refresh_audiotracks += self.service_interval
 
             else:
                 self.refresh_audiotracks += 10
 
-            MONITOR.waitForAbort(service_interval)
+            MONITOR.waitForAbort(self.service_interval)
 
         self.stop()
+
+
+    def grabfanart(self):
+        movie_fanarts = list()
+        tvshow_fanarts = list()
+        artists_fanarts = list()
+
+        ''' Movie fanarts
+        '''
+        try:
+            movie_query = json_call('VideoLibrary.GetMovies',
+                                properties=['art'],
+                                sort={'method': 'random'}, limit=40
+                                )
+
+            for art in movie_query['result']['movies']:
+                movie_fanart = art['art'].get('fanart')
+                if movie_fanart:
+                    movie_fanarts.append(movie_fanart)
+
+        except Exception:
+            pass
+
+        ''' TV show fanarts
+        '''
+        try:
+            tvshow_query = json_call('VideoLibrary.GetTVShows',
+                                properties=['art'],
+                                sort={'method': 'random'}, limit=40
+                                )
+            for art in tvshow_query['result']['tvshows']:
+                tvshow_fanart = art['art'].get('fanart')
+                if tvshow_fanart:
+                    tvshow_fanarts.append(tvshow_fanart)
+
+        except Exception:
+            pass
+
+        ''' Music fanarts
+        '''
+        try:
+            artist_query = json_call('AudioLibrary.GetArtists',
+                                properties=['fanart'],
+                                sort={'method': 'random'}, limit=40
+                                )
+            for art in artist_query['result']['artists']:
+                artist_fanart = art.get('fanart')
+                if artist_fanart:
+                    artists_fanarts.append(artist_fanart)
+
+        except Exception:
+            pass
+
+        return movie_fanarts, tvshow_fanarts, artists_fanarts
 
 
 if __name__ == '__main__':

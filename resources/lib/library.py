@@ -56,6 +56,14 @@ def get_joined_items(item):
     return item
 
 
+def get_unwatched(episode,watchedepisodes):
+    if episode > watchedepisodes:
+        unwatchedepisodes = episode - watchedepisodes
+        return unwatchedepisodes
+    else:
+        return 0
+
+
 def _set_unique_properties(li_item,item,prop):
     try:
         i = 0

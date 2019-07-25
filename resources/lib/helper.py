@@ -93,36 +93,6 @@ def gotopath(path,target='videos'):
     execute('Container.Update(%s)' % path) if visible('Window.IsMedia') else execute('ActivateWindow(%s,%s,return)' % (target,path))
 
 
-def grabfanart():
-    fanarts = list()
-
-    movie_query = json_call('VideoLibrary.GetMovies',
-                            properties=['art'],
-                            sort={'method': 'random'}, limit=20
-                            )
-
-    try:
-        for art in movie_query['result']['movies']:
-                movie_fanart = art['art'].get('fanart', '')
-                fanarts.append(movie_fanart)
-    except Exception:
-        log('Backgrounds: No movie artworks found.')
-
-    tvshow_query = json_call('VideoLibrary.GetTVShows',
-                            properties=['art'],
-                            sort={'method': 'random'}, limit=20
-                            )
-
-    try:
-        for art in tvshow_query['result']['tvshows']:
-                tvshow_fanart = art['art'].get('fanart', '')
-                fanarts.append(tvshow_fanart)
-    except Exception:
-        log('Backgrounds: No TV show artworks found.')
-
-    return fanarts
-
-
 def winprop(key, value=None, clear=False, window_id=10000):
     window = xbmcgui.Window(window_id)
 
@@ -172,14 +142,6 @@ def get_channeldetails(channel_name):
         return
 
     return channel_details
-
-
-def get_unwatched(episode,watchedepisodes):
-    if episode > watchedepisodes:
-        unwatchedepisodes = episode - watchedepisodes
-        return unwatchedepisodes
-    else:
-        return 0
 
 
 def get_bool(value,string='true'):
