@@ -27,7 +27,8 @@ movie_properties = [
                     'writer',
                     'cast',
                     'dateadded',
-                    'imdbnumber']
+                    'imdbnumber'
+                    ]
 
 episode_properties = [
                     'title',
@@ -51,7 +52,8 @@ episode_properties = [
                     'writer',
                     'cast',
                     'dateadded',
-                    'lastplayed']
+                    'lastplayed'
+                    ]
 
 season_properties = [
                     'season',
@@ -61,7 +63,8 @@ season_properties = [
                     'watchedepisodes',
                     'showtitle',
                     'playcount',
-                    'tvshowid']
+                    'tvshowid'
+                    ]
 
 tvshow_properties = [
                     'title',
@@ -85,7 +88,8 @@ tvshow_properties = [
                     'art',
                     'dateadded',
                     'watchedepisodes',
-                    'imdbnumber']
+                    'imdbnumber'
+                    ]
 
 playlist_properties = [
                     'title',
@@ -170,4 +174,26 @@ playlist_properties = [
                     'displayconductor',
                     'displayorchestra',
                     'displaylyricist',
-                    'userrating']
+                    'userrating'
+                    ]
+
+artist_properties = [
+                    "instrument",
+                    "style",
+                    "mood",
+                    "born",
+                    "formed",
+                    "description",
+                    "genre",
+                    "died",
+                    "disbanded",
+                    "yearsactive",
+                    "musicbrainzartistid",
+                    "fanart",
+                    "thumbnail",
+                    "compilationartist",
+                    "dateadded",
+                    "roles",
+                    "songgenres",
+                    "isalbumartist"
+                    ]

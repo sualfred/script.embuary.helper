@@ -61,7 +61,8 @@ class PluginContent(object):
         self.title_filter = {'operator': 'is', 'field': 'title', 'value': self.dbtitle}
 
 
-    # by dbid
+    ''' by dbid to get all available listitems
+    '''
     def getbydbid(self):
         try:
             json_query = json_call(self.method_details,
@@ -78,7 +79,8 @@ class PluginContent(object):
         append_items(self.li,[result],type=self.dbtype)
 
 
-    # by custom args
+    ''' by custom args to parse own json
+    '''
     def getbyargs(self):
         limit = self.limit or None
         filter_args = remove_quotes(self.params.get('filter_args')) or None
@@ -113,7 +115,8 @@ class PluginContent(object):
         append_items(self.li,result,type=self.dbtype)
 
 
-    # resource helper
+    ''' resource helper to create a list will all existing and matching resource images
+    '''
     def getresourceimages(self):
         resource_addon = self.params.get('addon')
         resource_dir = xbmc.translatePath('resource://%s/' % resource_addon)
@@ -136,7 +139,8 @@ class PluginContent(object):
                     break
 
 
-    # season widgets
+    ''' season widgets to display library content that fit a special seasson or date
+    '''
     def getseasonal(self):
         xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays', 'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann', 'heilige nacht',
                 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig', 'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce',
@@ -230,7 +234,8 @@ class PluginContent(object):
         random.shuffle(self.li)
 
 
-    # get seasons
+    ''' get seasons of a show
+    '''
     def getseasons(self):
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
@@ -264,7 +269,8 @@ class PluginContent(object):
             append_items(self.li,season_query,type='season')
 
 
-    # get more episodes from the same season
+    ''' get more episodes from the same season
+    '''
     def getseasonepisodes(self):
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
@@ -296,7 +302,8 @@ class PluginContent(object):
             append_items(self.li,episode_query,type='episode')
 
 
-    # get nextup
+    ''' get nextup of inprogress TV shows
+    '''
     def getnextup(self):
         filters = [self.inprogress_filter]
         if self.tag:
@@ -332,7 +339,8 @@ class PluginContent(object):
                     append_items(self.li,episode_details,type='episode')
 
 
-    # get recently added episodes of unwatched shows
+    ''' get recently added episodes of unwatched shows
+    '''
     def getnewshows(self):
         show_all = get_bool(self.params.get('showall'))
 
@@ -415,7 +423,8 @@ class PluginContent(object):
                 pass
 
 
-    # media by genre
+    ''' get custom media by genre
+    '''
     def getbygenre(self):
         genre = remove_quotes(self.params.get('genre'))
 
@@ -487,7 +496,8 @@ class PluginContent(object):
             random.shuffle(self.li)
 
 
-    # inprogress media
+    ''' get inprogress media
+    '''
     def getinprogress(self):
         filters = [self.inprogress_filter]
         if self.tag:
@@ -521,7 +531,8 @@ class PluginContent(object):
                 append_items(self.li,json_query,type='episode')
 
 
-    # genres
+    ''' genres listing with 4 posters of each available genre content
+    '''
     def getgenre(self):
         json_query = json_call('VideoLibrary.GetGenres',
                             sort={'method': 'label'},
@@ -561,7 +572,8 @@ class PluginContent(object):
         append_items(self.li,json_query,type='genre')
 
 
-    # get movies by director
+    ''' get movies by director
+    '''
     def getdirectedby(self):
         if self.dbid:
             json_query = json_call('VideoLibrary.GetMovieDetails',
@@ -597,7 +609,8 @@ class PluginContent(object):
         append_items(self.li,json_query,type='movie',searchstring=joineddirectors)
 
 
-    # get items by actor
+    ''' get items by actor
+    '''
     def getitemsbyactor(self):
         if self.dbid:
             json_query = json_call(self.method_details,
@@ -660,7 +673,8 @@ class PluginContent(object):
         random.shuffle(self.li)
 
 
-    # because you watched xyz
+    ''' because you watched xyz
+    '''
     def getsimilar(self):
         ''' Based on show or movie of the database
         '''
@@ -743,7 +757,8 @@ class PluginContent(object):
             append_items(self.li,json_query,type='tvshow',searchstring=title)
 
 
-    # cast
+    ''' get cast of item
+    '''
     def getcast(self):
         if self.dbtitle:
             json_query = json_call(self.method_item,
@@ -773,7 +788,8 @@ class PluginContent(object):
         append_items(self.li,cast,type='cast')
 
 
-    # jump to letter
+    ''' jump to letter for smsjump navigation
+    '''
     def jumptoletter(self):
         if xbmc.getInfoLabel('Container.NumItems'):
 
@@ -826,7 +842,8 @@ class PluginContent(object):
                         self.li.append((li_path, li_item, False))
 
 
-    # retry loop
+    ''' retry loop for random based widgets if previous run has not returned any single item
+    '''
     def _retry(self,type):
         log('Retry to get content (%s)' % str(self.retry_count))
 

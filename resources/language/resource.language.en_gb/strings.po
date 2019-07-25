@@ -106,3 +106,8 @@ msgstr ""
 msgctxt "#32020"
 msgid "Misc."
 msgstr ""
+
+#: /resources/settings.xml
+msgctxt "#32021"
+msgid "Background change interval."
+msgstr ""
