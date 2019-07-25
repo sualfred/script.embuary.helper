@@ -113,3 +113,8 @@ msgstr "Standard Radius des Weichzeichners"
 msgctxt "#32020"
 msgid "Misc."
 msgstr "Sonstiges"
+
+#: /resources/settings.xml
+msgctxt "#32021"
+msgid "Background change interval"
+msgstr "Hintergrund-Wechselintervall"
