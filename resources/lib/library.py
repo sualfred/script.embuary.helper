@@ -76,6 +76,26 @@ def _set_unique_properties(li_item,item,prop):
     return li_item
 
 
+def _set_all_ratings(li_item,item):
+    for key in item:
+        try:
+            rating = item[key]['rating']
+            votes = item[key]['votes']
+
+            if key.startswith('rotten'):
+                rating = int(rating)
+            else:
+                rating = round(rating,1)
+
+            li_item.setProperty('Rating(%s)' % key, str(rating))
+            li_item.setProperty('Votes(%s)' % key, str(votes))
+
+        except Exception:
+            pass
+
+    return li_item
+
+
 def parse_movies(li, item, searchstring=False, append=False):
 
     if 'cast' in item:
@@ -123,6 +143,8 @@ def parse_movies(li, item, searchstring=False, append=False):
     _set_unique_properties(li_item,director,'director')
     _set_unique_properties(li_item,writer,'writer')
     _set_unique_properties(li_item,cast[0],'cast')
+
+    _set_all_ratings(li_item,item['ratings'])
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
@@ -201,6 +223,8 @@ def parse_tvshows(li, item, searchstring=False, append=False):
     _set_unique_properties(li_item,genre,'genre')
     _set_unique_properties(li_item,studio,'studio')
     _set_unique_properties(li_item,cast[0],'cast')
+
+    _set_all_ratings(li_item,item['ratings'])
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
@@ -287,6 +311,8 @@ def parse_episodes(li, item, append=False):
     _set_unique_properties(li_item,director,'director')
     _set_unique_properties(li_item,writer,'writer')
     _set_unique_properties(li_item,cast[0],'cast')
+
+    _set_all_ratings(li_item,item['ratings'])
 
     li_item.setArt({'icon': 'DefaultTVShows.png', 'fanart': item['art'].get('tvshow.fanart', ''), 'clearlogo': item['art'].get('tvshow.clearlogo', ''), 'landscape': item['art'].get('tvshow.landscape', ''), 'clearart': item['art'].get('tvshow.clearart', '')})
     li_item.setArt(item['art'])
