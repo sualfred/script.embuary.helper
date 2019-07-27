@@ -76,19 +76,22 @@ def _set_unique_properties(li_item,item,prop):
     return li_item
 
 
-def _set_all_ratings(li_item,item):
+def _set_ratings(li_item,item,properties=False):
     for key in item:
         try:
             rating = item[key]['rating']
-            votes = item[key]['votes']
+            votes = item[key]['votes'] or 0
+            default = True if key == 'default' or len(item) == 1 else False
 
-            if key.startswith('rotten'):
-                rating = int(rating)
-            else:
-                rating = round(rating,1)
+            ''' Kodi only supports floats up to 10.0. But Rotten Tomatoes is using 0-100.
+                To get the values correctly set it's required to transform the value.
+            '''
+            if rating > 100:
+                raise Exception
+            elif rating > 10:
+                rating = rating / 10
 
-            li_item.setProperty('Rating(%s)' % key, str(rating))
-            li_item.setProperty('Votes(%s)' % key, str(votes))
+            li_item.setRating(key, float(rating), votes, default)
 
         except Exception:
             pass
@@ -134,8 +137,8 @@ def parse_movies(li, item, searchstring=False, append=False):
                                             'dateadded': item['dateadded'],
                                             'path': item['file'],
                                             'playcount': item['playcount']})
-    li_item.setProperty('resumetime', str(item['resume']['position']))
-    li_item.setProperty('totaltime', str(item['resume']['total']))
+
+    _set_ratings(li_item,item['ratings'])
 
     _set_unique_properties(li_item,genre,'genre')
     _set_unique_properties(li_item,studio,'studio')
@@ -144,7 +147,8 @@ def parse_movies(li, item, searchstring=False, append=False):
     _set_unique_properties(li_item,writer,'writer')
     _set_unique_properties(li_item,cast[0],'cast')
 
-    _set_all_ratings(li_item,item['ratings'])
+    li_item.setProperty('resumetime', str(item['resume']['position']))
+    li_item.setProperty('totaltime', str(item['resume']['total']))
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
@@ -215,16 +219,17 @@ def parse_tvshows(li, item, searchstring=False, append=False):
                                             'duration': item['runtime'],
                                             'dateadded': item['dateadded'],
                                             'playcount': item['playcount']})
-    li_item.setProperty('Totalseasons', str(season))
-    li_item.setProperty('Totalepisodes', str(episode))
-    li_item.setProperty('Watchedepisodes', str(watchedepisodes))
-    li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
+
+    _set_ratings(li_item,item['ratings'])
 
     _set_unique_properties(li_item,genre,'genre')
     _set_unique_properties(li_item,studio,'studio')
     _set_unique_properties(li_item,cast[0],'cast')
 
-    _set_all_ratings(li_item,item['ratings'])
+    li_item.setProperty('Totalseasons', str(season))
+    li_item.setProperty('Totalepisodes', str(episode))
+    li_item.setProperty('Watchedepisodes', str(watchedepisodes))
+    li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
@@ -305,14 +310,15 @@ def parse_episodes(li, item, append=False):
                                             'dateadded': item['dateadded'],
                                             'castandrole': cast[1],
                                             'mediatype': 'episode'})
-    li_item.setProperty('resumetime', str(item['resume']['position']))
-    li_item.setProperty('totaltime', str(item['resume']['total']))
+
+    _set_ratings(li_item,item['ratings'])
 
     _set_unique_properties(li_item,director,'director')
     _set_unique_properties(li_item,writer,'writer')
     _set_unique_properties(li_item,cast[0],'cast')
 
-    _set_all_ratings(li_item,item['ratings'])
+    li_item.setProperty('resumetime', str(item['resume']['position']))
+    li_item.setProperty('totaltime', str(item['resume']['total']))
 
     li_item.setArt({'icon': 'DefaultTVShows.png', 'fanart': item['art'].get('tvshow.fanart', ''), 'clearlogo': item['art'].get('tvshow.clearlogo', ''), 'landscape': item['art'].get('tvshow.landscape', ''), 'clearart': item['art'].get('tvshow.clearart', '')})
     li_item.setArt(item['art'])
