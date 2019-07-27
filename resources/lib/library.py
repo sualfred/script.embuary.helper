@@ -76,7 +76,7 @@ def _set_unique_properties(li_item,item,prop):
     return li_item
 
 
-def _set_ratings(li_item,item,properties=False):
+def _set_ratings(li_item,item):
     for key in item:
         try:
             rating = item[key]['rating']
