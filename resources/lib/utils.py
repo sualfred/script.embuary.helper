@@ -3,6 +3,7 @@
 
 ########################
 
+from __future__ import division
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -28,6 +29,13 @@ except ImportError:
 
 def restartservice(params):
     execute('NotifyAll(%s, restart)' % ADDON_ID)
+
+
+def calc(params):
+    prop = remove_quotes(params.get('prop','CalcResult'))
+    formula = remove_quotes(params.get('do'))
+    result = eval(str(formula))
+    winprop(prop, str(result))
 
 
 def settimer(params):
