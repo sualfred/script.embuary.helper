@@ -225,6 +225,9 @@ def playfolder(params):
     dbid = int(params.get('dbid'))
     shuffled = get_bool(params.get('shuffle'))
 
+    if shuffled:
+        winprop('script.shuffle.bool', True)
+
     if params.get('type') == 'season':
         json_query = json_call('VideoLibrary.GetSeasonDetails',
                                 properties=['title','season','tvshowid'],
@@ -275,6 +278,9 @@ def playall(params):
 
     playlistid = 0 if params.get('type') == 'music' else 1
     shuffled = get_bool(method,'shuffle')
+
+    if shuffled:
+        winprop('script.shuffle.bool', True)
 
     if method == 'fromhere':
         method = 'Container(%s).ListItemNoWrap' % container
