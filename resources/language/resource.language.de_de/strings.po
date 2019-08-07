@@ -26,7 +26,7 @@ msgctxt "#32001"
 msgid ""
 "This is a tool to provide features to a skin and requires skin integration."
 msgstr ""
-"Dieses Tool stellt Features für Skins bereit und eine benötigt Skin-"
+"Dieses Tool stellt Features für Skins bereit und benötigt eine Skin-"
 "Integration."
 
 msgctxt "#32002"
