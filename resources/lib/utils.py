@@ -488,7 +488,7 @@ def setinfo(params):
 
 def split(params):
     value =  remove_quotes(params.get('value'))
-    prop = params.get('property')
+    prop = params.get('prop')
     separator = remove_quotes(params.get('separator'))
 
     if value:
