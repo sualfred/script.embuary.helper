@@ -137,6 +137,7 @@ def togglekodisetting(params):
 
 def getkodisetting(params):
     setting = params.get('setting')
+    strip = params.get('strip')
 
     json_query = json_call('Settings.GetSettingValue',
                 params={'setting': '%s' % setting}
@@ -146,14 +147,17 @@ def getkodisetting(params):
         result = json_query['result']
         result = result.get('value')
 
-        if params.get('strip') == 'timeformat':
-
+        if strip == 'timeformat':
             strip = ['(12h)', ('(24h)')]
             for value in strip:
                 if value in result:
                     result = result[:-6]
 
-        winprop(setting, result)
+        result = str(result)
+        if result.startswith('[') and result.endswith(']'):
+           result = result[1:-1]
+
+        winprop(setting,result)
 
     except Exception:
         winprop(setting, clear=True)
