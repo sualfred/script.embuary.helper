@@ -14,7 +14,6 @@ from resources.lib.player_monitor import PlayerMonitor
 
 ########################
 
-MONITOR = PlayerMonitor()
 KODIVERSION = get_kodiversion()
 
 ########################
@@ -23,6 +22,8 @@ KODIVERSION = get_kodiversion()
 class Main(xbmc.Monitor):
 
     def __init__(self):
+        self.monitor = PlayerMonitor()
+
         self.service_enabled = ADDON.getSettingBool('service')
         self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or ADDON.getSetting('service_interval')
         self.service_interval = float(self.service_interval)
@@ -61,6 +62,7 @@ class Main(xbmc.Monitor):
 
     def stop(self):
         if self.service_enabled:
+            del self.monitor
             log('Service: Stopped', force=True)
 
         if self.restart:
@@ -73,8 +75,8 @@ class Main(xbmc.Monitor):
     def keep_alive(self):
         log('Service: Disabled')
 
-        while not MONITOR.abortRequested() and not self.restart:
-            MONITOR.waitForAbort(5)
+        while not self.monitor.abortRequested() and not self.restart:
+            self.monitor.waitForAbort(5)
 
         self.stop()
 
@@ -82,7 +84,7 @@ class Main(xbmc.Monitor):
     def start(self):
         log('Service: Started', force=True)
 
-        while not MONITOR.abortRequested() and not self.restart:
+        while not self.monitor.abortRequested() and not self.restart:
 
             '''Focus monitor to split merged info labels by the default / seperator to properties
             '''
@@ -165,7 +167,7 @@ class Main(xbmc.Monitor):
             elif self.master_lock is not None:
                 self.master_lock = None
 
-            MONITOR.waitForAbort(self.service_interval)
+            self.monitor.waitForAbort(self.service_interval)
 
         self.stop()
 
