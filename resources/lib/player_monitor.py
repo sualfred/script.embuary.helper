@@ -77,7 +77,7 @@ class PlayerMonitor(xbmc.Monitor):
                     set shuffle to false for the next video playback if it was enabled by the script before.
                 '''
                 if winprop('script.shuffle.bool'):
-                    winrpop('script.shuffle', clear=True)
+                    winprop('script.shuffle', clear=True)
 
                     json_call('Player.SetShuffle',
                                 params={'playerid': 1, 'shuffle': False}
