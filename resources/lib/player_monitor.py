@@ -16,10 +16,10 @@ from resources.lib.library import get_joined_items
 class PlayerMonitor(xbmc.Monitor):
 
     def __init__(self):
+        log('Service: Player monitor started', force=True)
         self.fullscreen_lock = False
         self.nextitem_lock = False
         self.pvr_playback = False
-
 
     def onNotification(self, sender, method, data):
         if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'Playlist.OnRemove', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:

@@ -28,12 +28,11 @@ KODIVERSION = get_kodiversion()
 class Main(xbmc.Monitor):
 
     def __init__(self):
-        self.monitor = PlayerMonitor()
-
+        self.player_monitor = False
+        self.restart = False
         self.service_enabled = get_bool(ADDON.getSetting('service'))
         self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or ADDON.getSetting('service_interval')
         self.service_interval = float(self.service_interval)
-        self.restart = False
 
         self.widget_refresh = 0
         self.get_backgrounds = 200
@@ -69,7 +68,8 @@ class Main(xbmc.Monitor):
 
     def stop(self):
         if self.service_enabled:
-            del self.monitor
+            del self.player_monitor
+            log('Service: Player monitor stopped', force=True)
             log('Service: Stopped', force=True)
 
         if self.restart:
@@ -82,16 +82,17 @@ class Main(xbmc.Monitor):
     def keep_alive(self):
         log('Service: Disabled')
 
-        while not self.monitor.abortRequested() and not self.restart:
-            self.monitor.waitForAbort(5)
+        while not self.abortRequested() and not self.restart:
+            self.waitForAbort(5)
 
         self.stop()
 
 
     def start(self):
         log('Service: Started', force=True)
+        self.player_monitor = PlayerMonitor()
 
-        while not self.monitor.abortRequested() and not self.restart:
+        while not self.abortRequested() and not self.restart:
 
             '''Focus monitor to split merged info labels by the default / seperator to properties
             '''
@@ -149,7 +150,7 @@ class Main(xbmc.Monitor):
             ''' Workaround for login screen bug
             '''
             if not self.login_reload:
-                if visible('System.HasLoginScreen + Skin.HasSetting(ReloadOnLogin)'):
+                if visible('System.HasLoginScreen'):
                     log('System has login screen enabled. Reload the skin to load all strings correctly.')
                     execute('ReloadSkin()')
                     self.login_reload = True
@@ -185,7 +186,7 @@ class Main(xbmc.Monitor):
             else:
                 self.refresh_audiotracks += 10
 
-            self.monitor.waitForAbort(self.service_interval)
+            self.waitForAbort(self.service_interval)
 
         self.stop()
 
