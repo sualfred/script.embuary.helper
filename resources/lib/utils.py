@@ -232,7 +232,7 @@ def playitem(params):
                     item={itemtype: int(dbid)}
                     )
     else:
-        execute('PlayMedia("%s")' % remove_quotes(params.get('item')))
+        PLAYER.Play('%s' % remove_quotes(params.get('item')))
 
 
 def playfolder(params):
