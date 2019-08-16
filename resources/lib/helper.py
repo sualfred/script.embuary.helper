@@ -39,7 +39,7 @@ def get_kodiversion():
 
 
 def log(txt,loglevel=NOTICE,force=False):
-    if ((loglevel == NOTICE or loglevel == WARNING) and ADDON.getSettingBool('log')) or (loglevel == DEBUG and ADDON.getSettingBool('debuglog')) or force:
+    if ((loglevel == NOTICE or loglevel == WARNING) and ADDON.getSettingBool('log')) or loglevel == DEBUG or force:
 
         if not PYTHON3 and isinstance(txt, str):
             txt = txt.decode('utf-8')
