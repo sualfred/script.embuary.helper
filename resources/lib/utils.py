@@ -127,6 +127,18 @@ def textviewer(params):
     DIALOG.textviewer(headertxt, bodytxt)
 
 
+def getaddonsetting(params):
+    addon_id = params.get('addon')
+    addon_setting = params.get('setting')
+    prop = addon_id + '-' + addon_setting
+
+    try:
+        setting = xbmcaddon.Addon(addon_id).getSetting(addon_setting)
+        winprop(prop,str(setting))
+    except Exception:
+        winprop(prop, clear=True)
+
+
 def togglekodisetting(params):
     settingname = params.get('setting', '')
     value = False if visible('system.getbool(%s)' % settingname) else True
