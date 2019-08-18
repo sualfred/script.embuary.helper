@@ -231,7 +231,7 @@ def playitem(params):
                     item={itemtype: int(dbid)}
                     )
     else:
-        PLAYER.Play('%s' % remove_quotes(params.get('item')))
+        PLAYER.play(remove_quotes(params.get('item')))
 
 
 def playfolder(params):
