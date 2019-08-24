@@ -126,6 +126,26 @@ def textviewer(params):
     DIALOG.textviewer(headertxt, bodytxt)
 
 
+def copyskinnodes(params):
+    active_skin = get_active_skin()
+    setting = addon_setting(active_skin,'copied_nodes')
+
+    if not setting or params.get('force') == 'true':
+        target = os.path.join(xbmc.translatePath('special://profile/library'),active_skin)
+        origin = xbmc.translatePath('special://skin/extras/nodes')
+
+        if not os.path.exists(target):
+            xbmcvfs.mkdirs(target)
+
+        if os.path.exists(origin):
+            dirs, files = xbmcvfs.listdir(origin)
+            for file in files:
+                if file.endswith('.xml'):
+                    xbmcvfs.copy(os.path.join(origin,file),os.path.join(target,file))
+
+        addon_setting(active_skin,'copied_nodes',save=True)
+
+
 def getaddonsetting(params):
     addon_id = params.get('addon')
     addon_setting = params.get('setting')
@@ -136,6 +156,31 @@ def getaddonsetting(params):
         winprop(prop,str(setting))
     except Exception:
         winprop(prop, clear=True)
+
+
+def test(params):
+    windowID = xbmcgui.getCurrentWindowId()
+    log('windowID ' + str(windowID))
+    #win = xbmcgui.Window(windowID)
+    win = xbmcgui.Window(10106)
+    controlID = win.getFocusId()
+    log('controlID ' + str(controlID))
+    control = win.getControl(controlID)
+    log('control ' + str(control))
+    listitem = control.getSelectedItem()
+    log('listitem ' + str(listitem))
+
+def test2(params):
+    windowID = xbmcgui.getCurrentWindowId()
+    log('windowID ' + str(windowID))
+    win = xbmcgui.Window(windowID)
+    log('win ' + str(win))
+    cid = win.getFocusId()
+    log('cid ' + str(cid))
+    ctrl = win.getControl(cid)
+    log('ctrl ' + str(ctrl))
+    listitem = ctrl.getSelectedItem()
+    log(listitem)
 
 
 def togglekodisetting(params):
