@@ -38,6 +38,32 @@ def get_kodiversion():
     return int(build[:2])
 
 
+def get_active_skin():
+    active_skin = winprop('CurrentActiveSkin')
+
+    if not active_skin:
+        active_skin = json_call('Settings.GetSettingValue',
+                                params={'setting': 'lookandfeel.skin'}
+                                )
+        active_skin = active_skin['result']['value']
+        winprop('CurrentActiveSkin', active_skin)
+
+    return active_skin
+
+
+def addon_setting(skin,setting,save=False):
+    profile = xbmc.getInfoLabel('System.ProfileName')
+    setting_id = skin + '_' + profile + '_' + setting
+    skin_version = xbmcaddon.Addon(skin).getAddonInfo('version')
+
+    if not save:
+        if ADDON.getSetting(id=setting_id) == skin_version:
+            return True
+        return False
+    else:
+        ADDON.setSetting(id=setting_id, value=skin_version)
+
+
 def log(txt,loglevel=NOTICE,force=False):
     if ((loglevel == NOTICE or loglevel == WARNING) and ADDON.getSettingBool('log')) or loglevel == DEBUG or force:
 
