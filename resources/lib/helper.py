@@ -36,7 +36,7 @@ def get_kodiversion():
 
 
 def log(txt,loglevel=NOTICE,force=False):
-    if ((loglevel == NOTICE or loglevel == WARNING) and get_bool(ADDON.getSetting('log'))) or (loglevel == DEBUG and get_bool(ADDON.getSetting('debuglog'))) or force:
+    if ((loglevel == NOTICE or loglevel == WARNING) and get_bool(ADDON.getSetting('log'))) or loglevel == DEBUG or force:
 
         ''' Python 2 requires to decode stuff at first
         '''
