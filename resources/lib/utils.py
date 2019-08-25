@@ -159,31 +159,6 @@ def getaddonsetting(params):
         winprop(prop, clear=True)
 
 
-def test(params):
-    windowID = xbmcgui.getCurrentWindowId()
-    log('windowID ' + str(windowID))
-    #win = xbmcgui.Window(windowID)
-    win = xbmcgui.Window(10106)
-    controlID = win.getFocusId()
-    log('controlID ' + str(controlID))
-    control = win.getControl(controlID)
-    log('control ' + str(control))
-    listitem = control.getSelectedItem()
-    log('listitem ' + str(listitem))
-
-def test2(params):
-    windowID = xbmcgui.getCurrentWindowId()
-    log('windowID ' + str(windowID))
-    win = xbmcgui.Window(windowID)
-    log('win ' + str(win))
-    cid = win.getFocusId()
-    log('cid ' + str(cid))
-    ctrl = win.getControl(cid)
-    log('ctrl ' + str(ctrl))
-    listitem = ctrl.getSelectedItem()
-    log(listitem)
-
-
 def togglekodisetting(params):
     settingname = params.get('setting', '')
     value = False if visible('system.getbool(%s)' % settingname) else True
