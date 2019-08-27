@@ -87,8 +87,8 @@ def get_date(date_time):
 
 
 def execute(cmd):
-    log('Execute: %s' % cmd)
-    xbmc.executebuiltin(cmd, DEBUG)
+    log('Execute: %s' % cmd, DEBUG)
+    xbmc.executebuiltin(cmd)
 
 
 def visible(condition):
