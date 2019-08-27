@@ -35,19 +35,6 @@ def get_kodiversion():
     return int(build[:2])
 
 
-def get_active_skin():
-    active_skin = winprop('CurrentActiveSkin')
-
-    if not active_skin:
-        active_skin = json_call('Settings.GetSettingValue',
-                                params={'setting': 'lookandfeel.skin'}
-                                )
-        active_skin = active_skin['result']['value']
-        winprop('CurrentActiveSkin', active_skin)
-
-    return active_skin
-
-
 def addon_setting(skin,setting,save=False):
     profile = xbmc.getInfoLabel('System.ProfileName')
     setting_id = skin + '_' + profile + '_' + setting
