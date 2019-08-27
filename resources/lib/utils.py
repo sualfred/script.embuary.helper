@@ -128,7 +128,7 @@ def textviewer(params):
 
 
 def copyskinnodes(params):
-    active_skin = get_active_skin()
+    active_skin = xbmc.getSkinDir()
     setting = addon_setting(active_skin,'copied_nodes')
 
     if not setting or params.get('force') == 'true':
