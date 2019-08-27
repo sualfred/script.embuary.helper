@@ -73,6 +73,8 @@ def remove_quotes(label):
         label = label[1:-1]
         if label.startswith('"') and label.endswith('"') and len(label) > 2:
             label = label[1:-1]
+        elif label.startswith('&quot;') and label.endswith('&quot;'):
+            label = label[6:-6]
 
     return label
 
