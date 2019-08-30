@@ -127,26 +127,6 @@ def textviewer(params):
     DIALOG.textviewer(headertxt, bodytxt)
 
 
-def copyskinnodes(params):
-    active_skin = xbmc.getSkinDir()
-    setting = addon_setting(active_skin,'copied_nodes')
-
-    if not setting or params.get('force') == 'true':
-        target = os.path.join(xbmc.translatePath('special://profile/library'),active_skin)
-        origin = xbmc.translatePath('special://skin/extras/nodes')
-
-        if not os.path.exists(target):
-            xbmcvfs.mkdirs(target)
-
-        if os.path.exists(origin):
-            dirs, files = xbmcvfs.listdir(origin)
-            for file in files:
-                if file.endswith('.xml'):
-                    xbmcvfs.copy(os.path.join(origin,file),os.path.join(target,file))
-
-        addon_setting(active_skin,'copied_nodes',save=True)
-
-
 def getaddonsetting(params):
     addon_id = params.get('addon')
     addon_setting = params.get('setting')
@@ -226,6 +206,32 @@ def toggleaddons(params):
             log('%s - enable: %s' % (addon, enable))
         except Exception:
             pass
+
+
+def tvshowsroot(params):
+    path = params.get('path','videodb://tvshows/titles/')
+    episode_level = False
+    season_level = False
+
+    execute('Dialog.Close(all)')
+    execute('Activatewindow(videos,%s,return)' % path)
+
+    while not visible('Window.IsVisible(MyVideoNav.xml)'): # wait for window because animations can delay it
+        pass
+
+    for i in range(10):
+        if visible('Container.Content(tvshows)'):
+            break
+
+        if visible('Container.Content(episodes)') and not episode_level:
+            episode_level = True
+            execute('Action(ParentDir)')
+
+        if visible('Container.Content(seasons)') and not season_level:
+            season_level = True
+            execute('Action(ParentDir)')
+
+        xbmc.sleep(10) # let Kodi time to catch up
 
 
 def playsfx(params):
