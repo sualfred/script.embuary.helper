@@ -207,32 +207,6 @@ def toggleaddons(params):
             pass
 
 
-def tvshowsroot(params):
-    path = params.get('path','videodb://tvshows/titles/')
-    episode_level = False
-    season_level = False
-
-    execute('Dialog.Close(all)')
-    execute('Activatewindow(videos,%s,return)' % path)
-
-    while not visible('Window.IsVisible(MyVideoNav.xml)'): # wait for window because animations can delay it
-        pass
-
-    for i in range(10):
-        if visible('Container.Content(tvshows)'):
-            break
-
-        if visible('Container.Content(episodes)') and not episode_level:
-            episode_level = True
-            execute('Action(ParentDir)')
-
-        if visible('Container.Content(seasons)') and not season_level:
-            season_level = True
-            execute('Action(ParentDir)')
-
-        xbmc.sleep(10) # let Kodi time to catch up
-
-
 def playsfx(params):
     xbmc.playSFX(remove_quotes(params.get('path', '')))
 
