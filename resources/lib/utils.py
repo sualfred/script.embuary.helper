@@ -477,11 +477,12 @@ def fontchange(params):
 def setinfo(params):
     dbid = params.get('dbid')
     dbtype = params.get('type')
-    value = params.get('value')
+    value = remove_quotes(params.get('value'))
 
     try:
         value = int(value)
     except Exception:
+        value = eval(value)
         pass
 
     if dbtype == 'movie':
@@ -495,8 +496,8 @@ def setinfo(params):
         key = 'tvshowid'
 
     json_call(method,
-                params={key: int(dbid), params.get('field'): value}
-                )
+            params={key: int(dbid), params.get('field'): value}
+            )
 
 
 def split(params):
