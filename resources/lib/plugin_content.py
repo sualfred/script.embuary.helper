@@ -192,7 +192,7 @@ class PluginContent(object):
 
         limit = self.limit or 25
 
-        if not self.dbtype or self.dbtype == 'movie':
+        if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
                                 properties=movie_properties,
                                 sort=self.sort_random, limit=limit,
@@ -205,7 +205,7 @@ class PluginContent(object):
             else:
                 append_items(self.li,json_query,type='movie')
 
-        if not self.dbtype or self.dbtype == 'tvshow':
+        if self.dbtype != 'movie':
             if use_episodes:
                 json_query = json_call('VideoLibrary.GetEpisodes',
                                     properties=episode_properties,
@@ -432,7 +432,7 @@ class PluginContent(object):
         if not genre:
             genres = []
 
-            if not self.dbtype or self.dbtype == 'movie':
+            if self.dbtype != 'tvshow':
                 movies_genres_query = json_call('VideoLibrary.GetGenres',
                                     sort={'method': 'label'},
                                     params={'type': 'movie'}
@@ -443,7 +443,7 @@ class PluginContent(object):
                 except Exception:
                     log('Get movies by genre: no genres found')
 
-            if not self.dbtype or self.dbtype == 'tvshow':
+            if self.dbtype != 'movie':
                 tvshow_genres_query = json_call('VideoLibrary.GetGenres',
                                     sort={'method': 'label'},
                                     params={'type': 'tvshow'}
@@ -465,7 +465,7 @@ class PluginContent(object):
                 filters.append(self.tag_filter)
             filter = {'and': filters}
 
-            if not self.dbtype or self.dbtype == 'movie':
+            if self.dbtype != 'tvshow':
                 json_query = json_call('VideoLibrary.GetMovies',
                                     properties=movie_properties,
                                     sort=self.sort_random, limit=10,
@@ -478,7 +478,7 @@ class PluginContent(object):
                 else:
                     append_items(self.li,json_query,type='movie',searchstring=genre)
 
-            if not self.dbtype or self.dbtype == 'tvshow':
+            if self.dbtype != 'movie':
                 json_query = json_call('VideoLibrary.GetTVShows',
                                     properties=tvshow_properties,
                                     sort=self.sort_random, limit=10,
@@ -505,7 +505,7 @@ class PluginContent(object):
             filters.append(self.tag_filter)
         filter = {'and': filters}
 
-        if not self.dbtype or self.dbtype == 'movie':
+        if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
                                 properties=movie_properties,
                                 sort=self.sort_lastplayed,
@@ -518,7 +518,7 @@ class PluginContent(object):
             else:
                 append_items(self.li,json_query,type='movie')
 
-        if not self.dbtype or self.dbtype == 'tvshow':
+        if self.dbtype != 'movie':
             json_query = json_call('VideoLibrary.GetEpisodes',
                                 properties=episode_properties,
                                 sort=self.sort_lastplayed,
