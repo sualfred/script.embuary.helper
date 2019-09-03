@@ -18,6 +18,8 @@ class PluginContent(object):
         self.dbtitle = remove_quotes(params.get('title'))
         self.dblabel = remove_quotes(params.get('label'))
         self.dbtype = remove_quotes(params.get('type'))
+        self.exclude = remove_quotes(params.get('exclude'))
+        self.dbcontent = remove_quotes(params.get('content'))
         self.dbid = remove_quotes(params.get('dbid'))
         self.season = remove_quotes(params.get('season'))
         self.tag = remove_quotes(params.get('tag'))
@@ -623,7 +625,7 @@ class PluginContent(object):
 
             try:
                 cast = json_query['result'][self.key_details]['cast']
-                title = json_query['result'][self.key_details]['label']
+                exclude = json_query['result'][self.key_details]['label']
 
                 if not cast:
                     raise Exception
@@ -647,12 +649,15 @@ class PluginContent(object):
             ''' Pick actor by label
             '''
             actor = self.dblabel
-            title = self.dbtitle
+            exclude = self.exclude
 
-        if actor and title:
-            filter = {'and': [{'operator': 'is', 'field': 'actor', 'value': actor}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
+        if actor:
+            filters = [{'operator': 'is', 'field': 'actor', 'value': actor}]
+            if exclude:
+                filters.append({'operator': 'isnot', 'field': 'title', 'value': exclude})
+            filter = {'and': filters}
 
-            if not self.dbtype == 'tvshow':
+            if self.dbcontent != 'tvshow':
                 movie_query = json_call('VideoLibrary.GetMovies',
                                         properties=movie_properties,
                                         sort=self.sort_random,
@@ -666,7 +671,7 @@ class PluginContent(object):
                 else:
                     append_items(self.li,movie_query,type='movie',searchstring=actor)
 
-            if not self.dbtype == 'movie':
+            if self.dbcontent != 'movie':
                 tvshow_query = json_call('VideoLibrary.GetTVShows',
                                         properties=tvshow_properties,
                                         sort=self.sort_random,
