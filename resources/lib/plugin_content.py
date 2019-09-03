@@ -16,6 +16,7 @@ class PluginContent(object):
     def __init__(self,params,li):
         self.params = params
         self.dbtitle = remove_quotes(params.get('title'))
+        self.dblabel = remove_quotes(params.get('label'))
         self.dbtype = remove_quotes(params.get('type'))
         self.dbid = remove_quotes(params.get('dbid'))
         self.season = remove_quotes(params.get('season'))
@@ -612,65 +613,79 @@ class PluginContent(object):
     ''' get items by actor
     '''
     def getitemsbyactor(self):
+        ''' Pick random actor of provided DBID item
+        '''
         if self.dbid:
             json_query = json_call(self.method_details,
                                     properties=['title', 'cast'],
                                     params={self.param: int(self.dbid)}
                                     )
 
-        try:
-            cast = json_query['result'][self.key_details]['cast']
-            title = json_query['result'][self.key_details]['label']
+            try:
+                cast = json_query['result'][self.key_details]['cast']
+                title = json_query['result'][self.key_details]['label']
 
-            if not cast:
-                raise Exception
+                if not cast:
+                    raise Exception
 
-        except Exception:
-            log('Items by actor: No cast found')
-            return
+            except Exception:
+                log('Items by actor: No cast found')
+                return
 
-        cast_range=[]
-        i = 0
-        for actor in cast:
-            if i < 4:
-                cast_range.append(actor['name'])
-                i += 1
-            else:
-                break
+            cast_range=[]
+            i = 0
+            for actor in cast:
+                if i < 4:
+                    cast_range.append(actor['name'])
+                    i += 1
+                else:
+                    break
 
-        random_actor = ''.join(random.choice(cast_range))
-        filter = {'and': [{'operator': 'is', 'field': 'actor', 'value': random_actor}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
+            actor = ''.join(random.choice(cast_range))
 
-        movie_query = json_call('VideoLibrary.GetMovies',
-                                    properties=movie_properties,
-                                    sort=self.sort_random,
-                                    query_filter=filter
-                                    )
-
-        try:
-            movie_query = movie_query['result']['movies']
-        except Exception:
-            log('Items by actor %s: No movies found' % random_actor)
         else:
-            append_items(self.li,movie_query,type='movie',searchstring=random_actor)
+            ''' Pick actor by label
+            '''
+            actor = self.dblabel
+            title = self.dbtitle
 
-        tvshow_query = json_call('VideoLibrary.GetTVShows',
-                                    properties=tvshow_properties,
-                                    sort=self.sort_random,
-                                    query_filter=filter
-                                    )
+        if actor and title:
+            filter = {'and': [{'operator': 'is', 'field': 'actor', 'value': actor}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
 
-        try:
-            tvshow_query = tvshow_query['result']['tvshows']
-        except Exception:
-            log('Items by actor %s: No shows found' % random_actor)
-        else:
-            append_items(self.li,tvshow_query,type='tvshow',searchstring=random_actor)
+            if not self.dbtype == 'tvshow':
+                movie_query = json_call('VideoLibrary.GetMovies',
+                                        properties=movie_properties,
+                                        sort=self.sort_random,
+                                        query_filter=filter
+                                        )
 
-        if not self.li:
-            self._retry('getitemsbyactor')
+                try:
+                    movie_query = movie_query['result']['movies']
+                except Exception:
+                    log('Items by actor %s: No movies found' % actor)
+                else:
+                    append_items(self.li,movie_query,type='movie',searchstring=actor)
 
-        random.shuffle(self.li)
+            if not self.dbtype == 'movie':
+                tvshow_query = json_call('VideoLibrary.GetTVShows',
+                                        properties=tvshow_properties,
+                                        sort=self.sort_random,
+                                        query_filter=filter
+                                        )
+
+                try:
+                    tvshow_query = tvshow_query['result']['tvshows']
+                except Exception:
+                    log('Items by actor %s: No shows found' % actor)
+                else:
+                    append_items(self.li,tvshow_query,type='tvshow',searchstring=actor)
+
+            ''' Retry if query is based on dbid and a random actor
+            '''
+            if self.dbid and not self.li:
+                self._retry('getitemsbyactor')
+
+            random.shuffle(self.li)
 
 
     ''' because you watched xyz
