@@ -177,7 +177,11 @@ class Main(xbmc.Monitor):
 
             # Get audio tracks for < Leia
             if PLAYER.isPlayingVideo() and self.refresh_audiotracks >= 10:
-                PlayerMonitor.get_audiotracks()
+                audiotracks = PLAYER.getAvailableAudioStreams()
+                if len(audiotracks) > 1:
+                    winprop('EmbuaryPlayerAudioTracks.bool', True)
+                else:
+                    winprop('EmbuaryPlayerAudioTracks', clear=True)
                 self.refresh_audiotracks = 0
 
             elif PLAYER.isPlayingVideo():

@@ -70,8 +70,8 @@ class PlayerMonitor(xbmc.Monitor):
                 self.pvr_playback = False
                 self.get_nextitem(clear=True)
                 self.get_channellogo(clear=True)
-                self.get_audiotracks(clear=True)
                 self.get_videoinfo(clear=True)
+                winprop('EmbuaryPlayerAudioTracks', clear=True)
 
                 ''' Kodi doesn't reset shuffle to false automatically. To prevent issues with Emby for Kodi we have to
                     set shuffle to false for the next video playback if it was enabled by the script before.
@@ -113,15 +113,6 @@ class PlayerMonitor(xbmc.Monitor):
 
                 else:
                     xbmc.sleep(50)
-
-
-    def get_audiotracks(self,clear=False):
-        xbmc.sleep(100)
-        audiotracks = PLAYER.getAvailableAudioStreams()
-        if len(audiotracks) > 1 and not clear:
-            winprop('EmbuaryPlayerAudioTracks.bool', True)
-        else:
-            winprop('EmbuaryPlayerAudioTracks', clear=True)
 
 
     def get_channellogo(self,clear=False):
