@@ -180,7 +180,7 @@ class PlayerMonitor(xbmc.Monitor):
             return
 
 
-    def get_nextitem(params,clear=False):
+    def get_nextitem(self,clear=False):
         try:
             if clear:
                 raise Exception
