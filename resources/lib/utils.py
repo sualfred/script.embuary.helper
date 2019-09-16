@@ -211,6 +211,16 @@ def playsfx(params):
     xbmc.playSFX(remove_quotes(params.get('path', '')))
 
 
+def imginfo(params):
+    prop = params.get('prop','img')
+    img = params.get('img')
+    if img:
+        width,height,ar = image_info(img)
+        winprop(prop + '.width',str(width))
+        winprop(prop + '.height',str(height))
+        winprop(prop + '.ar',str(ar))
+
+
 def playitem(params):
     clear_playlists()
 
