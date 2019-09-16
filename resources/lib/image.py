@@ -111,7 +111,7 @@ def image_info(image):
     xbmc_cache_jpg_file = os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.jpg')
     xbmc_cache_png_file = os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.png')
 
-    for i in range(1, 4):
+    for i in range(1, 10):
         try:
             if xbmcvfs.exists(xbmc_cache_jpg_file):
                 img = Image.open(xbmc.translatePath(xbmc_cache_jpg_file))
@@ -127,9 +127,9 @@ def image_info(image):
             return width,height,ar
 
         except Exception:
-            log('Could not get cached image for %s (try %i)' % (image, i))
             xbmc.sleep(500)
 
+    log('Image info: Could not get cached image for %s' % image)
     return '','',''
 
 
