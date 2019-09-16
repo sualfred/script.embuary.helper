@@ -430,7 +430,7 @@ def details_by_season(params):
 
 
 def txtfile(params):
-    prop = params.get('property')
+    prop = params.get('prop')
     path = xbmc.translatePath(remove_quotes(params.get('path')))
 
     if os.path.isfile(path):
