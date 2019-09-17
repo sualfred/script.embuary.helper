@@ -100,6 +100,23 @@ def createselect(params):
         execute('ClearProperty(Dialog.%i.Label)' % i)
 
 
+def splitandcreateselect(params):
+    headertxt = remove_quotes(params.get('header', ''))
+    seperator = remove_quotes(params.get('seperator', ' / '))
+    selectionlist = remove_quotes(params.get('items')).split(seperator)
+
+    if selectionlist:
+        index = DIALOG.select(headertxt, selectionlist)
+
+        if index > -1:
+            value = xbmc.getInfoLabel('Window.Property(Dialog.Builtin)').replace('???',selectionlist[index])
+            for builtin in value.split('||'):
+                execute(builtin)
+                xbmc.sleep(30)
+
+    execute('ClearProperty(Dialog.Builtin)')
+
+
 def dialogok(params):
     headertxt = remove_quotes(params.get('header', ''))
     bodytxt = remove_quotes(params.get('message', ''))
