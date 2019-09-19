@@ -75,6 +75,7 @@ def createselect(params):
     selectionlist = []
     indexlist = []
     headertxt = remove_quotes(params.get('header', ''))
+    splitby = remove_quotes(params.get('splitby', '||'))
 
     for i in range(1, 30):
 
@@ -103,6 +104,7 @@ def createselect(params):
 def splitandcreateselect(params):
     headertxt = remove_quotes(params.get('header', ''))
     seperator = remove_quotes(params.get('seperator', ' / '))
+    splitby = remove_quotes(params.get('splitby', '||'))
     selectionlist = remove_quotes(params.get('items')).split(seperator)
 
     if selectionlist:
@@ -110,7 +112,7 @@ def splitandcreateselect(params):
 
         if index > -1:
             value = xbmc.getInfoLabel('Window.Property(Dialog.Builtin)').replace('???',selectionlist[index])
-            for builtin in value.split('||'):
+            for builtin in value.split(splitby):
                 execute(builtin)
                 xbmc.sleep(30)
 
