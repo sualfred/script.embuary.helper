@@ -93,7 +93,7 @@ def createselect(params):
 
         if index > -1:
             value = xbmc.getInfoLabel('Window.Property(Dialog.%i.Builtin)' % (indexlist[index]))
-            for builtin in value.split('||'):
+            for builtin in value.split(splitby):
                 execute(builtin)
                 xbmc.sleep(30)
 
