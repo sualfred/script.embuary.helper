@@ -661,8 +661,6 @@ class PluginContent(object):
             actor = ''.join(random.choice(cast_range))
 
         else:
-            ''' Pick actor by label
-            '''
             actor = self.dblabel
             exclude = self.exclude
 
@@ -943,16 +941,19 @@ class PluginContent(object):
 
     ''' function to return the TV show id based on a season or episode id
     '''
-    def _gettvshowid(self,dbid=None):
+    def _gettvshowid(self,dbid=None,idtype=None):
         try:
             if not dbid:
                 dbid = self.dbid
 
-            if self.idtype == 'season':
+            if not idtype:
+                idtype = self.idtype
+
+            if idtype == 'season':
                 method_details = 'VideoLibrary.GetSeasonDetails'
                 param = 'seasonid'
                 key_details = 'seasondetails'
-            elif self.idtype == 'episode':
+            elif idtype == 'episode':
                 method_details = 'VideoLibrary.GetEpisodeDetails'
                 param = 'episodeid'
                 key_details = 'episodedetails'
