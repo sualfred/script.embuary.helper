@@ -10,13 +10,7 @@ import datetime
 from resources.lib.helper import *
 from resources.lib.json_map import *
 from resources.lib.library import get_joined_items
-
-# Disable image function for TVOS if ImportError
-try:
-    from resources.lib.image import *
-    PIL_supported = True
-except ImportError:
-    PIL_supported = False
+from resources.lib.image import *
 
 ########################
 
@@ -45,8 +39,7 @@ class PlayerMonitor(xbmc.Monitor):
             self.nextitem_lock = False
             self.pvr_playback = visible('String.StartsWith(Player.Filenameandpath,pvr://)')
 
-            if not self.fullscreen_lock:
-                self.do_fullscreen()
+            self.get_art_info()
 
             if self.pvr_playback:
                 self.get_channellogo()
@@ -60,6 +53,9 @@ class PlayerMonitor(xbmc.Monitor):
 
             if PLAYER.isPlayingAudio() and not self.pvr_playback and visible('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
                 self.get_songartworks()
+
+            if not self.fullscreen_lock:
+                self.do_fullscreen()
 
         ''' Playlist changed. Fetch nextitem again.
         '''

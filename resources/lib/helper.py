@@ -10,6 +10,8 @@ import json
 import time
 import datetime
 import os
+import sys
+import hashlib
 
 ########################
 
@@ -17,6 +19,7 @@ ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
 ADDON_DATA_PATH = os.path.join(xbmc.translatePath("special://profile/addon_data/%s" % ADDON_ID))
 ADDON_DATA_IMG_PATH = os.path.join(xbmc.translatePath("special://profile/addon_data/%s/img" % ADDON_ID))
+ADDON_DATA_IMG_TEMP_PATH = os.path.join(xbmc.translatePath("special://profile/addon_data/%s/img/tmp" % ADDON_ID))
 
 NOTICE = xbmc.LOGNOTICE
 WARNING = xbmc.LOGWARNING
@@ -171,6 +174,10 @@ def get_bool(value,string='true'):
 
 def encode_string(string):
     return string.encode('utf-8')
+
+
+def md5hash(value):
+    return hashlib.md5(str(value)).hexdigest()
 
 
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None,limits=None,debug=False):

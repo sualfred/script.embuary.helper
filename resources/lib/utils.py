@@ -480,7 +480,7 @@ def txtfile(params):
 
 def blurimg(params):
     if PIL_supported:
-        image_filter(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius'))
+        image_blur(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius'))
 
 
 def fontchange(params):
