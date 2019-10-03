@@ -10,13 +10,7 @@ import datetime
 from resources.lib.helper import *
 from resources.lib.json_map import *
 from resources.lib.library import get_joined_items
-
-# Disable image function for TVOS if ImportError
-try:
-    from resources.lib.image import *
-    PIL_supported = True
-except ImportError:
-    PIL_supported = False
+from resources.lib.image import *
 
 ########################
 
@@ -45,8 +39,7 @@ class PlayerMonitor(xbmc.Monitor):
             self.nextitem_lock = False
             self.pvr_playback = visible('String.StartsWith(Player.Filenameandpath,pvr://)')
 
-            if not self.fullscreen_lock:
-                self.do_fullscreen()
+            self.get_art_info()
 
             if self.pvr_playback:
                 self.get_channellogo()
@@ -55,12 +48,12 @@ class PlayerMonitor(xbmc.Monitor):
                 self.get_videoinfo()
                 self.get_nextitem(clear=True)
                 self.get_nextitem()
-                if PIL_supported:
-                    self.get_art_info(clear=True)
-                    self.get_art_info()
 
             if PLAYER.isPlayingAudio() and not self.pvr_playback and visible('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
                 self.get_songartworks()
+
+            if not self.fullscreen_lock:
+                self.do_fullscreen()
 
         ''' Playlist changed. Fetch nextitem again.
         '''
@@ -75,8 +68,8 @@ class PlayerMonitor(xbmc.Monitor):
         '''
         if method == 'Player.OnAVChange':
             self.get_audiotracks()
-            if PIL_supported and self.pvr_playback:
-                self.get_art_info(clear=True)
+
+            if self.pvr_playback:
                 self.get_art_info()
 
         ''' Playback stopped. Clean up.
@@ -91,6 +84,7 @@ class PlayerMonitor(xbmc.Monitor):
                 self.get_channellogo(clear=True)
                 self.get_audiotracks(clear=True)
                 self.get_videoinfo(clear=True)
+                self.get_art_info(clear=True)
 
                 ''' Kodi doesn't reset shuffle to false automatically. To prevent issues with Emby for Kodi we have to
                     set shuffle to false for the next video playback if it was enabled by the script before.

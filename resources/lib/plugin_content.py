@@ -8,6 +8,7 @@ import xbmcvfs
 
 from resources.lib.helper import *
 from resources.lib.library import *
+from resources.lib.image import *
 
 ########################
 
@@ -567,7 +568,7 @@ class PluginContent(object):
 
             genre_items = json_call(self.method_item,
                                     properties=['art'],
-                                    sort=self.sort_random, limit=4,
+                                    sort=self.sort_recent, limit=4,
                                     query_filter={'operator': 'is', 'field': 'genre', 'value': genre['label']}
                                     )
             posters = {}
@@ -581,6 +582,7 @@ class PluginContent(object):
                 pass
 
             genre['art'] = posters
+            genre['art']['thumb'] = create_genre_thumb(genre['label'], posters)
 
             try:
                 genre['file'] = 'videodb://%ss/genres/%s/' % (self.dbtype, genre['genreid'])

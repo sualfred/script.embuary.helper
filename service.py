@@ -129,7 +129,7 @@ class Main(xbmc.Monitor):
             ''' Blur backgrounds
             '''
             if self.blur_background:
-                image_filter(radius=self.blur_radius)
+                image_blur(radius=self.blur_radius)
 
             ''' Refresh widgets
             '''
