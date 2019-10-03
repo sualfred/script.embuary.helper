@@ -26,6 +26,7 @@ ADDON_DATA_IMG_TEMP_PATH = os.path.join(xbmc.translatePath("special://profile/ad
 NOTICE = xbmc.LOGNOTICE
 WARNING = xbmc.LOGWARNING
 DEBUG = xbmc.LOGDEBUG
+ERROR = xbmc.LOGERROR
 
 DIALOG = xbmcgui.Dialog()
 
@@ -54,7 +55,7 @@ def addon_setting(skin,setting,save=False):
 
 
 def log(txt,loglevel=NOTICE,force=False):
-    if ((loglevel == NOTICE or loglevel == WARNING) and ADDON.getSettingBool('log')) or loglevel == DEBUG or force:
+    if (loglevel == NOTICE and ADDON.getSettingBool('log')) or loglevel in [DEBUG, WARNING, ERROR] or force:
 
         if not PYTHON3 and isinstance(txt, str):
             txt = txt.decode('utf-8')

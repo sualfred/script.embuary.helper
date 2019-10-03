@@ -76,7 +76,7 @@ class Main(xbmc.Monitor):
 
 
     def keep_alive(self):
-        log('Service: Disabled')
+        log('Service: Disabled', force=True)
 
         while not self.abortRequested() and not self.restart:
             self.waitForAbort(5)

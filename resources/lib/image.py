@@ -47,7 +47,7 @@ def image_blur(prop='listitem',file=None,radius=BLUR_RADIUS):
     try:
         radius = int(radius)
     except ValueError:
-        log('No valid radius defined for blurring')
+        log('No valid radius defined for blurring', ERROR)
         return
 
     if image:
@@ -60,26 +60,29 @@ def image_blur(prop='listitem',file=None,radius=BLUR_RADIUS):
             filename = md5hash(image) + str(radius) + '.png'
             targetfile = os.path.join(ADDON_DATA_IMG_PATH, filename)
 
-            if not xbmcvfs.exists(targetfile):
-                img = _getimgcache(image,ADDON_DATA_IMG_PATH,filename)
-
-                if img:
+            try:
+                if not xbmcvfs.exists(targetfile):
+                    img = _getimgcache(image,ADDON_DATA_IMG_PATH,filename)
                     img = Image.open(img)
                     img.thumbnail((200, 200), Image.ANTIALIAS)
                     img = img.convert('RGB')
                     img = img.filter(ImageFilter.GaussianBlur(radius))
                     img.save(targetfile)
 
-            else:
-                log('Blurred img already created: ' + targetfile, DEBUG)
-                touch_file(targetfile)
-                img = Image.open(targetfile)
+                else:
+                    log('Blurred img already created: ' + targetfile, DEBUG)
+                    touch_file(targetfile)
+                    img = Image.open(targetfile)
 
-            if img:
+
                 imagecolor = _imgcolors(img)
                 winprop(prop + '_blurred', targetfile)
                 winprop(prop + '_color', imagecolor)
                 winprop(prop + '_color_noalpha', imagecolor[2:])
+
+            except Exception as error:
+                log('Image blurring: Error -> %s (%s)' % (error, image), WARNING)
+                pass
 
 
 ''' get image dimension and aspect ratio
@@ -158,7 +161,7 @@ def create_genre_thumb(genre,images):
         collage.save(genre_thumb,optimize=True,quality=85)
         _deltemp()
 
-    return xbmc.translatePath(genre_thumb)
+    return genre_thumb
 
 
 ''' get cached images or copy to temp if file has not been cached yet
@@ -182,7 +185,7 @@ def _getimgcache(image,targetpath,filename):
                 log('Get cached file ' + cachefile_png, DEBUG)
                 break
             elif xbmcvfs.exists(vid_cachefile):
-                log('Get cache video file ' + vid_cachefile)
+                log('Get cache video file ' + vid_cachefile, DEBUG)
                 img = vid_cachefile
                 break
             else:
@@ -194,8 +197,7 @@ def _getimgcache(image,targetpath,filename):
                 img = targetfile
                 break
         except Exception as error:
-            log('Could not get image for %s (try %i)' % (image, i))
-            log(error)
+            log('Could not get image for %s (try %i) -> %s' % (image, i, error), WARNING)
             xbmc.sleep(500)
 
     img = xbmc.translatePath(img) if img else ''
