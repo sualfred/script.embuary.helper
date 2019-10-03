@@ -649,32 +649,29 @@ class PlayCinema(object):
 
 
     def get_trailers(self):
+        movies = json_call('VideoLibrary.GetMovies',
+                            properties=movie_properties,
+                            query_filter={'field': 'playcount', 'operator': 'lessthan', 'value': '1'},
+                            sort={'method': 'random'}, limit=int(self.trailer_count)
+                            )
+        try:
+            movies = movies['result']['movies']
+        except KeyError:
+            return
 
-            movies = json_call('VideoLibrary.GetMovies',
-                                properties=movie_properties,
-                                query_filter={'field': 'playcount', 'operator': 'lessthan', 'value': '1'},
-                                sort={'method': 'random'}, limit=int(self.trailer_count)
-                                )
-
-            try:
-                movies = movies['result']['movies']
-            except KeyError:
-                return
-
-            return movies
+        return movies
 
 
     def get_intros(self):
+        dirs, files = xbmcvfs.listdir(self.intro_path)
 
-            dirs, files = xbmcvfs.listdir(self.intro_path)
+        intros = []
+        for file in files:
+            if file.endswith(('.mp4', '.mkv', '.mpg', '.mpeg', '.avi', '.wmv', '.mov', '.flv')):
+                intros.append(file)
 
-            intros = []
-            for file in files:
-                if file.endswith(('.mp4', '.mkv', '.mpg', '.mpeg', '.avi', '.wmv', '.mov', '.flv')):
-                    intros.append(file)
+        if intros:
+            url = '%s%s' % (self.intro_path,random.choice(intros))
+            return url
 
-            if intros:
-                url = '%s%s' % (self.intro_path,random.choice(intros))
-                return url
-
-            return intros
+        return
