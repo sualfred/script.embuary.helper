@@ -6,6 +6,8 @@
 import xbmc
 import xbmcgui
 import random
+import os
+import time
 
 from resources.lib.utils import split
 from resources.lib.helper import *
@@ -41,6 +43,7 @@ class Main(xbmc.Monitor):
         self.login_reload = False
 
         if self.service_enabled:
+            self.addon_data_cleanup()
             self.start()
         else:
             self.keep_alive()
@@ -225,6 +228,22 @@ class Main(xbmc.Monitor):
             pass
 
         return movie_fanarts, tvshow_fanarts, artists_fanarts
+
+
+    ''' Image storage maintaining. Deletes all created images which were unused in the
+        last 60 days. The image functions are touching existing files to update the
+        modification date so often used images are never get deleted by this task.
+    '''
+    def addon_data_cleanup(self,number_of_days=60):
+        time_in_secs = time.time() - (number_of_days * 24 * 60 * 60)
+        dirs, files = xbmcvfs.listdir(ADDON_DATA_IMG_PATH)
+
+        for file in files:
+            full_path = os.path.join(ADDON_DATA_IMG_PATH, file)
+            stat = xbmcvfs.Stat(full_path)
+
+            if stat.st_mtime() <= time_in_secs:
+                xbmcvfs.delete(full_path)
 
 
 if __name__ == '__main__':

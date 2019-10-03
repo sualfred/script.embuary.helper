@@ -72,6 +72,7 @@ def image_blur(prop='listitem',file=None,radius=BLUR_RADIUS):
 
             else:
                 log('Blurred img already created: ' + targetfile, DEBUG)
+                touch_file(targetfile)
                 img = Image.open(targetfile)
 
             if img:
@@ -106,7 +107,10 @@ def create_genre_thumb(genre,images):
     filename = genre + '_' + md5hash(images) + '.jpg'
     genre_thumb = os.path.join(ADDON_DATA_IMG_PATH, filename)
 
-    if not xbmcvfs.exists(genre_thumb):
+    if xbmcvfs.exists(genre_thumb):
+        touch_file(genre_thumb)
+
+    else:
         width, height = 356, 533
         cols, rows = 2, 2
         thumbnail_width = int(width / cols)

@@ -179,6 +179,10 @@ def md5hash(value):
     return hashlib.md5(str(value)).hexdigest()
 
 
+def touch_file(filepath):
+    os.utime(filepath,None)
+
+
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None,limits=None,debug=False):
     json_string = {'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': {}}
 
