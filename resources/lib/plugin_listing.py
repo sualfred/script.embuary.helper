@@ -91,7 +91,7 @@ class PluginListing(object):
 
     def folders(self):
         for folder in index:
-            url = self._encode_url(folder=folder['type'])
+            url = self._encode_url(folder=folder['type'], plugincat=encode_string(folder['name']))
             self._add_item(folder['name'],url)
 
         if visible('System.HasAddon(plugin.video.emby'):
@@ -102,7 +102,7 @@ class PluginListing(object):
 
                 if database == 'movies' or database == 'tvshows':
                     label = 'Emby: %s' % winprop('emby.wnodes.%s.title' % i)
-                    url = self._encode_url(folder='emby_%s' % database,tag=tag)
+                    url = self._encode_url(folder='emby_%s' % database,tag=tag, plugincat=encode_string(label))
                     self._add_item(label,url)
 
                 i += 1
@@ -115,7 +115,7 @@ class PluginListing(object):
 
 
     def _get_url(self,widget):
-        return self._encode_url(info=widget['action'], type=self.cat_type, tag=self.tag, pos=widget.get('pos',''), filter_args=widget.get('filter',''), sort_args=widget.get('sort',''), limit=widget.get('limit',''), showall=widget.get('showall',''))
+        return self._encode_url(info=widget['action'], type=self.cat_type, tag=self.tag, pos=widget.get('pos',''), filter_args=widget.get('filter',''), sort_args=widget.get('sort',''), limit=widget.get('limit',''), showall=widget.get('showall',''), plugincat=encode_string(widget['name']))
 
 
     def _encode_url(self,**kwargs):
