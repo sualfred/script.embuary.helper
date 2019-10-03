@@ -80,6 +80,7 @@ class PlayerMonitor(xbmc.Monitor):
                 self.get_nextitem(clear=True)
                 self.get_channellogo(clear=True)
                 self.get_videoinfo(clear=True)
+                self.get_art_info(clear=True)
                 winprop('EmbuaryPlayerAudioTracks', clear=True)
 
                 ''' Kodi doesn't reset shuffle to false automatically. To prevent issues with Emby for Kodi we have to
@@ -280,9 +281,14 @@ class PlayerMonitor(xbmc.Monitor):
         xbmc.Player().updateInfoTag(item)
 
 
-    def get_art_info(self):
+    def get_art_info(self,clear=False):
         for art in ['Player.Icon', 'Player.Art(poster)', 'Player.Art(tvshow.poster)']:
-            width,height,ar = image_info(xbmc.getInfoLabel(art))
-            winprop(art + '.width',str(width))
-            winprop(art + '.height',str(height))
-            winprop(art + '.ar',str(ar))
+            if not clear:
+                width,height,ar = image_info(xbmc.getInfoLabel(art))
+                winprop(art + '.width',str(width))
+                winprop(art + '.height',str(height))
+                winprop(art + '.ar',str(ar))
+            else:
+                winprop(art + '.width',clear=True)
+                winprop(art + '.height',clear=True)
+                winprop(art + '.ar',clear=True)
