@@ -48,10 +48,10 @@ class ImageBlur():
 
         if self.image:
             if self.image == OLD_IMAGE:
-                log('Image blurring: Image has not changed. Skip %s.' % self.image, WARNING)
+                log('Image blurring: Image has not changed. Skip %s.' % self.image, DEBUG)
 
             else:
-                log('Image blurring: Image changed. Blur %s.' % self.image, WARNING)
+                log('Image blurring: Image changed. Blur %s.' % self.image, DEBUG)
                 OLD_IMAGE = self.image
 
                 self.filepath = self.blur()
@@ -69,14 +69,14 @@ class ImageBlur():
         targetfile = os.path.join(ADDON_DATA_IMG_PATH, filename)
 
         try:
-            if not xbmcvfs.exists(targetfile):
+            if xbmcvfs.exists(targetfile):
+                touch_file(targetfile)
+            else:
                 img = _openimage(self.image,ADDON_DATA_IMG_PATH,filename)
                 img.thumbnail((200, 200), Image.ANTIALIAS)
                 img = img.convert('RGB')
                 img = img.filter(ImageFilter.GaussianBlur(self.radius))
                 img.save(targetfile)
-            else:
-                log('Blurred img already created: ' + targetfile, DEBUG)
 
             return targetfile
 
@@ -245,7 +245,7 @@ def _openimage(image,targetpath,filename):
                         img = Image.open(xbmc.translatePath(cache))
                         return img
                     except Exception as error:
-                        log('Image error: Could not open cached image --> %s' % error)
+                        log('Image error: Could not open cached image --> %s' % error, WARNING)
                         pass
 
             targetfile = os.path.join(targetpath, filename)
@@ -260,7 +260,7 @@ def _openimage(image,targetpath,filename):
             return img
 
         except Exception as error:
-            log('Image error: Could not get image for %s (try %d) -> %s' % (image, i, error))
+            log('Image error: Could not get image for %s (try %d) -> %s' % (image, i, error), ERROR)
             xbmc.sleep(500)
             pass
 
