@@ -6,6 +6,7 @@
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 import json
 import time
 import datetime

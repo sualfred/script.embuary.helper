@@ -582,7 +582,9 @@ class PluginContent(object):
                 pass
 
             genre['art'] = posters
-            genre['art']['thumb'] = create_genre_thumb(genre['label'], posters)
+            generated_thumb = CreateGenreThumb(genre['label'],posters)
+            if generated_thumb:
+                genre['art']['thumb'] = str(CreateGenreThumb(genre['label'],posters))
 
             try:
                 genre['file'] = 'videodb://%ss/genres/%s/' % (self.dbtype, genre['genreid'])

@@ -80,7 +80,7 @@ def createselect(params):
 
     for i in range(1, 30):
 
-        label = xbmc.getInfoLabel('Window.Property(Dialog.%i.Label)' % (i))
+        label = xbmc.getInfoLabel('Window.Property(Dialog.%d.Label)' % (i))
 
         if label == '':
             break
@@ -92,14 +92,14 @@ def createselect(params):
         index = DIALOG.select(headertxt, selectionlist)
 
         if index > -1:
-            value = xbmc.getInfoLabel('Window.Property(Dialog.%i.Builtin)' % (indexlist[index]))
+            value = xbmc.getInfoLabel('Window.Property(Dialog.%d.Builtin)' % (indexlist[index]))
             for builtin in value.split(splitby):
                 execute(builtin)
                 xbmc.sleep(30)
 
     for i in range(1, 30):
-        execute('ClearProperty(Dialog.%i.Builtin)' % i)
-        execute('ClearProperty(Dialog.%i.Label)' % i)
+        execute('ClearProperty(Dialog.%d.Builtin)' % i)
+        execute('ClearProperty(Dialog.%d.Label)' % i)
 
 
 def splitandcreateselect(params):
@@ -480,7 +480,7 @@ def txtfile(params):
 
 
 def blurimg(params):
-    image_blur(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius'))
+    ImageBlur(params.get('prop','output'),remove_quotes(params.get('file')),params.get('radius',None))
 
 
 def fontchange(params):
@@ -571,7 +571,6 @@ def getlocale(params):
 
 
 class PlayCinema(object):
-
     def __init__(self, params):
         self.trailer_count = xbmc.getInfoLabel('Skin.String(TrailerCount)') if xbmc.getInfoLabel('Skin.String(TrailerCount)') != '0' else False
         self.intro_path = xbmc.getInfoLabel('Skin.String(IntroPath)')

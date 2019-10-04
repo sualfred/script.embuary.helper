@@ -153,10 +153,10 @@ class PlayerMonitor(xbmc.Monitor):
         dbid = xbmc.getInfoLabel('VideoPlayer.DBID')
 
         for i in range(1,50):
-            winprop('VideoPlayer.AudioCodec.%i' % i, clear=True)
-            winprop('VideoPlayer.AudioChannels.%i' % i, clear=True)
-            winprop('VideoPlayer.AudioLanguage.%i' % i, clear=True)
-            winprop('VideoPlayer.SubtitleLanguage.%i' % i, clear=True)
+            winprop('VideoPlayer.AudioCodec.%d' % i, clear=True)
+            winprop('VideoPlayer.AudioChannels.%d' % i, clear=True)
+            winprop('VideoPlayer.AudioLanguage.%d' % i, clear=True)
+            winprop('VideoPlayer.SubtitleLanguage.%d' % i, clear=True)
 
         if clear or not dbid:
             return
@@ -182,9 +182,9 @@ class PlayerMonitor(xbmc.Monitor):
 
             i = 1
             for track in results_audio:
-                winprop('VideoPlayer.AudioCodec.%i' % i, track['codec'])
-                winprop('VideoPlayer.AudioChannels.%i' % i, str(track['channels']))
-                winprop('VideoPlayer.AudioLanguage.%i' % i, track['language'])
+                winprop('VideoPlayer.AudioCodec.%d' % i, track['codec'])
+                winprop('VideoPlayer.AudioChannels.%d' % i, str(track['channels']))
+                winprop('VideoPlayer.AudioLanguage.%d' % i, track['language'])
                 i += 1
 
         except Exception:
@@ -195,7 +195,7 @@ class PlayerMonitor(xbmc.Monitor):
 
             i = 1
             for subtitle in results_subtitle:
-                winprop('VideoPlayer.SubtitleLanguage.%i' % i, subtitle['language'])
+                winprop('VideoPlayer.SubtitleLanguage.%d' % i, subtitle['language'])
                 i += 1
 
         except Exception:

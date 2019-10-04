@@ -22,7 +22,6 @@ KODIVERSION = get_kodiversion()
 
 
 class Main(xbmc.Monitor):
-
     def __init__(self):
         self.player_monitor = False
         self.restart = False
@@ -42,8 +41,9 @@ class Main(xbmc.Monitor):
         self.master_lock = None
         self.login_reload = False
 
+        self.addon_data_cleanup()
+
         if self.service_enabled:
-            self.addon_data_cleanup()
             self.start()
         else:
             self.keep_alive()
@@ -132,7 +132,7 @@ class Main(xbmc.Monitor):
             ''' Blur backgrounds
             '''
             if self.blur_background:
-                image_blur(radius=self.blur_radius)
+                ImageBlur(radius=self.blur_radius)
 
             ''' Refresh widgets
             '''
@@ -230,20 +230,27 @@ class Main(xbmc.Monitor):
         return movie_fanarts, tvshow_fanarts, artists_fanarts
 
 
-    ''' Image storage maintaining. Deletes all created images which were unused in the
-        last 60 days. The image functions are touching existing files to update the
-        modification date so often used images are never get deleted by this task.
-    '''
+
     def addon_data_cleanup(self,number_of_days=60):
         time_in_secs = time.time() - (number_of_days * 24 * 60 * 60)
-        dirs, files = xbmcvfs.listdir(ADDON_DATA_IMG_PATH)
 
-        for file in files:
+        ''' Image storage maintaining. Deletes all created images which were unused in the
+            last 60 days. The image functions are touching existing files to update the
+            modification date. Often used images are never get deleted by this task.
+        '''
+        for file in os.listdir(ADDON_DATA_IMG_PATH):
             full_path = os.path.join(ADDON_DATA_IMG_PATH, file)
-            stat = xbmcvfs.Stat(full_path)
+            if os.path.isfile(full_path):
+                stat = os.stat(full_path)
+                if stat.st_mtime <= time_in_secs:
+                    os.remove(full_path)
 
-            if stat.st_mtime() <= time_in_secs:
-                xbmcvfs.delete(full_path)
+        ''' Deletes old temporary files on startup
+        '''
+        for file in os.listdir(ADDON_DATA_IMG_TEMP_PATH):
+            full_path = os.path.join(ADDON_DATA_IMG_TEMP_PATH, file)
+            if os.path.isfile(full_path):
+                os.remove(full_path)
 
 
 if __name__ == '__main__':

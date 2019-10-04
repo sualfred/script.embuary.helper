@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#Based on script.toolbox by phil65 - https://github.com/phil65/script.toolbox/
+# coding: utf-8
 
 #################################################################################################
 
@@ -40,233 +40,228 @@ if not os.path.exists(ADDON_DATA_IMG_TEMP_PATH):
 
 ''' blur image and store result in addon data folder
 '''
-def image_blur(prop='listitem',file=None,radius=BLUR_RADIUS):
-    global OLD_IMAGE
-    image = file if file is not None else xbmc.getInfoLabel('Control.GetLabel(%s)' % BLUR_CONTAINER)
+class ImageBlur():
+    def __init__(self,prop='listitem',file=None,radius=None):
+        global OLD_IMAGE
+        self.image = file if file is not None else xbmc.getInfoLabel('Control.GetLabel(%s)' % BLUR_CONTAINER)
+        self.radius = int(radius) if radius is not None else int(BLUR_RADIUS)
 
-    try:
-        radius = int(radius)
-    except ValueError:
-        log('No valid radius defined for blurring', ERROR)
-        return
+        if self.image:
+            if self.image == OLD_IMAGE:
+                log('Image blurring: Image has not changed. Skip %s.' % self.image, WARNING)
 
-    if image:
-        if image == OLD_IMAGE:
-            log('Image blurring: Image has not changed. Skip %s.' % image, DEBUG)
-        else:
-            log('Image blurring: Image changed. Blur %s.' % image, DEBUG)
-            OLD_IMAGE = image
+            else:
+                log('Image blurring: Image changed. Blur %s.' % self.image, WARNING)
+                OLD_IMAGE = self.image
 
-            filename = md5hash(image) + str(radius) + '.png'
-            targetfile = os.path.join(ADDON_DATA_IMG_PATH, filename)
+                self.filepath = self.blur()
+                self.avgcolor = self.color()
 
-            try:
-                if not xbmcvfs.exists(targetfile):
-                    img = _getimgcache(image,ADDON_DATA_IMG_PATH,filename)
-                    img = Image.open(img)
-                    img.thumbnail((200, 200), Image.ANTIALIAS)
-                    img = img.convert('RGB')
-                    img = img.filter(ImageFilter.GaussianBlur(radius))
-                    img.save(targetfile)
+                winprop(prop + '_blurred', self.filepath)
+                winprop(prop + '_color', self.avgcolor)
+                winprop(prop + '_color_noalpha', self.avgcolor[2:])
 
-                else:
-                    log('Blurred img already created: ' + targetfile, DEBUG)
-                    touch_file(targetfile)
-                    img = Image.open(targetfile)
+    def __str__(self):
+        return self.filepath, self.avgcolor
 
+    def blur(self):
+        filename = md5hash(self.image) + str(self.radius) + '.png'
+        targetfile = os.path.join(ADDON_DATA_IMG_PATH, filename)
 
-                imagecolor = _imgcolors(img)
-                winprop(prop + '_blurred', targetfile)
-                winprop(prop + '_color', imagecolor)
-                winprop(prop + '_color_noalpha', imagecolor[2:])
+        try:
+            if not xbmcvfs.exists(targetfile):
+                img = _openimage(self.image,ADDON_DATA_IMG_PATH,filename)
+                img.thumbnail((200, 200), Image.ANTIALIAS)
+                img = img.convert('RGB')
+                img = img.filter(ImageFilter.GaussianBlur(self.radius))
+                img.save(targetfile)
+            else:
+                log('Blurred img already created: ' + targetfile, DEBUG)
 
-            except Exception as error:
-                log('Image blurring: Error -> %s (%s)' % (error, image), WARNING)
-                pass
+            return targetfile
 
+        except Exception:
+            return ''
 
-''' get image dimension and aspect ratio
-'''
-def image_info(image):
-    width, height, ar = '', '', ''
+    ''' get average image color
+    '''
+    def color(self):
+        imagecolor = 'FFF0F0F0'
 
-    if image:
-        filename = 'tmp_' + md5hash(image) + '.jpg'
-        img = _getimgcache(image,ADDON_DATA_IMG_TEMP_PATH,filename)
+        try:
+            img = Image.open(self.filepath)
+            width, height = img.size
+            pixels = img.load()
 
-        if img:
-            img = Image.open(img)
-            width,height = img.size
-            ar = round(width / height,2)
+            data = []
+            for x in range(int(width / 2)):
+                for y in range(int(height / 2)):
+                    cpixel = pixels[x * 2, y * 2]
+                    data.append(cpixel)
 
-        _deltemp()
+            counter, r, g, b = 0, 0, 0, 0
+            for x in range(len(data)):
+                brightness = data[x][0] + data[x][1] + data[x][2]
+                if brightness > 150 and brightness < 720:
+                    r += data[x][0]
+                    g += data[x][1]
+                    b += data[x][2]
+                    counter += 1
 
-    return width, height, ar
+            if counter > 0:
+                rAvg = int(r / counter)
+                gAvg = int(g / counter)
+                bAvg = int(b / counter)
+                Avg = int((rAvg + gAvg + bAvg) / 3)
+                minBrightness = 130
+
+                if Avg < minBrightness:
+                    Diff = minBrightness - Avg
+
+                    if rAvg <= (255 - Diff):
+                        rAvg += Diff
+                    else:
+                        rAvg = 255
+                    if gAvg <= (255 - Diff):
+                        gAvg += Diff
+                    else:
+                        gAvg = 255
+                    if bAvg <= (255 - Diff):
+                        bAvg += Diff
+                    else:
+                        bAvg = 255
+
+                imagecolor = 'FF%s%s%s' % (format(rAvg, '02x'), format(gAvg, '02x'), format(bAvg, '02x'))
+                log('Average color: ' + imagecolor, DEBUG)
+
+            else:
+                raise Exception
+
+        except Exception as error:
+            log('Use fallback average color: ' + imagecolor, DEBUG)
+            pass
+
+        return imagecolor
 
 
 ''' generate genre thumb and store result in addon data folder
 '''
-def create_genre_thumb(genre,images):
-    filename = genre + '_' + md5hash(images) + '.jpg'
-    genre_thumb = os.path.join(ADDON_DATA_IMG_PATH, filename)
+class CreateGenreThumb():
+    def __init__(self,genre,images):
+        self.images = images
+        self.genre = genre
+        self.filename = genre + '_' + md5hash(images) + '.jpg'
+        self.filepath = os.path.join(ADDON_DATA_IMG_PATH, self.filename)
 
-    if xbmcvfs.exists(genre_thumb):
-        touch_file(genre_thumb)
+        if xbmcvfs.exists(self.filepath):
+            self.thumb = self.filepath
+            touch_file(self.filepath)
+        else:
+            self.temp_files = self.copy_files()
+            self.thumb = self.create_thumb()
 
-    else:
-        width, height = 356, 533
+    def __str__(self):
+        return self.thumb
+
+    def copy_files(self):
+        ''' copy source posters to addon_data/img/tmp
+        '''
+        posters = list()
+        for poster in self.images:
+            posterfile = self.images.get(poster)
+            temp_filename = md5hash(posterfile) + '.jpg'
+            image = _openimage(posterfile,ADDON_DATA_IMG_TEMP_PATH,temp_filename)
+
+            if image:
+                posters.append(image)
+
+        return posters
+
+    def create_thumb(self):
+        ''' create collage with copied posteres
+        '''
+        width, height = 500, 750
         cols, rows = 2, 2
         thumbnail_width = int(width / cols)
         thumbnail_height = int(height / rows)
         size = thumbnail_width, thumbnail_height
 
-        ''' get real file names and move to temp if image has not been cached yet
-        '''
-        posters = list()
-        for poster in images:
-            posterfile = images.get(poster)
-            temp_filename = genre + '_' + md5hash(posterfile) + '.jpg'
-            image = _getimgcache(posterfile,ADDON_DATA_IMG_TEMP_PATH,temp_filename)
+        try:
+            collage_images = []
+            for poster in self.temp_files:
+                image = ImageOps.fit(poster, (size), method=Image.ANTIALIAS, bleed=0.0, centering=(0.5, 0.5))
+                collage_images.append(image)
 
-            if image:
-                posters.append(image)
+            collage = Image.new('RGB', (width, height), (19,19,19))
+            i, x, y = 0, 0 ,0
+            for row in range(rows):
+                for col in range(cols):
+                    try:
+                        collage.paste(collage_images[i],(int(x), int(y)))
+                    except Exception:
+                        pass
+                    i += 1
+                    x += thumbnail_width
+                y += thumbnail_height
+                x = 0
 
-        if not posters:
+            collage.save(self.filepath,optimize=True,quality=75)
+
+            return self.filepath
+
+        except Exception:
             return ''
 
-        ''' create collage
-        '''
-        collage = Image.new('RGB', (width, height), (19,19,19))
-        collage_images = []
-        for poster in posters:
-            try:
-                image = Image.open(xbmc.translatePath(poster))
-                image = ImageOps.fit(image, (size), method=Image.ANTIALIAS, bleed=0.0, centering=(0.5, 0.5))
-                collage_images.append(image)
-            except Exception:
-                pass
 
-        i, x, y = 0, 0 ,0
-        for row in range(rows):
-            for col in range(cols):
-                try:
-                    collage.paste(collage_images[i],(int(x), int(y)))
-                except Exception:
-                    pass
-                i += 1
-                x += thumbnail_width
-            y += thumbnail_height
-            x = 0
+''' get image dimension and aspect ratio
+'''
+def image_info(image):
+    try:
+        filename = md5hash(image) + '.jpg'
+        img = _openimage(image,ADDON_DATA_IMG_TEMP_PATH,filename)
+        width,height = img.size
+        ar = round(width / height,2)
 
-        collage.save(genre_thumb,optimize=True,quality=85)
-        _deltemp()
+        return width, height, ar
 
-    return genre_thumb
+    except Exception:
+        return '', '', ''
 
 
 ''' get cached images or copy to temp if file has not been cached yet
 '''
-def _getimgcache(image,targetpath,filename):
+def _openimage(image,targetpath,filename):
+    cached_files = list()
     cachedthumb = xbmc.getCacheThumbName(image)
-    vid_cachefile = os.path.join('special://profile/Thumbnails/Video', cachedthumb[0], cachedthumb)
-    cachefile_jpg = os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.jpg')
-    cachefile_png = os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.png')
-    targetfile = os.path.join(targetpath, filename)
-    img = None
+    cached_files.append(os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.jpg'))
+    cached_files.append(os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.png'))
+    cached_files.append(os.path.join('special://profile/Thumbnails/Video', cachedthumb[0], cachedthumb))
 
     for i in range(1, 4):
         try:
-            if xbmcvfs.exists(cachefile_jpg):
-                img = cachefile_jpg
-                log('Get cached file ' + cachefile_jpg, DEBUG)
-                break
-            elif xbmcvfs.exists(cachefile_png):
-                img = cachefile_png
-                log('Get cached file ' + cachefile_png, DEBUG)
-                break
-            elif xbmcvfs.exists(vid_cachefile):
-                log('Get cache video file ' + vid_cachefile, DEBUG)
-                img = vid_cachefile
-                break
-            else:
+            for cache in cached_files:
+                if xbmcvfs.exists(cache):
+                    try:
+                        img = Image.open(xbmc.translatePath(cache))
+                        return img
+                    except Exception as error:
+                        log('Image error: Could not open cached image --> %s' % error)
+                        pass
+
+            targetfile = os.path.join(targetpath, filename)
+            if not xbmcvfs.exists(targetfile):
                 image = urllib.unquote(image.replace('image://', ''))
                 if image.endswith('/'):
                     image = image[:-1]
-                log('Copy image from source: ' + image, DEBUG)
                 xbmcvfs.copy(image, targetfile)
-                img = targetfile
-                break
+
+            img = Image.open(targetfile)
+
+            return img
+
         except Exception as error:
-            log('Could not get image for %s (try %i) -> %s' % (image, i, error), WARNING)
+            log('Image error: Could not get image for %s (try %d) -> %s' % (image, i, error))
             xbmc.sleep(500)
+            pass
 
-    img = xbmc.translatePath(img) if img else ''
-    return img
-
-
-''' get average image color
-'''
-def _imgcolors(img):
-    width, height = img.size
-    imagecolor = 'FFF0F0F0'
-
-    try:
-        pixels = img.load()
-
-        data = []
-        for x in range(width / 2):
-            for y in range(height / 2):
-                cpixel = pixels[x * 2, y * 2]
-                data.append(cpixel)
-
-        counter, r, g, b = 0, 0, 0, 0
-        for x in range(len(data)):
-            brightness = data[x][0] + data[x][1] + data[x][2]
-            if brightness > 150 and brightness < 720:
-                r += data[x][0]
-                g += data[x][1]
-                b += data[x][2]
-                counter += 1
-
-        if counter > 0:
-            rAvg = int(r / counter)
-            gAvg = int(g / counter)
-            bAvg = int(b / counter)
-            Avg = (rAvg + gAvg + bAvg) / 3
-            minBrightness = 130
-
-            if Avg < minBrightness:
-                Diff = minBrightness - Avg
-
-                if rAvg <= (255 - Diff):
-                    rAvg += Diff
-                else:
-                    rAvg = 255
-                if gAvg <= (255 - Diff):
-                    gAvg += Diff
-                else:
-                    gAvg = 255
-                if bAvg <= (255 - Diff):
-                    bAvg += Diff
-                else:
-                    bAvg = 255
-
-            imagecolor = 'FF%s%s%s' % (format(rAvg, '02x'), format(gAvg, '02x'), format(bAvg, '02x'))
-            log('Average color: ' + imagecolor, DEBUG)
-
-        else:
-            raise Exception
-
-    except Exception:
-        log('Use fallback average color: ' + imagecolor, DEBUG)
-        pass
-
-    return imagecolor
-
-
-''' clean temporary copied files
-'''
-def _deltemp():
-    tempdirs, tempfiles = xbmcvfs.listdir(ADDON_DATA_IMG_TEMP_PATH)
-    for file in tempfiles:
-        xbmcvfs.delete(os.path.join(ADDON_DATA_IMG_TEMP_PATH, file))
+    return ''
