@@ -570,6 +570,20 @@ def getlocale(params):
         winprop('SystemLocale', clear=True)
 
 
+def deleteimgcache(params,path=ADDON_DATA_IMG_PATH,delete=False):
+    if not delete:
+        if DIALOG.yesno(heading=ADDON.getLocalizedString(32003), line1=ADDON.getLocalizedString(32019)):
+            delete = True
+
+    if delete:
+        for item in os.listdir(path):
+            full_path = os.path.join(path, item)
+            if os.path.isfile(full_path):
+                os.remove(full_path)
+            else:
+                deleteimgcache(params,full_path,True)
+
+
 class PlayCinema(object):
     def __init__(self, params):
         self.trailer_count = xbmc.getInfoLabel('Skin.String(TrailerCount)') if xbmc.getInfoLabel('Skin.String(TrailerCount)') != '0' else False

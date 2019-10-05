@@ -33,9 +33,10 @@ msgctxt "#32002"
 msgid "Enable logging"
 msgstr "Aktiviere Logging"
 
+#: /resources/settings.xml
 msgctxt "#32003"
-msgid "Enable debug logging"
-msgstr "Aktiviere Debug-Logging"
+msgid "Delete add-on image cache"
+msgstr ""
 
 msgctxt "#32004"
 msgid "detected"
