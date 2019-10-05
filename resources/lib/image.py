@@ -192,7 +192,7 @@ class CreateGenreThumb():
                 image = ImageOps.fit(poster, (size), method=Image.ANTIALIAS, bleed=0.0, centering=(0.5, 0.5))
                 collage_images.append(image)
 
-            collage = Image.new('RGB', (width, height), (19,19,19))
+            collage = Image.new('RGB', (width, height), (5,5,5))
             i, x, y = 0, 0 ,0
             for row in range(rows):
                 for col in range(cols):
