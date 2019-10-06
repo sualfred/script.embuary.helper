@@ -142,7 +142,7 @@ class PluginListing(object):
         for item in eval(self.available_tags):
             if item not in duplicate_handler:
                 duplicate_handler.append(item)
-                items.append({'name': '"' + item + '" ADDON.getLocalizedString(32023)', 'browse': 'widgets', 'tag': item})
+                items.append({'name': '"' + item + '" ' + ADDON.getLocalizedString(32023), 'browse': 'widgets', 'tag': item})
 
         return items
 
