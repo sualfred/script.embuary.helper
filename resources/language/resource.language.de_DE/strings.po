@@ -132,9 +132,9 @@ msgstr ""
 #: /resources/lib/plugin_listing.py
 msgctxt "#32022"
 msgid "All available database items"
-msgstr "Alle verfügbaren Datenbankeinträge"
+msgstr "Alle Datenbankeinträge"
 
 #: /resources/lib/plugin_listing.py
 msgctxt "#32023"
 msgid "items"
-msgstr "Einträge"
+msgstr "Inhalte"
