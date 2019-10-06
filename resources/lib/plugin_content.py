@@ -564,17 +564,31 @@ class PluginContent(object):
             log('Get genres: No genres found')
             return
 
+        genres = []
         for genre in json_query:
+            filters = [{'operator': 'is', 'field': 'genre', 'value': genre['label']}]
+            if self.tag:
+                filters.append(self.tag_filter)
+            filter = {'and': filters}
 
             genre_items = json_call(self.method_item,
                                     properties=['art'],
                                     sort=self.sort_recent, limit=4,
-                                    query_filter={'operator': 'is', 'field': 'genre', 'value': genre['label']}
+                                    query_filter=filter
                                     )
+
+            try:
+                genre_items = genre_items['result'][self.key_items]
+                if not genre_items:
+                    raise Exception
+
+            except Exception:
+                continue
+
             posters = {}
             index = 0
             try:
-                for art in genre_items['result'][self.key_items]:
+                for art in genre_items:
                     poster = 'poster.%s' % index
                     posters[poster] = art['art'].get('poster', '')
                     index += 1
@@ -582,17 +596,19 @@ class PluginContent(object):
                 pass
 
             genre['art'] = posters
+
             generated_thumb = CreateGenreThumb(genre['label'],posters)
             if generated_thumb:
                 genre['art']['thumb'] = str(CreateGenreThumb(genre['label'],posters))
 
-            try:
-                genre['file'] = 'videodb://%ss/genres/%s/' % (self.dbtype, genre['genreid'])
-            except Exception:
-                log('Get genres: No genre ID found')
-                return
+            if self.tag:
+                genre['url'] = 'videodb://%ss/titles/?xsp={"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (self.dbtype,genre['label'],self.tag,self.dbtype)
+            else:
+                genre['url'] = 'videodb://%ss/titles/?xsp={"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]}]},"type":"%ss"}' % (self.dbtype,genre['label'],self.dbtype)
 
-        append_items(self.li,json_query,type='genre')
+            genres.append(genre)
+
+        append_items(self.li,genres,type='genre')
 
 
     ''' get movies by director

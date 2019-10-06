@@ -54,9 +54,10 @@ emby_movies = [
         {'name': ADDON.getLocalizedString(32007), 'action': 'getsimilar'},
         {'name': ADDON.getLocalizedString(32014), 'action': 'getsimilar', 'pos': '0'},
         {'name': ADDON.getLocalizedString(32009), 'action': 'getbygenre'},
+        {'name': xbmc.getLocalizedString(135), 'action': 'getgenre'},
         {'name': ADDON.getLocalizedString(32012), 'action': 'getbyargs', 'limit': '50', 'sort': '{"order": "descending", "method": "rating"}'},
         {'name': xbmc.getLocalizedString(16101), 'action': 'getbyargs', 'filter': '{"field": "playcount", "operator": "lessthan", "value": "1"}', 'sort': '{"order": "ascending", "method": "title"}'},
-        {'name': xbmc.getLocalizedString(590), 'action': 'getbyargs', 'sort': '{"method": "random"}', 'limit': '50'},
+        {'name': xbmc.getLocalizedString(590), 'action': 'getbyargs', 'sort': '{"method": "random"}', 'limit': '50'}
         ]
 
 emby_tvshows = [
@@ -67,9 +68,10 @@ emby_tvshows = [
         {'name': ADDON.getLocalizedString(32007), 'action': 'getsimilar'},
         {'name': ADDON.getLocalizedString(32014), 'action': 'getsimilar', 'pos': '0'},
         {'name': ADDON.getLocalizedString(32009), 'action': 'getbygenre'},
+        {'name': xbmc.getLocalizedString(135), 'action': 'getgenre'},
         {'name': ADDON.getLocalizedString(32012), 'action': 'getbyargs', 'limit': '50', 'sort': '{"order": "descending", "method": "rating"}'},
         {'name': xbmc.getLocalizedString(16101), 'action': 'getrbyargs', 'filter': '{"field": "numwatched", "operator": "lessthan", "value": "1"}', 'sort': '{"order": "ascending", "method": "title"}'},
-        {'name': xbmc.getLocalizedString(590), 'action': 'getbyargs', 'sort': '{"method": "random"}', 'limit': '50'},
+        {'name': xbmc.getLocalizedString(590), 'action': 'getbyargs', 'sort': '{"method": "random"}', 'limit': '50'}
         ]
 
 ########################
