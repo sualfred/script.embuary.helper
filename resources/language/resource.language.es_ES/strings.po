@@ -3,13 +3,14 @@
 # Addon id: script.embuary.helper
 # Addon Provider: sualfred
 # Translators:
+# sualfred <su4lfred@gmail.com>, 2019
 # Bartolome Soriano <bsoriano@gmail.com>, 2019
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Embuary Helper\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2019-07-14 05:59+0000\n"
+"PO-Revision-Date: 2019-10-06 17:40+0000\n"
 "Last-Translator: Bartolome Soriano <bsoriano@gmail.com>, 2019\n"
 "Language-Team: Spanish (Spain) (https://www.transifex.com/sualfred/teams/80018/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -33,10 +34,6 @@ msgctxt "#32002"
 msgid "Enable logging"
 msgstr "Activar bitácora"
 
-msgctxt "#32003"
-msgid "Enable debug logging"
-msgstr "Activar bitácora de depuración"
-
 msgctxt "#32004"
 msgid "detected"
 msgstr "detectado"
@@ -44,6 +41,11 @@ msgstr "detectado"
 msgctxt "#32005"
 msgid "Changed font to"
 msgstr "Font cambiado a"
+
+#: /resources/settings.xml
+msgctxt "#32003"
+msgid "Delete add-on image cache"
+msgstr "Borrar cache de imágenes del addon"
 
 msgctxt "#32006"
 msgid "Applying changes"
@@ -118,3 +120,22 @@ msgstr "Misc."
 msgctxt "#32021"
 msgid "Background change interval"
 msgstr "Intervalo de cambio de fondo"
+
+#: /resources/lib/utils.py
+msgctxt "#32019"
+msgid ""
+"This will delete all created images (blurred backgrounds, genre thumbs, "
+"etc.) in the addon_data folder. Do you want to proceed?"
+msgstr ""
+"Esto eliminará todas las imágenes creadas (fondos difuminados, miniaturas de"
+" géneros, etc.) in el folder addon_data. ¿Desea proceder?"
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32022"
+msgid "All available database items"
+msgstr "Todos los ítems de la base de datos disponibles"
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32023"
+msgid "items"
+msgstr "ítems"
