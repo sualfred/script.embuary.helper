@@ -14,6 +14,13 @@ import os
 import sys
 import hashlib
 
+''' Python 2<->3 compatibility
+'''
+try:
+    import urllib2 as urllib
+except ImportError:
+    import urllib.request as urllib
+
 ########################
 
 PYTHON3 = True if sys.version_info.major == 3 else False
@@ -175,6 +182,14 @@ def encode_string(string):
     if not PYTHON3:
         string = string.encode('utf-8')
     return string
+
+
+def url_quote(string):
+    return urllib.quote(string)
+
+
+def url_unquote(string):
+    return urllib.unquote(string)
 
 
 def md5hash(value):

@@ -14,13 +14,6 @@ import random
 import os
 import locale
 
-''' Python 2<->3 compatibility
-'''
-try:
-    import urllib
-except ImportError:
-    import urllib.parse as urllib
-
 from resources.lib.helper import *
 from resources.lib.library import *
 from resources.lib.json_map import *
@@ -63,13 +56,13 @@ def settimer(params):
 def encode(params):
     string = remove_quotes(params.get('string'))
     prop = params.get('prop','EncodedString')
-    winprop(prop,urllib.quote(string))
+    winprop(prop,url_quote(string))
 
 
 def decode(params):
     string = remove_quotes(params.get('string'))
     prop = params.get('prop','DecodedString')
-    winprop(prop,urllib.unquote(string))
+    winprop(prop,url_unquote(string))
 
 
 def createselect(params):

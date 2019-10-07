@@ -11,13 +11,6 @@ import xbmcvfs
 import os
 from PIL import ImageFilter,Image,ImageOps
 
-''' Python 2<->3 compatibility
-'''
-try:
-    import urllib2 as urllib
-except ImportError:
-    import urllib.request as urllib
-
 from resources.lib.helper import *
 
 #################################################################################################
@@ -250,7 +243,7 @@ def _openimage(image,targetpath,filename):
 
             targetfile = os.path.join(targetpath, filename)
             if not xbmcvfs.exists(targetfile):
-                image = urllib.unquote(image.replace('image://', ''))
+                image = url_unquote(image.replace('image://', ''))
                 if image.endswith('/'):
                     image = image[:-1]
                 xbmcvfs.copy(image, targetfile)

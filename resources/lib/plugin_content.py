@@ -6,6 +6,13 @@
 import random
 import xbmcvfs
 
+''' Python 2<->3 compatibility
+'''
+try:
+    from urllib import urlencode
+except ImportError:
+    from urllib.parse import urlencode
+
 from resources.lib.helper import *
 from resources.lib.library import *
 from resources.lib.image import *
@@ -602,9 +609,11 @@ class PluginContent(object):
                 genre['art']['thumb'] = str(CreateGenreThumb(genre['label'],posters))
 
             if self.tag:
-                genre['url'] = 'videodb://%ss/titles/?xsp={"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (self.dbtype,genre['label'],self.tag,self.dbtype)
+                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.tag,self.dbtype)
             else:
-                genre['url'] = 'videodb://%ss/titles/?xsp={"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]}]},"type":"%ss"}' % (self.dbtype,genre['label'],self.dbtype)
+                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.dbtype)
+
+            genre['url'] = 'videodb://{0}s/titles/?xsp={1}'.format(self.dbtype, url_quote(xsp))
 
             genres.append(genre)
 
