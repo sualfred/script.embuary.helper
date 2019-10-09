@@ -253,3 +253,81 @@ def reload_widgets(instant=False,force=True):
     if force:
         execute('AlarmClock(WidgetForceRefresh1,SetProperty(EmbuaryForceWidgetUpdate,1,home),00:10,silent)')
         execute('AlarmClock(WidgetForceRefresh2,ClearProperty(EmbuaryForceWidgetUpdate,home),00:11,silent)')
+
+
+def get_library_tags():
+    tags = {}
+    duplicate_handler = []
+    tag_blacklist = ['Favorite tvshows', 'Favorite movies']
+
+    movie_tags = json_call('VideoLibrary.GetTags',
+                            properties=['title'],
+                            params={'type': 'movie'},
+                            debug=True
+                            )
+
+    tvshow_tags = json_call('VideoLibrary.GetTags',
+                            properties=['title'],
+                            params={'type': 'tvshow'},
+                            debug=True
+                            )
+
+    try:
+        for tag in movie_tags['result']['tags']:
+            label, tagid = tag['label'], tag['tagid']
+
+            if label in tag_blacklist:
+                continue
+
+            tags[label] = {'type': 'movies', 'id': str(tagid)}
+            duplicate_handler.append(label)
+
+    except KeyError:
+        pass
+
+    try:
+        for tag in tvshow_tags['result']['tags']:
+            label, tagid = tag['label'], tag['tagid']
+
+            if label in tag_blacklist:
+                continue
+
+            if label not in duplicate_handler:
+                tags[label] = {'type': 'tvshows', 'id': str(tagid)}
+            else:
+                tags[label] = {'type': 'mixed', 'id': str(tagid)}
+
+    except KeyError:
+        pass
+
+    return tags
+
+
+def set_library_tags(tags=None):
+    if tags is None:
+        tags = get_library_tags()
+
+    index = 0
+
+    if tags:
+        try:
+            whitelist = eval(ADDON.getSetting('library_tags'))
+        except Exception:
+            whitelist = []
+            for item in tags:
+                whitelist.append(item)
+            ADDON.setSetting(id='library_tags', value=str(whitelist))
+            pass
+
+        for item in tags:
+            if item in whitelist:
+                log('process whitelisted item ' + item)
+                winprop('library.tags.%d.title' % index, item)
+                winprop('library.tags.%d.type' % index, tags[item].get('type'))
+                winprop('library.tags.%d.id' % index, tags[item].get('id'))
+                index += 1
+
+    for clean in range(index,30):
+        winprop('library.tags.%d.title' % clean, clear=True)
+        winprop('library.tags.%d.type' % clean, clear=True)
+        winprop('library.tags.%d.id' % clean, clear=True)

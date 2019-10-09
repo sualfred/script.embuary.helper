@@ -6,13 +6,6 @@
 import random
 import xbmcvfs
 
-''' Python 2<->3 compatibility
-'''
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlencode
-
 from resources.lib.helper import *
 from resources.lib.library import *
 from resources.lib.image import *

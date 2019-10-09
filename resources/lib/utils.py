@@ -577,6 +577,46 @@ def deleteimgcache(params,path=ADDON_DATA_IMG_PATH,delete=False):
                 deleteimgcache(params,full_path,True)
 
 
+def selecttags(params):
+    tags = get_library_tags()
+
+    if tags:
+        try:
+            whitelist = eval(ADDON.getSetting('library_tags'))
+        except Exception:
+            set_library_tags(tags)
+            whitelist = eval(ADDON.getSetting('library_tags'))
+        except Exception:
+            whitelist = []
+
+        indexlist = {}
+        selectlist = []
+        preselectlist = []
+
+        index = 0
+        for item in tags:
+            selectlist.append(item)
+            indexlist[index] = item
+
+            if item in whitelist:
+                preselectlist.append(index)
+
+            index += 1
+
+        selectdialog = DIALOG.multiselect(ADDON.getLocalizedString(32026), selectlist, preselect=preselectlist)
+
+        if selectdialog is not None:
+            whitelist = []
+            for item in selectdialog:
+                whitelist.append(indexlist[item])
+
+            ADDON.setSetting(id='library_tags', value=str(whitelist))
+            set_library_tags(tags)
+
+    elif params.get('silent') != 'true':
+        DIALOG.ok(heading=ADDON.getLocalizedString(32000), line1=ADDON.getLocalizedString(32024))
+
+
 class PlayCinema(object):
     def __init__(self, params):
         self.trailer_count = xbmc.getInfoLabel('Skin.String(TrailerCount)') if xbmc.getInfoLabel('Skin.String(TrailerCount)') != '0' else False

@@ -41,6 +41,7 @@ class Main(xbmc.Monitor):
         self.master_lock = None
         self.login_reload = False
 
+        set_library_tags()
         self.addon_data_cleanup()
 
         if self.service_enabled:
@@ -55,6 +56,9 @@ class Main(xbmc.Monitor):
 
         if method in ['VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
             reload_widgets()
+
+        if method in ['VideoLibrary.OnUpdate','VideoLibrary.OnScanFinished', 'VideoLibrary.OnCleanFinished']:
+            set_library_tags()
 
 
     def onSettingsChanged(self):
