@@ -154,7 +154,7 @@ class CreateGenreThumb():
             self.thumb = self.create_thumb()
 
     def __str__(self):
-        return self.thumb
+        return encode_string(self.thumb)
 
     def copy_files(self):
         ''' copy source posters to addon_data/img/tmp

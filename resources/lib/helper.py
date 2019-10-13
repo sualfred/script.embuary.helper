@@ -130,6 +130,8 @@ def encode_string(string):
 
 
 def url_quote(string):
+    if not PYTHON3:
+        string = string.encode('utf-8')
     return urllib.quote(string)
 
 

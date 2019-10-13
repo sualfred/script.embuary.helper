@@ -599,7 +599,7 @@ class PluginContent(object):
 
             generated_thumb = CreateGenreThumb(genre['label'],posters)
             if generated_thumb:
-                genre['art']['thumb'] = str(CreateGenreThumb(genre['label'],posters))
+                genre['art']['thumb'] = str(generated_thumb)
 
             if self.tag:
                 xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.tag,self.dbtype)
