@@ -5,13 +5,14 @@
 # Translators:
 # sualfred <su4lfred@gmail.com>, 2019
 # EffeF, 2019
+# Andrea Matesi <andreamatesi@gmail.com>, 2019
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Embuary Helper\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2019-10-06 17:40+0000\n"
-"Last-Translator: EffeF, 2019\n"
+"Last-Translator: Andrea Matesi <andreamatesi@gmail.com>, 2019\n"
 "Language-Team: Italian (Italy) (https://www.transifex.com/sualfred/teams/80018/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -139,3 +140,18 @@ msgstr "Tutti gli elementi del database disponibili"
 msgctxt "#32023"
 msgid "items"
 msgstr "elementi"
+
+#: /resources/lib/utils.py
+msgctxt "#32024"
+msgid "The video database has no library tags stored."
+msgstr "i"
+
+#: /resources/lib/utils.py
+msgctxt "#32025"
+msgid "Attention"
+msgstr "Attenzione"
+
+#: /resources/lib/utils.py
+msgctxt "#32026"
+msgid "Enable library tag detection for"
+msgstr "Attiva riconoscimento tag libreria per"
