@@ -293,8 +293,10 @@ class PlayerMonitor(xbmc.Monitor):
 
     def get_art_info(self,clear=False):
         for art in ['Player.Icon', 'Player.Art(poster)', 'Player.Art(tvshow.poster)', 'Pvr.EPGEventIcon']:
-            if not clear:
-                width,height,ar = image_info(xbmc.getInfoLabel(art))
+            image = xbmc.getInfoLabel(art)
+
+            if not clear and image:
+                width,height,ar = image_info(image)
                 winprop(art + '.width',str(width))
                 winprop(art + '.height',str(height))
                 winprop(art + '.ar',str(ar))

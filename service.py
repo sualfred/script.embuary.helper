@@ -47,7 +47,9 @@ class Main(xbmc.Monitor):
 
 
     def onNotification(self, sender, method, data):
-        #log('-----------------------------> Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
+        if visible('Skin.HasSetting(DebugInfo'):
+            log('Skin debug -----------------------------> Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
+
         if ADDON_ID in sender and 'restart' in method:
             self.restart = True
 
@@ -85,6 +87,7 @@ class Main(xbmc.Monitor):
 
     def start(self):
         log('Service: Started', force=True)
+
         self.player_monitor = PlayerMonitor()
 
         while not self.abortRequested() and not self.restart:
