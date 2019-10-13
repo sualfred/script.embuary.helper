@@ -209,16 +209,18 @@ class CreateGenreThumb():
 ''' get image dimension and aspect ratio
 '''
 def image_info(image):
-    try:
-        filename = md5hash(image) + '.jpg'
-        img = _openimage(image,ADDON_DATA_IMG_TEMP_PATH,filename)
-        width,height = img.size
-        ar = round(width / height,2)
+    width, height, ar = '', '', ''
 
-        return width, height, ar
+    if image:
+        try:
+            filename = md5hash(image) + '.jpg'
+            img = _openimage(image,ADDON_DATA_IMG_TEMP_PATH,filename)
+            width,height = img.size
+            ar = round(width / height,2)
+        except Exception:
+            pass
 
-    except Exception:
-        return '', '', ''
+    return width, height, ar
 
 
 ''' get cached images or copy to temp if file has not been cached yet
