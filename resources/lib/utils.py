@@ -605,7 +605,7 @@ def selecttags(params):
         selectdialog = DIALOG.multiselect(ADDON.getLocalizedString(32026), selectlist, preselect=preselectlist)
 
         if selectdialog is not None and not selectdialog:
-            addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data', '[""]')
+            set_library_tags(tags,[],clear=True)
 
         elif selectdialog is not None:
             whitelist_new = []

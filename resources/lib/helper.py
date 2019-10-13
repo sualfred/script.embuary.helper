@@ -349,11 +349,11 @@ def get_library_tags():
     return tags
 
 
-def set_library_tags(tags,whitelist=None,save=True):
+def set_library_tags(tags,whitelist=None,save=True,clear=False):
     setting = 'tags_whitelist.' + xbmc.getSkinDir() +'.data'
     index = 0
 
-    if tags:
+    if tags and not clear:
         if not whitelist:
             try:
                 whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
