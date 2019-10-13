@@ -9,7 +9,6 @@ import datetime
 
 from resources.lib.helper import *
 from resources.lib.json_map import *
-from resources.lib.library import get_joined_items
 from resources.lib.image import *
 
 ########################
@@ -24,7 +23,6 @@ class PlayerMonitor(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
         if method in ['Player.OnPlay', 'Player.OnStop', 'Player.OnAVChange', 'Playlist.OnAdd', 'Playlist.OnRemove', 'VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
-            log('Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
             self.data = json.loads(data)
 
         ''' Clear music or video playlist based on player content.

@@ -818,22 +818,36 @@ class PluginContent(object):
         try:
             if self.dbtitle:
                 json_query = json_call(self.method_item,
-                                        properties=['cast'],
-                                        limit=1,
-                                        query_filter=self.title_filter
-                                        )
+                                       properties=['cast'],
+                                       limit=1,
+                                       query_filter=self.title_filter
+                                       )
 
             elif self.dbid:
                 if self.dbtype == 'tvshow' and self.idtype in ['season','episode']:
                     self.dbid = self._gettvshowid()
 
                 json_query = json_call(self.method_details,
-                                        properties=['cast'],
-                                        params={self.param: int(self.dbid)}
-                                        )
+                                       properties=['cast'],
+                                       params={self.param: int(self.dbid)}
+                                       )
 
             if self.key_details in json_query['result']:
                 cast = json_query['result'][self.key_details]['cast']
+
+                ''' Fallback to TV show cast if episode has no cast stored
+                '''
+                if not cast and self.dbtype == 'episode':
+                    tvshow_id = self._gettvshowid(idtype='episode',dbid=self.dbid)
+
+                    json_query = json_call('VideoLibrary.GetTVShowDetails',
+                                           properties=['cast'],
+                                           params={'tvshowid': int(tvshow_id)},
+                                           debug=True
+                                           )
+
+                    cast = json_query['result']['tvshowdetails']['cast']
+
             else:
                 cast = json_query['result'][self.key_items][0]['cast']
 

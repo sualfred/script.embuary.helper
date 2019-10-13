@@ -37,24 +37,6 @@ def get_cast(castData):
     return [listcast, listcastandrole]
 
 
-def get_first_item(item):
-    if len(item) > 0:
-        item = item[0]
-    else:
-        item = ''
-
-    return item
-
-
-def get_joined_items(item):
-    if len(item) > 0:
-        item = ' / '.join(item)
-    else:
-        item = ''
-
-    return item
-
-
 def get_unwatched(episode,watchedepisodes):
     if episode > watchedepisodes:
         unwatchedepisodes = episode - watchedepisodes

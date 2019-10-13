@@ -94,7 +94,6 @@ class PluginListing(object):
                 browse = 'folder'
                 available_tags = tags_movies + tags_tvshows
 
-
             url = self._encode_url(browse=browse,
                                    folder=content,
                                    available_tags=available_tags,
@@ -150,9 +149,9 @@ class PluginListing(object):
     def _get_tags(self,library):
         tags = []
         json_query = json_call('VideoLibrary.GetTags',
-                                properties=['title'],
-                                params={'type': library}
-                                )
+                               properties=['title'],
+                               params={'type': library}
+                               )
 
         try:
             for tag in json_query['result']['tags']:

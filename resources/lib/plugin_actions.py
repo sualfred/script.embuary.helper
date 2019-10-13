@@ -32,7 +32,7 @@ class PluginActions(object):
         except Exception:
             pass
 
-        gotopath(path)
+        go_to_path(path)
 
 
     def smsjump(self):

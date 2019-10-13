@@ -49,19 +49,6 @@ def get_kodiversion():
     return int(build[:2])
 
 
-def addon_setting(skin,setting,save=False):
-    profile = xbmc.getInfoLabel('System.ProfileName')
-    setting_id = skin + '_' + profile + '_' + setting
-    skin_version = xbmcaddon.Addon(skin).getAddonInfo('version')
-
-    if not save:
-        if ADDON.getSetting(id=setting_id) == skin_version:
-            return True
-        return False
-    else:
-        ADDON.setSetting(id=setting_id, value=skin_version)
-
-
 def log(txt,loglevel=NOTICE,force=False):
     if (loglevel == NOTICE and ADDON.getSettingBool('log')) or loglevel in [DEBUG, WARNING, ERROR] or force:
 
@@ -90,6 +77,15 @@ def remove_quotes(label):
     return label
 
 
+def get_joined_items(item):
+    if len(item) > 0 and item is not None:
+        item = ' / '.join(item)
+    else:
+        item = ''
+
+    return item
+
+
 def get_date(date_time):
     date_time_obj = datetime.datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
     date_obj = date_time_obj.date()
@@ -112,9 +108,41 @@ def clear_playlists():
     MUSICPLAYLIST.clear()
 
 
-def gotopath(path,target='videos'):
+def go_to_path(path,target='videos'):
     execute('Dialog.Close(all,true)')
     execute('Container.Update(%s)' % path) if visible('Window.IsMedia') else execute('ActivateWindow(%s,%s,return)' % (target,path))
+
+
+def get_bool(value,string='true'):
+    try:
+        if value.lower() == string:
+            return True
+        raise Exception
+
+    except Exception:
+        return False
+
+
+def encode_string(string):
+    if not PYTHON3:
+        string = string.encode('utf-8')
+    return string
+
+
+def url_quote(string):
+    return urllib.quote(string)
+
+
+def url_unquote(string):
+    return urllib.unquote(string)
+
+
+def md5hash(value):
+    return hashlib.md5(str(value)).hexdigest()
+
+
+def touch_file(filepath):
+    os.utime(filepath,None)
 
 
 def winprop(key, value=None, clear=False, window_id=10000):
@@ -166,38 +194,6 @@ def get_channeldetails(channel_name):
         return
 
     return channel_details
-
-
-def get_bool(value,string='true'):
-    try:
-        if value.lower() == string:
-            return True
-        raise Exception
-
-    except Exception:
-        return False
-
-
-def encode_string(string):
-    if not PYTHON3:
-        string = string.encode('utf-8')
-    return string
-
-
-def url_quote(string):
-    return urllib.quote(string)
-
-
-def url_unquote(string):
-    return urllib.unquote(string)
-
-
-def md5hash(value):
-    return hashlib.md5(str(value)).hexdigest()
-
-
-def touch_file(filepath):
-    os.utime(filepath,None)
 
 
 def json_call(method,properties=None,sort=None,query_filter=None,limit=None,params=None,item=None,options=None,limits=None,debug=False):
@@ -255,21 +251,66 @@ def reload_widgets(instant=False,force=True):
         execute('AlarmClock(WidgetForceRefresh2,ClearProperty(EmbuaryForceWidgetUpdate,home),00:11,silent)')
 
 
+def sync_library_tags(tags=None):
+    save = False
+    if tags is None:
+        tags = get_library_tags()
+
+    try:
+        whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
+    except Exception:
+        whitelist = []
+
+    try:
+        old_tags = eval(addon_data('tags_all.data'))
+    except Exception:
+        old_tags = []
+
+    ''' cleanup removed old tags
+    '''
+    for tag in old_tags:
+        if tag not in tags:
+            save = True
+            old_tags.remove(tag)
+            if tag in whitelist:
+                whitelist.remove(tag)
+
+    ''' recognize new available tags
+    '''
+    new_tags = []
+    for tag in tags:
+        if tag not in old_tags:
+            save = True
+            new_tags.append(tag)
+
+    if save:
+        known_tags = old_tags + new_tags
+
+        ''' automatically whitelist new tags if enabled
+        '''
+        if visible('Skin.HasSetting(AutoLibraryTags)'):
+            for tag in new_tags:
+                whitelist.append(tag)
+
+        addon_data('tags_all.data', str(known_tags))
+
+    set_library_tags(tags,whitelist,save=save)
+
+
 def get_library_tags():
     tags = {}
+    all_tags = []
     duplicate_handler = []
     tag_blacklist = ['Favorite tvshows', 'Favorite movies']
 
     movie_tags = json_call('VideoLibrary.GetTags',
                             properties=['title'],
-                            params={'type': 'movie'},
-                            debug=True
+                            params={'type': 'movie'}
                             )
 
     tvshow_tags = json_call('VideoLibrary.GetTags',
                             properties=['title'],
-                            params={'type': 'tvshow'},
-                            debug=True
+                            params={'type': 'tvshow'}
                             )
 
     try:
@@ -280,6 +321,7 @@ def get_library_tags():
                 continue
 
             tags[label] = {'type': 'movies', 'id': str(tagid)}
+            all_tags.append(label)
             duplicate_handler.append(label)
 
     except KeyError:
@@ -294,34 +336,32 @@ def get_library_tags():
 
             if label not in duplicate_handler:
                 tags[label] = {'type': 'tvshows', 'id': str(tagid)}
+                all_tags.append(label)
             else:
                 tags[label] = {'type': 'mixed', 'id': str(tagid)}
 
     except KeyError:
         pass
 
+    all_tags.sort()
+    winprop('library.tags.all', get_joined_items(all_tags))
+
     return tags
 
 
-def set_library_tags(tags=None):
-    if tags is None:
-        tags = get_library_tags()
-
+def set_library_tags(tags,whitelist=None,save=True):
+    setting = 'tags_whitelist.' + xbmc.getSkinDir() +'.data'
     index = 0
 
     if tags:
-        try:
-            whitelist = eval(ADDON.getSetting('library_tags'))
-        except Exception:
-            whitelist = []
-            for item in tags:
-                whitelist.append(item)
-            ADDON.setSetting(id='library_tags', value=str(whitelist))
-            pass
+        if not whitelist:
+            try:
+                whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
+            except Exception:
+                pass
 
         for item in tags:
             if item in whitelist:
-                log('process whitelisted item ' + item)
                 winprop('library.tags.%d.title' % index, item)
                 winprop('library.tags.%d.type' % index, tags[item].get('type'))
                 winprop('library.tags.%d.id' % index, tags[item].get('id'))
@@ -331,3 +371,53 @@ def set_library_tags(tags=None):
         winprop('library.tags.%d.title' % clean, clear=True)
         winprop('library.tags.%d.type' % clean, clear=True)
         winprop('library.tags.%d.id' % clean, clear=True)
+
+    whitelist.sort()
+    winprop('library.tags', get_joined_items(whitelist))
+
+    if save:
+        addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data', str(whitelist))
+
+
+def addon_data_cleanup(number_of_days=60):
+    time_in_secs = time.time() - (number_of_days * 24 * 60 * 60)
+
+    ''' Image storage maintaining. Deletes all created images which were unused in the
+        last 60 days. The image functions are touching existing files to update the
+        modification date. Often used images are never get deleted by this task.
+    '''
+    for file in os.listdir(ADDON_DATA_IMG_PATH):
+        full_path = os.path.join(ADDON_DATA_IMG_PATH, file)
+        if os.path.isfile(full_path):
+            stat = os.stat(full_path)
+            if stat.st_mtime <= time_in_secs:
+                os.remove(full_path)
+
+    ''' Deletes old temporary files on startup
+    '''
+    for file in os.listdir(ADDON_DATA_IMG_TEMP_PATH):
+        full_path = os.path.join(ADDON_DATA_IMG_TEMP_PATH, file)
+        if os.path.isfile(full_path):
+            os.remove(full_path)
+
+
+def addon_data(file,content=None):
+    targetfile = os.path.join(ADDON_DATA_PATH, file)
+
+    if not content:
+        try:
+            f = open(targetfile,'r')
+            filecontent = ''
+            for line in f:
+                filecontent = filecontent + line
+            f.close()
+
+            return filecontent
+
+        except Exception:
+            return ''
+
+    else:
+        f = open(targetfile,'w')
+        f.write(content)
+        f.close()

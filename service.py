@@ -36,13 +36,9 @@ class Main(xbmc.Monitor):
 
         self.blur_background = visible('Skin.HasSetting(BlurEnabled)')
         self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or ADDON.getSetting('blur_radius')
-        self.focus_monitor = visible('Skin.HasSetting(FocusMonitor)')
 
         self.master_lock = None
         self.login_reload = False
-
-        set_library_tags()
-        self.addon_data_cleanup()
 
         if self.service_enabled:
             self.start()
@@ -51,14 +47,13 @@ class Main(xbmc.Monitor):
 
 
     def onNotification(self, sender, method, data):
+        #log('-----------------------------> Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
         if ADDON_ID in sender and 'restart' in method:
             self.restart = True
 
-        if method in ['VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate']:
+        if method in ['VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate', 'AudioLibrary.OnScanFinished', 'VideoLibrary.OnScanFinished', 'VideoLibrary.OnCleanFinished', 'Other.LibraryChanged']:
+            sync_library_tags()
             reload_widgets()
-
-        if method in ['VideoLibrary.OnUpdate','VideoLibrary.OnScanFinished', 'VideoLibrary.OnCleanFinished']:
-            set_library_tags()
 
 
     def onSettingsChanged(self):
@@ -93,15 +88,6 @@ class Main(xbmc.Monitor):
         self.player_monitor = PlayerMonitor()
 
         while not self.abortRequested() and not self.restart:
-
-            '''Focus monitor to split merged info labels by the default / seperator to properties
-            '''
-            if self.focus_monitor:
-                split({'value': xbmc.getInfoLabel('ListItem.Genre'), 'property': 'ListItem.Genre', 'separator': ' / '})
-                split({'value': xbmc.getInfoLabel('ListItem.Country'), 'property': 'ListItem.Country', 'separator': ' / '})
-                split({'value': xbmc.getInfoLabel('ListItem.Studio'), 'property': 'ListItem.Studio', 'separator': ' / '})
-                split({'value': xbmc.getInfoLabel('ListItem.Director'), 'property': 'ListItem.Director', 'separator': ' / '})
-                split({'value': xbmc.getInfoLabel('ListItem.Cast'), 'property': 'ListItem.Cast'})
 
             ''' Grab fanarts
             '''
@@ -234,28 +220,8 @@ class Main(xbmc.Monitor):
         return movie_fanarts, tvshow_fanarts, artists_fanarts
 
 
-
-    def addon_data_cleanup(self,number_of_days=60):
-        time_in_secs = time.time() - (number_of_days * 24 * 60 * 60)
-
-        ''' Image storage maintaining. Deletes all created images which were unused in the
-            last 60 days. The image functions are touching existing files to update the
-            modification date. Often used images are never get deleted by this task.
-        '''
-        for file in os.listdir(ADDON_DATA_IMG_PATH):
-            full_path = os.path.join(ADDON_DATA_IMG_PATH, file)
-            if os.path.isfile(full_path):
-                stat = os.stat(full_path)
-                if stat.st_mtime <= time_in_secs:
-                    os.remove(full_path)
-
-        ''' Deletes old temporary files on startup
-        '''
-        for file in os.listdir(ADDON_DATA_IMG_TEMP_PATH):
-            full_path = os.path.join(ADDON_DATA_IMG_TEMP_PATH, file)
-            if os.path.isfile(full_path):
-                os.remove(full_path)
-
-
 if __name__ == '__main__':
+    sync_library_tags()
+    addon_data_cleanup()
+
     Main()

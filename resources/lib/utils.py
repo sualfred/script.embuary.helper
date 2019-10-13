@@ -389,11 +389,11 @@ def jumptoshow_by_episode(params):
         log('Could not get the TV show ID')
         return
 
-    gotopath('videodb://tvshows/titles/%s/' % tvshow_id)
+    go_to_path('videodb://tvshows/titles/%s/' % tvshow_id)
 
 
 def goto(params):
-    gotopath(remove_quotes(params.get('path')),params.get('target'))
+    go_to_path(remove_quotes(params.get('path')),params.get('target'))
 
 
 def resetposition(params):
@@ -581,11 +581,12 @@ def selecttags(params):
     tags = get_library_tags()
 
     if tags:
+        setting = xbmc.getSkinDir() + '_' + 'library_tags'
         try:
-            whitelist = eval(ADDON.getSetting('library_tags'))
+            whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
         except Exception:
-            set_library_tags(tags)
-            whitelist = eval(ADDON.getSetting('library_tags'))
+            sync_library_tags(tags)
+            whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
         except Exception:
             whitelist = []
 
@@ -594,24 +595,25 @@ def selecttags(params):
         preselectlist = []
 
         index = 0
-        for item in tags:
+        for item in sorted(tags):
             selectlist.append(item)
             indexlist[index] = item
-
             if item in whitelist:
                 preselectlist.append(index)
-
             index += 1
 
         selectdialog = DIALOG.multiselect(ADDON.getLocalizedString(32026), selectlist, preselect=preselectlist)
 
-        if selectdialog is not None:
-            whitelist = []
-            for item in selectdialog:
-                whitelist.append(indexlist[item])
+        if selectdialog is not None and not selectdialog:
+            addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data', '[""]')
 
-            ADDON.setSetting(id='library_tags', value=str(whitelist))
-            set_library_tags(tags)
+        elif selectdialog is not None:
+            whitelist_new = []
+            for item in selectdialog:
+                whitelist_new.append(indexlist[item])
+
+            if whitelist != whitelist_new:
+                set_library_tags(tags,whitelist_new)
 
     elif params.get('silent') != 'true':
         DIALOG.ok(heading=ADDON.getLocalizedString(32000), line1=ADDON.getLocalizedString(32024))
