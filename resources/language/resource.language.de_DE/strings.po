@@ -138,3 +138,18 @@ msgstr "Alle Datenbankeinträge"
 msgctxt "#32023"
 msgid "items"
 msgstr "Inhalte"
+
+#: /resources/lib/utils.py
+msgctxt "#32024"
+msgid "The video database has no library tags stored."
+msgstr "Deine Videodatenbank enthält keine Tags."
+
+#: /resources/lib/utils.py
+msgctxt "#32025"
+msgid "Attention"
+msgstr "Achtung"
+
+#: /resources/lib/utils.py
+msgctxt "#32026"
+msgid "Enable library tag detection for"
+msgstr "Aktiviere Tag-Erkennung für"
