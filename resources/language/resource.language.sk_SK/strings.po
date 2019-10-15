@@ -138,3 +138,18 @@ msgstr "Všetky dostupné položky databázy"
 msgctxt "#32023"
 msgid "items"
 msgstr "položky"
+
+#: /resources/lib/utils.py
+msgctxt "#32024"
+msgid "The video database has no library tags stored."
+msgstr "Vo video databáze nie sú uložené žiadne značky."
+
+#: /resources/lib/utils.py
+msgctxt "#32025"
+msgid "Attention"
+msgstr "Upozornenie"
+
+#: /resources/lib/utils.py
+msgctxt "#32026"
+msgid "Enable library tag detection for"
+msgstr "Povoliť detekciu značiek v knižnici pre"
