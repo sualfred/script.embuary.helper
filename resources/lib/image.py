@@ -230,7 +230,7 @@ def _openimage(image,targetpath,filename):
     cachedthumb = xbmc.getCacheThumbName(image)
     cached_files.append(os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.jpg'))
     cached_files.append(os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.png'))
-    cached_files.append(os.path.join('special://profile/Thumbnails/Video', cachedthumb[0], cachedthumb))
+    cached_files.append(os.path.join('special://profile/Thumbnails/Video/', cachedthumb[0], cachedthumb))
 
     for i in range(1, 4):
         try:
@@ -239,9 +239,24 @@ def _openimage(image,targetpath,filename):
                     try:
                         img = Image.open(xbmc.translatePath(cache))
                         return img
+
                     except Exception as error:
                         log('Image error: Could not open cached image --> %s' % error, WARNING)
                         pass
+
+            if xbmc.skinHasImage(image):
+                try:
+                    if image.startswith('special://skin'):
+                        skin_image = image
+                    else:
+                        skin_image = os.path.join('special://skin/media/', image)
+
+                    img = Image.open(xbmc.translatePath(skin_image))
+                    return img
+
+                except Exception as error:
+                    log('Image error: Could not get skin image %s -> %s' % (skin_image, error), ERROR)
+                    pass
 
             targetfile = os.path.join(targetpath, filename)
             if not xbmcvfs.exists(targetfile):
@@ -251,7 +266,6 @@ def _openimage(image,targetpath,filename):
                 xbmcvfs.copy(image, targetfile)
 
             img = Image.open(targetfile)
-
             return img
 
         except Exception as error:
