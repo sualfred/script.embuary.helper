@@ -234,6 +234,8 @@ def _openimage(image,targetpath,filename):
 
     for i in range(1, 4):
         try:
+            ''' Try to get cached image at first
+            '''
             for cache in cached_files:
                 if xbmcvfs.exists(cache):
                     try:
@@ -244,29 +246,29 @@ def _openimage(image,targetpath,filename):
                         log('Image error: Could not open cached image --> %s' % error, WARNING)
                         pass
 
+            ''' Skin images will be tried to be accessed directly. For all other ones
+                the source will be copied to the addon_data folder to get access.
+            '''
             if xbmc.skinHasImage(image):
-                try:
-                    if image.startswith('special://skin'):
-                        skin_image = image
-                    else:
-                        skin_image = os.path.join('special://skin/media/', image)
+                if not image.startswith('special://skin'):
+                    image = os.path.join('special://skin/media/', image)
 
-                    img = Image.open(xbmc.translatePath(skin_image))
+                try: # in case image is packed in textures.xbt
+                    img = Image.open(xbmc.translatePath(image))
                     return img
+                except Exception:
+                    return ''
 
-                except Exception as error:
-                    log('Image error: Could not get skin image %s -> %s' % (skin_image, error), ERROR)
-                    pass
+            else:
+                targetfile = os.path.join(targetpath, filename)
+                if not xbmcvfs.exists(targetfile):
+                    image = url_unquote(image.replace('image://', ''))
+                    if image.endswith('/'):
+                        image = image[:-1]
+                    xbmcvfs.copy(image, targetfile)
 
-            targetfile = os.path.join(targetpath, filename)
-            if not xbmcvfs.exists(targetfile):
-                image = url_unquote(image.replace('image://', ''))
-                if image.endswith('/'):
-                    image = image[:-1]
-                xbmcvfs.copy(image, targetfile)
-
-            img = Image.open(targetfile)
-            return img
+                img = Image.open(targetfile)
+                return img
 
         except Exception as error:
             log('Image error: Could not get image for %s (try %d) -> %s' % (image, i, error), ERROR)

@@ -226,7 +226,7 @@ def playsfx(params):
 
 def imginfo(params):
     prop = remove_quotes(params.get('prop','img'))
-    img = params.get('img')
+    img = remove_quotes(params.get('img'))
     if img:
         width,height,ar = image_info(img)
         winprop(prop + '.width',str(width))
