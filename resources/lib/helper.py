@@ -44,11 +44,6 @@ MUSICPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 
 ########################
 
-def get_kodiversion():
-    build = xbmc.getInfoLabel('System.BuildVersion')
-    return int(build[:2])
-
-
 def log(txt,loglevel=NOTICE,force=False):
     if (loglevel == NOTICE and ADDON.getSettingBool('log')) or loglevel in [DEBUG, WARNING, ERROR] or force:
 
@@ -303,12 +298,16 @@ def get_library_tags():
     tags = {}
     all_tags = []
     duplicate_handler = []
-    tag_blacklist = ['Favorite tvshows', 'Favorite movies']
+    tag_blacklist = ['Favorite tvshows', # Emby
+                     'Favorite movies', # Emby
+                     'Fav. Kodi Movies',
+                     'Fav. Kodi TV Shows'
+                     ]
 
     movie_tags = json_call('VideoLibrary.GetTags',
-                            properties=['title'],
-                            params={'type': 'movie'}
-                            )
+                           properties=['title'],
+                           params={'type': 'movie'}
+                           )
 
     tvshow_tags = json_call('VideoLibrary.GetTags',
                             properties=['title'],

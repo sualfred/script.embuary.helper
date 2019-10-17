@@ -16,7 +16,14 @@ from resources.lib.player_monitor import PlayerMonitor
 
 ########################
 
-KODIVERSION = get_kodiversion()
+NOTIFICATION_METHOD = ['VideoLibrary.OnUpdate',
+                       'VideoLibrary.OnScanFinished',
+                       'VideoLibrary.OnCleanFinished',
+                       'AudioLibrary.OnUpdate',
+                       'AudioLibrary.OnScanFinished',
+                       'Other.LibraryChanged', # Emby
+                       'Other.UserDataChanged' # Emby
+                       ]
 
 ########################
 
@@ -48,11 +55,10 @@ class Main(xbmc.Monitor):
 
     def onNotification(self, sender, method, data):
         #log('Skin debug -----------------------------> Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
-
         if ADDON_ID in sender and 'restart' in method:
             self.restart = True
 
-        if method in ['VideoLibrary.OnUpdate', 'AudioLibrary.OnUpdate', 'AudioLibrary.OnScanFinished', 'VideoLibrary.OnScanFinished', 'VideoLibrary.OnCleanFinished', 'Other.LibraryChanged']:
+        if method in NOTIFICATION_METHOD:
             sync_library_tags()
             reload_widgets()
 
