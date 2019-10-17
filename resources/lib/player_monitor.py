@@ -18,7 +18,6 @@ class PlayerMonitor(xbmc.Monitor):
     def __init__(self):
         log('Service: Player monitor started', force=True)
         self.fullscreen_lock = False
-        self.nextitem_lock = False
         self.pvr_playback = False
 
     def onNotification(self, sender, method, data):
@@ -34,7 +33,6 @@ class PlayerMonitor(xbmc.Monitor):
         '''
         if method == 'Player.OnPlay':
             xbmc.stopSFX()
-            self.nextitem_lock = False
             self.pvr_playback = visible('String.StartsWith(Player.Filenameandpath,pvr://)')
 
             self.get_art_info()
@@ -44,7 +42,6 @@ class PlayerMonitor(xbmc.Monitor):
 
             if PLAYER.isPlayingVideo() and not self.pvr_playback:
                 self.get_videoinfo()
-                self.get_nextitem(clear=True)
                 self.get_nextitem()
 
             if PLAYER.isPlayingAudio() and not self.pvr_playback and visible('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
@@ -56,10 +53,7 @@ class PlayerMonitor(xbmc.Monitor):
         ''' Playlist changed. Fetch nextitem again.
         '''
         if method in ['Playlist.OnAdd', 'Playlist.OnRemove'] and PLAYER.isPlayingVideo() and not self.pvr_playback:
-            if not self.nextitem_lock or method == 'Playlist.OnRemove':
-                self.get_nextitem(clear=True)
-                self.get_nextitem()
-                self.nextitem_lock = True
+            self.get_nextitem()
 
         ''' Check if multiple audio tracks are available and refetch
             artwork info for PVR playback.
@@ -76,7 +70,6 @@ class PlayerMonitor(xbmc.Monitor):
             xbmc.sleep(2500)
             if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
                 self.fullscreen_lock = False
-                self.nextitem_lock = False
                 self.pvr_playback = False
                 self.get_nextitem(clear=True)
                 self.get_channellogo(clear=True)
