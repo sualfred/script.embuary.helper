@@ -81,7 +81,6 @@ def _set_ratings(li_item,item):
 
 
 def parse_movies(li, item, searchstring=False, append=False):
-
     if 'cast' in item:
         cast = get_cast(item['cast'])
 
@@ -93,32 +92,32 @@ def parse_movies(li, item, searchstring=False, append=False):
 
     li_item = xbmcgui.ListItem(item['title'])
     li_item.setInfo(type='Video', infoLabels={'title': item['title'],
-                                            'originaltitle': item['originaltitle'],
-                                            'sorttitle': item['sorttitle'],
-                                            'year': item['year'],
-                                            'genre': get_joined_items(genre),
-                                            'studio': get_joined_items(studio),
-                                            'country': get_joined_items(country),
-                                            'director': get_joined_items(director),
-                                            'writer': get_joined_items(writer),
-                                            'plot': item['plot'],
-                                            'plotoutline': item['plotoutline'],
-                                            'dbid': item['movieid'],
-                                            'imdbnumber': item['imdbnumber'],
-                                            'tagline': item['tagline'],
-                                            'tag': item['tag'],
-                                            'rating': str(float(item['rating'])),
-                                            'userrating': str(float(item['userrating'])),
-                                            'votes': item['votes'],
-                                            'mpaa': item['mpaa'],
-                                            'lastplayed': item['lastplayed'],
-                                            'cast': cast[0],
-                                            'castandrole': cast[1],
-                                            'mediatype': 'movie',
-                                            'trailer': item['trailer'],
-                                            'dateadded': item['dateadded'],
-                                            'path': item['file'],
-                                            'playcount': item['playcount']})
+                                              'originaltitle': item['originaltitle'],
+                                              'sorttitle': item['sorttitle'],
+                                              'year': item['year'],
+                                              'genre': get_joined_items(genre),
+                                              'studio': get_joined_items(studio),
+                                              'country': get_joined_items(country),
+                                              'director': get_joined_items(director),
+                                              'writer': get_joined_items(writer),
+                                              'plot': item['plot'],
+                                              'plotoutline': item['plotoutline'],
+                                              'dbid': item['movieid'],
+                                              'imdbnumber': item['imdbnumber'],
+                                              'tagline': item['tagline'],
+                                              'tag': item['tag'],
+                                              'rating': str(float(item['rating'])),
+                                              'userrating': str(float(item['userrating'])),
+                                              'votes': item['votes'],
+                                              'mpaa': item['mpaa'],
+                                              'lastplayed': item['lastplayed'],
+                                              'cast': cast[0],
+                                              'castandrole': cast[1],
+                                              'mediatype': 'movie',
+                                              'trailer': item['trailer'],
+                                              'dateadded': item['dateadded'],
+                                              'path': item['file'],
+                                              'playcount': item['playcount']})
 
     _set_ratings(li_item,item['ratings'])
 
@@ -155,7 +154,6 @@ def parse_movies(li, item, searchstring=False, append=False):
 
 
 def parse_tvshows(li, item, searchstring=False, append=False):
-
     if 'cast' in item:
         cast = get_cast(item['cast'])
 
@@ -177,31 +175,31 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 
     li_item = xbmcgui.ListItem(item['title'])
     li_item.setInfo(type='Video', infoLabels={'title': item['title'],
-                                            'year': item['year'],
-                                            'tvshowtitle': item['title'],
-                                            'sorttitle': item['sorttitle'],
-                                            'originaltitle': item['originaltitle'],
-                                            'genre': get_joined_items(genre),
-                                            'studio': get_joined_items(studio),
-                                            'plot': item['plot'],
-                                            'rating': str(float(item['rating'])),
-                                            'userrating': str(float(item['userrating'])),
-                                            'votes': item['votes'],
-                                            'premiered': item['premiered'],
-                                            'mpaa': item['mpaa'],
-                                            'tag': item['tag'],
-                                            'cast': cast[0],
-                                            'castandrole': cast[1],
-                                            'mediatype': 'tvshow',
-                                            'dbid': dbid,
-                                            'season': season,
-                                            'episode': episode,
-                                            'imdbnumber': item['imdbnumber'],
-                                            'lastplayed': item['lastplayed'],
-                                            'path': item['file'],
-                                            'duration': item['runtime'],
-                                            'dateadded': item['dateadded'],
-                                            'playcount': item['playcount']})
+                                              'year': item['year'],
+                                              'tvshowtitle': item['title'],
+                                              'sorttitle': item['sorttitle'],
+                                              'originaltitle': item['originaltitle'],
+                                              'genre': get_joined_items(genre),
+                                              'studio': get_joined_items(studio),
+                                              'plot': item['plot'],
+                                              'rating': str(float(item['rating'])),
+                                              'userrating': str(float(item['userrating'])),
+                                              'votes': item['votes'],
+                                              'premiered': item['premiered'],
+                                              'mpaa': item['mpaa'],
+                                              'tag': item['tag'],
+                                              'cast': cast[0],
+                                              'castandrole': cast[1],
+                                              'mediatype': 'tvshow',
+                                              'dbid': dbid,
+                                              'season': season,
+                                              'episode': episode,
+                                              'imdbnumber': item['imdbnumber'],
+                                              'lastplayed': item['lastplayed'],
+                                              'path': item['file'],
+                                              'duration': item['runtime'],
+                                              'dateadded': item['dateadded'],
+                                              'playcount': item['playcount']})
 
     _set_ratings(li_item,item['ratings'])
 
@@ -209,10 +207,10 @@ def parse_tvshows(li, item, searchstring=False, append=False):
     _set_unique_properties(li_item,studio,'studio')
     _set_unique_properties(li_item,cast[0],'cast')
 
-    li_item.setProperty('Totalseasons', str(season))
-    li_item.setProperty('Totalepisodes', str(episode))
-    li_item.setProperty('Watchedepisodes', str(watchedepisodes))
-    li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
+    li_item.setProperty('totalseasons', str(season))
+    li_item.setProperty('totalepisodes', str(episode))
+    li_item.setProperty('watchedepisodes', str(watchedepisodes))
+    li_item.setProperty('unwatchedepisodes', str(unwatchedepisodes))
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
@@ -225,7 +223,6 @@ def parse_tvshows(li, item, searchstring=False, append=False):
 
 
 def parse_seasons(li, item, append=False):
-
     tvshowdbid = item['tvshowid']
     season = item['season']
     episode = item['episode']
@@ -248,24 +245,24 @@ def parse_seasons(li, item, append=False):
 
     li_item = xbmcgui.ListItem(title)
     li_item.setInfo(type='Video', infoLabels={'title': title,
-                                            'season': season,
-                                            'episode': episode,
-                                            'tvshowtitle': item['showtitle'],
-                                            'playcount': item['playcount'],
-                                            'mediatype': 'season',
-                                            'dbid': item['seasonid']})
+                                              'season': season,
+                                              'episode': episode,
+                                              'tvshowtitle': item['showtitle'],
+                                              'playcount': item['playcount'],
+                                              'mediatype': 'season',
+                                              'dbid': item['seasonid']})
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png', 'fanart': item['art'].get('tvshow.fanart', '')})
-    li_item.setProperty('Watchedepisodes', str(watchedepisodes))
-    li_item.setProperty('Unwatchedepisodes', str(unwatchedepisodes))
-    li_item.setProperty('IsSpecial', special)
+    li_item.setProperty('watchedepisodes', str(watchedepisodes))
+    li_item.setProperty('unwatchedepisodes', str(unwatchedepisodes))
+    li_item.setProperty('isspecial', special)
+    li_item.setProperty('season_label', item.get('label', ''))
 
     if append:
         li.append((file, li_item, folder))
 
 
 def parse_episodes(li, item, append=False):
-
     if 'cast' in item:
         cast = get_cast(item['cast'])
 
@@ -274,25 +271,25 @@ def parse_episodes(li, item, append=False):
 
     li_item = xbmcgui.ListItem(item['title'])
     li_item.setInfo(type='Video', infoLabels={'title': item['title'],
-                                            'episode': item['episode'],
-                                            'season': item['season'],
-                                            'premiered': item['firstaired'],
-                                            'dbid': item['episodeid'],
-                                            'plot': item['plot'],
-                                            'tvshowtitle': item['showtitle'],
-                                            'originaltitle': item['originaltitle'],
-                                            'lastplayed': item['lastplayed'],
-                                            'rating': str(float(item['rating'])),
-                                            'userrating': str(float(item['userrating'])),
-                                            'votes': item['votes'],
-                                            'playcount': item['playcount'],
-                                            'director': get_joined_items(director),
-                                            'writer': get_joined_items(writer),
-                                            'cast': cast[0],
-                                            'path': item['file'],
-                                            'dateadded': item['dateadded'],
-                                            'castandrole': cast[1],
-                                            'mediatype': 'episode'})
+                                              'episode': item['episode'],
+                                              'season': item['season'],
+                                              'premiered': item['firstaired'],
+                                              'dbid': item['episodeid'],
+                                              'plot': item['plot'],
+                                              'tvshowtitle': item['showtitle'],
+                                              'originaltitle': item['originaltitle'],
+                                              'lastplayed': item['lastplayed'],
+                                              'rating': str(float(item['rating'])),
+                                              'userrating': str(float(item['userrating'])),
+                                              'votes': item['votes'],
+                                              'playcount': item['playcount'],
+                                              'director': get_joined_items(director),
+                                              'writer': get_joined_items(writer),
+                                              'cast': cast[0],
+                                              'path': item['file'],
+                                              'dateadded': item['dateadded'],
+                                              'castandrole': cast[1],
+                                              'mediatype': 'episode'})
 
     _set_ratings(li_item,item['ratings'])
 
