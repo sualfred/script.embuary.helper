@@ -248,6 +248,10 @@ def playsfx(params):
     xbmc.playSFX(remove_quotes(params.get('path', '')))
 
 
+def stopsfx(params):
+    xbmc.stopSFX()
+
+
 def imginfo(params):
     prop = remove_quotes(params.get('prop','img'))
     img = remove_quotes(params.get('img'))
