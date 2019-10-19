@@ -87,6 +87,24 @@ class PluginContent(object):
 
             result = json_query['result'][self.key_details]
 
+            if self.dbtype == 'episode':
+                try:
+                    season_query = json_call('VideoLibrary.GetSeasons',
+                                             properties=season_properties,
+                                             sort={'order': 'ascending', 'method': 'season'},
+                                             params={'tvshowid': int(result.get('tvshowid'))}
+                                             )
+
+                    season_query = season_query['result']['seasons']
+
+                    for season in season_query:
+                        if season.get('season') == result.get('season'):
+                            result['season_label'] = season.get('label')
+                            break
+
+                except Exception:
+                    pass
+
         except Exception as error:
             log('Get by DBID: No result found: %s' % error)
             return

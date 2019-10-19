@@ -302,6 +302,7 @@ def parse_episodes(li, item, append=False):
 
     li_item.setProperty('resumetime', str(item['resume']['position']))
     li_item.setProperty('totaltime', str(item['resume']['total']))
+    li_item.setProperty('season_label', item.get('season_label', ''))
 
     li_item.setArt({'icon': 'DefaultTVShows.png',
                     'fanart': item['art'].get('tvshow.fanart', ''),
