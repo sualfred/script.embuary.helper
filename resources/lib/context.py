@@ -58,4 +58,4 @@ class Favourites(object):
                   params={self.param: int(self.dbid), 'tag': self.tag_list}
                   )
 
-        reload_widgets()
+        reload_widgets(reason='Fav. updated')

@@ -233,8 +233,9 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     return json.loads(result)
 
 
-def reload_widgets(instant=False):
-    log('Force widgets to refresh')
+def reload_widgets(instant=False,reason='Timer'):
+    log('Force widgets to refresh (%s)' % reason)
+
     timestamp = time.strftime('%Y%m%d%H%M%S', time.gmtime())
 
     if instant:

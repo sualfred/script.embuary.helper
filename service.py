@@ -20,9 +20,7 @@ NOTIFICATION_METHOD = ['VideoLibrary.OnUpdate',
                        'VideoLibrary.OnScanFinished',
                        'VideoLibrary.OnCleanFinished',
                        'AudioLibrary.OnUpdate',
-                       'AudioLibrary.OnScanFinished',
-                       'Other.LibraryChanged', # Emby
-                       'Other.UserDataChanged' # Emby
+                       'AudioLibrary.OnScanFinished'
                        ]
 
 ########################
@@ -60,7 +58,7 @@ class Main(xbmc.Monitor):
 
         if method in NOTIFICATION_METHOD:
             sync_library_tags()
-            reload_widgets()
+            reload_widgets(reason=method)
 
 
     def onSettingsChanged(self):
