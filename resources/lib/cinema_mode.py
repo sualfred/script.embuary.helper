@@ -53,12 +53,12 @@ class CinemaMode(object):
                                            'plot': trailer.get('plot', ''),
                                            'year': trailer.get('year', ''),
                                            'mpaa': trailer.get('mpaa', ''),
-                                           'rating': trailer_rating}
-                                           )
+                                           'rating': trailer_rating
+                                           })
 
                 listitem.setArt({'thumb': trailer_thumb,
-                                 'clearlogo': trailer['art'].get('clearlogo', '')}
-                                 )
+                                 'clearlogo': trailer['art'].get('clearlogo', '')
+                                 })
 
                 VIDEOPLAYLIST.add(url=trailer['trailer'], listitem=listitem, index=index)
                 log('Play with cinema mode: Adding trailer %s' % trailer_title)
@@ -82,9 +82,9 @@ class CinemaMode(object):
 
 
         json_call('Playlist.Add',
-                    item={'%sid' % self.dbtype: int(self.dbid)},
-                    params={'playlistid': 1}
-                    )
+                  item={'%sid' % self.dbtype: int(self.dbid)},
+                  params={'playlistid': 1}
+                  )
 
         log('Play with cinema mode: Grab your popcorn')
 

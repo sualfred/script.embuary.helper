@@ -13,7 +13,6 @@ from resources.lib.image import *
 ########################
 
 class PluginContent(object):
-
     def __init__(self,params,li):
         self.params = params
         self.dbtitle = remove_quotes(params.get('title'))
@@ -109,7 +108,7 @@ class PluginContent(object):
             log('Get by DBID: No result found: %s' % error)
             return
 
-        append_items(self.li,[result],type=self.dbtype)
+        add_items(self.li,[result],type=self.dbtype)
 
 
     ''' by custom args to parse own json
@@ -134,10 +133,10 @@ class PluginContent(object):
 
         try:
             json_query = json_call(self.method_item,
-                                    properties=self.properties,
-                                    sort=sort_args, limit=limit,
-                                    query_filter=filter
-                                    )
+                                   properties=self.properties,
+                                   sort=sort_args, limit=limit,
+                                   query_filter=filter
+                                   )
 
             result = json_query['result'][self.key_items]
 
@@ -145,7 +144,7 @@ class PluginContent(object):
             log('Get by args: No result found: %s' % error)
             return
 
-        append_items(self.li,result,type=self.dbtype)
+        add_items(self.li,result,type=self.dbtype)
 
 
     ''' resource helper to create a list will all existing and matching resource images
@@ -175,19 +174,29 @@ class PluginContent(object):
     ''' season widgets to display library content that fit a special seasson or date
     '''
     def getseasonal(self):
-        xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays', 'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann', 'heilige nacht',
-                'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig', 'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce',
-                'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun']
+        xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays',
+                'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann',
+                'heilige nacht', 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig',
+                'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta',
+                'Veselé Vánoce', 'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun'
+                ]
 
-        horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas', 'borzalom', 'hryllingi', 'ホラー', 'siaubas', 'verschrikking', 'skrekk', 'przerażenie', 'groază',
-                'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах']
+        horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas',
+                  'borzalom', 'hryllingi', 'ホラー', 'siaubas', 'verschrikking', 'skrekk', 'przerażenie',
+                  'groază', 'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах'
+                  ]
 
-        starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks', 'Starwars', 'Kylo Ren', 'Yoda ', 'Chewbacca', 'Anakin Skywalker', 'Han Solo', 'r2-d2', 'bb-8',
-                    'Millennium Falcon', 'Millenium Falke', 'Stormtrooper', 'Sturmtruppler']
+        starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks',
+                    'Starwars', 'Kylo Ren', 'Yoda ', 'Chewbacca', 'Anakin Skywalker', 'Han Solo', 'r2-d2',
+                    'bb-8', 'Millennium Falcon', 'Millenium Falke', 'Stormtrooper', 'Sturmtruppler'
+                    ]
 
-        startrek = ['Star Trek', 'Captain Kirk', 'Cpt. Kirk', 'James Kirk', 'James T. Kirk', 'James Tiberius Kirk', 'Jean-Luc Picard', 'Commander Spock', 'Deep Space Nine', 'Deep Space 9',
-                    'Raumschiff Enterprise', 'Raumschiff Voyager', 'Klingonen', 'Klingons', 'Commander Data', 'Commander Geordi La Forge', 'Counselor Deanna Troi', 'William Thomas Riker',
-                    'Captain Benjamin Sisko', 'Cpt. Benjamin Sisko', 'Captain Kathryn Janeway', 'Cpt. Kathryn Janeway']
+        startrek = ['Star Trek', 'Captain Kirk', 'Cpt. Kirk', 'James Kirk', 'James T. Kirk', 'James Tiberius Kirk',
+                    'Jean-Luc Picard', 'Commander Spock', 'Deep Space Nine', 'Deep Space 9', 'Raumschiff Enterprise',
+                    'Raumschiff Voyager', 'Klingonen', 'Klingons', 'Commander Data', 'Commander Geordi La Forge',
+                    'Counselor Deanna Troi', 'William Thomas Riker', 'Captain Benjamin Sisko', 'Cpt. Benjamin Sisko',
+                    'Captain Kathryn Janeway', 'Cpt. Kathryn Janeway'
+                    ]
 
         filters = []
         list_type = self.params.get('list')
@@ -221,48 +230,47 @@ class PluginContent(object):
             return
 
         filter = {'or': filters}
-
         limit = self.limit or 25
 
         if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
-                                    properties=movie_properties,
-                                    sort=self.sort_random, limit=limit,
-                                    query_filter=filter
-                                    )
+                                   properties=movie_properties,
+                                   sort=self.sort_random, limit=limit,
+                                   query_filter=filter
+                                   )
             try:
                 json_query = json_query['result']['movies']
             except Exception:
                 log('Movies by seasonal keyword: No movies found.')
             else:
-                append_items(self.li,json_query,type='movie')
+                add_items(self.li,json_query,type='movie')
 
         if self.dbtype != 'movie':
             if use_episodes:
                 json_query = json_call('VideoLibrary.GetEpisodes',
-                                        properties=episode_properties,
-                                        sort=self.sort_random, limit=limit,
-                                        query_filter=filter
-                                        )
+                                       properties=episode_properties,
+                                       sort=self.sort_random, limit=limit,
+                                       query_filter=filter
+                                       )
                 try:
                     json_query = json_query['result']['episodes']
                 except Exception:
                     log('Episodes by seasonal keyword: No episodes found.')
                 else:
-                    append_items(self.li,json_query,type='episode')
+                    add_items(self.li,json_query,type='episode')
 
             else:
                 json_query = json_call('VideoLibrary.GetTVShows',
-                                        properties=tvshow_properties,
-                                        sort=self.sort_random, limit=limit,
-                                        query_filter=filter
-                                        )
+                                       properties=tvshow_properties,
+                                       sort=self.sort_random, limit=limit,
+                                       query_filter=filter
+                                       )
                 try:
                     json_query = json_query['result']['tvshows']
                 except Exception:
                     log('TV shows by seasonal keyword: No shows found.')
                 else:
-                    append_items(self.li,json_query,type='tvshow')
+                    add_items(self.li,json_query,type='tvshow')
 
         random.shuffle(self.li)
 
@@ -272,9 +280,9 @@ class PluginContent(object):
     def getseasons(self):
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
-                                properties=['title'], limit=1,
-                                query_filter=self.title_filter
-                                )
+                                 properties=['title'], limit=1,
+                                 query_filter=self.title_filter
+                                 )
 
             try:
                 tvshow_dbid = get_dbid['result']['tvshows'][0]['tvshowid']
@@ -289,10 +297,10 @@ class PluginContent(object):
                 tvshow_dbid = self.dbid
 
         season_query = json_call('VideoLibrary.GetSeasons',
-                                properties=season_properties,
-                                sort={'order': 'ascending', 'method': 'season'},
-                                params={'tvshowid': int(tvshow_dbid)}
-                                )
+                                 properties=season_properties,
+                                 sort={'order': 'ascending', 'method': 'season'},
+                                 params={'tvshowid': int(tvshow_dbid)}
+                                 )
 
         try:
             season_query = season_query['result']['seasons']
@@ -302,7 +310,7 @@ class PluginContent(object):
         except Exception:
             log('Get seasons by TV show: No seasons found')
         else:
-            append_items(self.li,season_query,type='season')
+            add_items(self.li,season_query,type='season')
 
 
     ''' get more episodes from the same season
@@ -310,9 +318,9 @@ class PluginContent(object):
     def getseasonepisodes(self):
         if not self.dbid:
             get_dbid = json_call('VideoLibrary.GetTVShows',
-                                properties=['title'], limit=1,
-                                query_filter=self.title_filter
-                                )
+                                 properties=['title'], limit=1,
+                                 query_filter=self.title_filter
+                                 )
 
             try:
                 tvshow_dbid = get_dbid['result']['tvshows'][0]['tvshowid']
@@ -327,18 +335,18 @@ class PluginContent(object):
                 tvshow_dbid = self.dbid
 
         episode_query = json_call('VideoLibrary.GetEpisodes',
-                                    properties=episode_properties,
-                                    sort={'order': 'ascending', 'method': 'episode'},
-                                    query_filter={'operator': 'is', 'field': 'season', 'value': self.season},
-                                    params={'tvshowid': int(tvshow_dbid)}
-                                    )
+                                  properties=episode_properties,
+                                  sort={'order': 'ascending', 'method': 'episode'},
+                                  query_filter={'operator': 'is', 'field': 'season', 'value': self.season},
+                                  params={'tvshowid': int(tvshow_dbid)}
+                                  )
 
         try:
             episode_query = episode_query['result']['episodes']
         except Exception:
             log('Get more episodes by season: No episodes found')
         else:
-            append_items(self.li,episode_query,type='episode')
+            add_items(self.li,episode_query,type='episode')
 
 
     ''' get nextup of inprogress TV shows
@@ -350,10 +358,10 @@ class PluginContent(object):
         filter = {'and': filters}
 
         json_query = json_call('VideoLibrary.GetTVShows',
-                                properties=tvshow_properties,
-                                sort=self.sort_lastplayed, limit=25,
-                                query_filter=filter
-                                )
+                               properties=tvshow_properties,
+                               sort=self.sort_lastplayed, limit=25,
+                               query_filter=filter
+                               )
 
         try:
             json_query = json_query['result']['tvshows']
@@ -363,18 +371,18 @@ class PluginContent(object):
 
         for episode in json_query:
                 episode_query = json_call('VideoLibrary.GetEpisodes',
-                                        properties=episode_properties,
-                                        sort={'order': 'ascending', 'method': 'episode'},limit=1,
-                                        query_filter={'and': [self.unplayed_filter,{'field': 'season', 'operator': 'greaterthan', 'value': '0'}]},
-                                        params={'tvshowid': int(episode['tvshowid'])}
-                                        )
+                                          properties=episode_properties,
+                                          sort={'order': 'ascending', 'method': 'episode'},limit=1,
+                                          query_filter={'and': [self.unplayed_filter,{'field': 'season', 'operator': 'greaterthan', 'value': '0'}]},
+                                          params={'tvshowid': int(episode['tvshowid'])}
+                                          )
 
                 try:
                     episode_details = episode_query['result']['episodes']
                 except Exception:
                     log('Get next up episodes: No next episodes found for %s' % episode['title'])
                 else:
-                    append_items(self.li,episode_details,type='episode')
+                    add_items(self.li,episode_details,type='episode')
 
 
     ''' get recently added episodes of unwatched shows
@@ -392,10 +400,10 @@ class PluginContent(object):
             filter = {'and': filters}
 
         json_query = json_call('VideoLibrary.GetTVShows',
-                                properties=tvshow_properties,
-                                sort=self.sort_recent, limit=25,
-                                query_filter=filter
-                                )
+                               properties=tvshow_properties,
+                               sort=self.sort_recent, limit=25,
+                               query_filter=filter
+                               )
 
         try:
             json_query = json_query['result']['tvshows']
@@ -413,10 +421,10 @@ class PluginContent(object):
                         will be grouped.
                     '''
                     episode_query = json_call('VideoLibrary.GetEpisodes',
-                                            properties=episode_properties,
-                                            sort=self.sort_recent, limit=2,
-                                            params={'tvshowid': int(tvshow['tvshowid'])}
-                                            )
+                                              properties=episode_properties,
+                                              sort=self.sort_recent, limit=2,
+                                              params={'tvshowid': int(tvshow['tvshowid'])}
+                                              )
 
                     episode_query = episode_query['result']['episodes']
 
@@ -426,21 +434,21 @@ class PluginContent(object):
                         append_tvshow = True
 
                     except Exception:
-                        append_items(self.li,[episode_query[0]],type='episode')
+                        add_items(self.li,[episode_query[0]],type='episode')
 
                 elif unwatchedepisodes == 1:
                     ''' Recently added episodes based on unwatched or in progress TV shows. Episodes will be grouped
                         if more than one unwatched episode is available.
                     '''
                     episode_query = json_call('VideoLibrary.GetEpisodes',
-                                            properties=episode_properties,
-                                            sort=self.sort_recent,limit=1,
-                                            query_filter=self.unplayed_filter,
-                                            params={'tvshowid': int(tvshow['tvshowid'])}
-                                            )
+                                              properties=episode_properties,
+                                              sort=self.sort_recent,limit=1,
+                                              query_filter=self.unplayed_filter,
+                                              params={'tvshowid': int(tvshow['tvshowid'])}
+                                              )
 
                     episode_query = episode_query['result']['episodes']
-                    append_items(self.li,episode_query,type='episode')
+                    add_items(self.li,episode_query,type='episode')
 
                 else:
                     append_tvshow = True
@@ -449,12 +457,12 @@ class PluginContent(object):
                 '''
                 if append_tvshow:
                     tvshow_query = json_call('VideoLibrary.GetTVShowDetails',
-                                            properties=tvshow_properties,
-                                            params={'tvshowid': int(tvshow['tvshowid'])}
-                                            )
+                                             properties=tvshow_properties,
+                                             params={'tvshowid': int(tvshow['tvshowid'])}
+                                             )
 
                     tvshow_query = tvshow_query['result']['tvshowdetails']
-                    append_items(self.li,[tvshow_query],type='tvshow')
+                    add_items(self.li,[tvshow_query],type='tvshow')
 
             except Exception as error:
                 log('Get new media: Not able to parse data for show %s - %s' % (tvshow,error))
@@ -504,29 +512,29 @@ class PluginContent(object):
 
             if self.dbtype != 'tvshow':
                 json_query = json_call('VideoLibrary.GetMovies',
-                                        properties=movie_properties,
-                                        sort=self.sort_random, limit=10,
-                                        query_filter=filter
-                                        )
+                                       properties=movie_properties,
+                                       sort=self.sort_random, limit=10,
+                                       query_filter=filter
+                                       )
                 try:
                     json_query = json_query['result']['movies']
                 except Exception:
                     log('Movies by genre %s: No movies found.' % genre)
                 else:
-                    append_items(self.li,json_query,type='movie',searchstring=genre)
+                    add_items(self.li,json_query,type='movie',searchstring=genre)
 
             if self.dbtype != 'movie':
                 json_query = json_call('VideoLibrary.GetTVShows',
-                                        properties=tvshow_properties,
-                                        sort=self.sort_random, limit=10,
-                                        query_filter=filter
-                                        )
+                                       properties=tvshow_properties,
+                                       sort=self.sort_random, limit=10,
+                                       query_filter=filter
+                                       )
                 try:
                     json_query = json_query['result']['tvshows']
                 except Exception:
                     log('TV shows by genre %s: No shows found.' % genre)
                 else:
-                    append_items(self.li,json_query,type='tvshow',searchstring=genre)
+                    add_items(self.li,json_query,type='tvshow',searchstring=genre)
 
             if not self.li:
                 self._retry('getbygenre')
@@ -544,38 +552,38 @@ class PluginContent(object):
 
         if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
-                                    properties=movie_properties,
-                                    sort=self.sort_lastplayed,
-                                    query_filter=filter
-                                    )
+                                   properties=movie_properties,
+                                   sort=self.sort_lastplayed,
+                                   query_filter=filter
+                                   )
             try:
                 json_query = json_query['result']['movies']
             except Exception:
                 log('In progress media: No movies found.')
             else:
-                append_items(self.li,json_query,type='movie')
+                add_items(self.li,json_query,type='movie')
 
         if self.dbtype != 'movie':
             json_query = json_call('VideoLibrary.GetEpisodes',
-                                    properties=episode_properties,
-                                    sort=self.sort_lastplayed,
-                                    query_filter=filter
-                                    )
+                                   properties=episode_properties,
+                                   sort=self.sort_lastplayed,
+                                   query_filter=filter
+                                   )
             try:
                 json_query = json_query['result']['episodes']
             except Exception:
                 log('In progress media: No episodes found.')
             else:
-                append_items(self.li,json_query,type='episode')
+                add_items(self.li,json_query,type='episode')
 
 
     ''' genres listing with 4 posters of each available genre content
     '''
     def getgenre(self):
         json_query = json_call('VideoLibrary.GetGenres',
-                                sort={'method': 'label'},
-                                params={'type': self.dbtype}
-                                )
+                               sort={'method': 'label'},
+                               params={'type': self.dbtype}
+                               )
         try:
             json_query = json_query['result']['genres']
         except KeyError:
@@ -628,7 +636,7 @@ class PluginContent(object):
 
             genres.append(genre)
 
-        append_items(self.li,genres,type='genre')
+        add_items(self.li,genres,type='genre')
 
 
     ''' get movies by director
@@ -636,9 +644,9 @@ class PluginContent(object):
     def getdirectedby(self):
         if self.dbid:
             json_query = json_call('VideoLibrary.GetMovieDetails',
-                                    properties=['title', 'director'],
-                                    params={'movieid': int(self.dbid)}
-                                    )
+                                   properties=['title', 'director'],
+                                   params={'movieid': int(self.dbid)}
+                                   )
 
         try:
             directors = json_query['result']['moviedetails']['director']
@@ -654,10 +662,10 @@ class PluginContent(object):
         filter = {'and': [{'or': filters}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
 
         json_query = json_call('VideoLibrary.GetMovies',
-                                properties=movie_properties,
-                                sort=self.sort_random,
-                                query_filter=filter
-                                )
+                               properties=movie_properties,
+                               sort=self.sort_random,
+                               query_filter=filter
+                               )
         try:
             json_query = json_query['result']['movies']
         except Exception:
@@ -665,7 +673,7 @@ class PluginContent(object):
             self._retry('getdirectedby')
             return
 
-        append_items(self.li,json_query,type='movie',searchstring=joineddirectors)
+        add_items(self.li,json_query,type='movie',searchstring=joineddirectors)
 
 
     ''' get items by actor
@@ -675,9 +683,9 @@ class PluginContent(object):
         '''
         if self.dbid:
             json_query = json_call(self.method_details,
-                                    properties=['title', 'cast'],
-                                    params={self.param: int(self.dbid)}
-                                    )
+                                   properties=['title', 'cast'],
+                                   params={self.param: int(self.dbid)}
+                                   )
 
             try:
                 cast = json_query['result'][self.key_details]['cast']
@@ -722,21 +730,21 @@ class PluginContent(object):
                 except Exception:
                     log('Items by actor %s: No movies found' % actor)
                 else:
-                    append_items(self.li,movie_query,type='movie',searchstring=actor)
+                    add_items(self.li,movie_query,type='movie',searchstring=actor)
 
             if self.dbcontent != 'movie':
                 tvshow_query = json_call('VideoLibrary.GetTVShows',
-                                        properties=tvshow_properties,
-                                        sort=self.sort_random,
-                                        query_filter=filter
-                                        )
+                                         properties=tvshow_properties,
+                                         sort=self.sort_random,
+                                         query_filter=filter
+                                         )
 
                 try:
                     tvshow_query = tvshow_query['result']['tvshows']
                 except Exception:
                     log('Items by actor %s: No shows found' % actor)
                 else:
-                    append_items(self.li,tvshow_query,type='tvshow',searchstring=actor)
+                    add_items(self.li,tvshow_query,type='tvshow',searchstring=actor)
 
             ''' Retry if query is based on dbid and a random actor
             '''
@@ -753,9 +761,9 @@ class PluginContent(object):
         '''
         if self.dbid:
             json_query = json_call(self.method_details,
-                                    properties=['title', 'genre'],
-                                    params={self.param: int(self.dbid)}
-                                    )
+                                   properties=['title', 'genre'],
+                                   params={self.param: int(self.dbid)}
+                                   )
 
         ''' Based on a random one of the last 10 watched items
         '''
@@ -766,10 +774,10 @@ class PluginContent(object):
                 query_filter=self.played_filter
 
             json_query = json_call(self.method_item,
-                                    properties=['title', 'genre'],
-                                    sort={'method': 'lastplayed','order': 'descending'}, limit=10,
-                                    query_filter=query_filter
-                                    )
+                                   properties=['title', 'genre'],
+                                   sort={'method': 'lastplayed','order': 'descending'}, limit=10,
+                                   query_filter=query_filter
+                                   )
 
         ''' Get the genres of the selected item
         '''
@@ -812,10 +820,10 @@ class PluginContent(object):
         filter = {'and': filters}
 
         json_query = json_call(self.method_item,
-                                properties=self.properties,
-                                sort=self.sort_random, limit=15,
-                                query_filter=filter
-                                )
+                               properties=self.properties,
+                               sort=self.sort_random, limit=15,
+                               query_filter=filter
+                               )
 
         try:
             json_query = json_query['result'][self.key_items]
@@ -825,9 +833,9 @@ class PluginContent(object):
             return
 
         if self.dbtype == 'movie':
-            append_items(self.li,json_query,type='movie',searchstring=title)
+            add_items(self.li,json_query,type='movie',searchstring=title)
         elif self.dbtype == 'tvshow':
-            append_items(self.li,json_query,type='tvshow',searchstring=title)
+            add_items(self.li,json_query,type='tvshow',searchstring=title)
 
 
     ''' get cast of item
@@ -876,20 +884,18 @@ class PluginContent(object):
             log('Get cast: No cast found.')
             return
 
-        append_items(self.li,cast,type='cast')
+        add_items(self.li,cast,type='cast')
 
 
     ''' jump to letter for smsjump navigation
     '''
     def jumptoletter(self):
         if xbmc.getInfoLabel('Container.NumItems'):
-
             all_letters = []
             for i in range(int(xbmc.getInfoLabel('Container.NumItems'))):
                 all_letters.append(xbmc.getInfoLabel('Listitem(%s).SortLetter' % i).upper())
 
             if len(all_letters) > 1:
-
                 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
                 alphabet = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
                 letter_count = 0
@@ -909,7 +915,6 @@ class PluginContent(object):
                     return
 
                 for letter in alphabet:
-
                     li_item = xbmcgui.ListItem(label=letter)
 
                     if letter == '#' and first_number:
@@ -1015,9 +1020,9 @@ class PluginContent(object):
                 raise Exception
 
             json_query = json_call(method_details,
-                                properties=['tvshowid'],
-                                params={param: int(dbid)}
-                                )
+                                   properties=['tvshowid'],
+                                   params={param: int(dbid)}
+                                   )
 
             result = json_query['result'][key_details]
             dbid = result.get('tvshowid')
@@ -1040,4 +1045,3 @@ class PluginContent(object):
         else:
             log('No content found. Stop retrying.')
             self.retry_count = 1
-
