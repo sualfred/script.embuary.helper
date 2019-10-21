@@ -153,3 +153,13 @@ msgstr "Achtung"
 msgctxt "#32026"
 msgid "Enable library tag detection for"
 msgstr "Aktiviere Tag-Erkennung für"
+
+#: /addon.xml
+msgctxt "#32027"
+msgid "Add/remove movie favourite"
+msgstr "Film-Favorit hinzufügen/entfernen"
+
+#: /addon.xml
+msgctxt "#32028"
+msgid "Add/remove TV show favourite"
+msgstr "Serien-Favorit hinzufügen/entfernen"
