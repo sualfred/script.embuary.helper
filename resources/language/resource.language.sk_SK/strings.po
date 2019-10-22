@@ -153,3 +153,13 @@ msgstr "Upozornenie"
 msgctxt "#32026"
 msgid "Enable library tag detection for"
 msgstr "Povoliť detekciu značiek v knižnici pre"
+
+#: /addon.xml
+msgctxt "#32027"
+msgid "Add/remove movie favourite"
+msgstr "Pridať/Odobrať obľúbený film"
+
+#: /addon.xml
+msgctxt "#32028"
+msgid "Add/remove TV show favourite"
+msgstr "Pridať/Odobrať obľubený seriál"
