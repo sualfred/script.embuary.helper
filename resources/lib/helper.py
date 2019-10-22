@@ -258,11 +258,13 @@ def sync_library_tags(tags=None):
         whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
     except Exception:
         whitelist = []
+        save = True
 
     try:
         old_tags = eval(addon_data('tags_all.data'))
     except Exception:
         old_tags = []
+        save = True
 
     ''' cleanup removed old tags
     '''
@@ -407,6 +409,9 @@ def addon_data(file,content=None):
     targetfile = os.path.join(ADDON_DATA_PATH, file)
 
     if not content:
+        if not xbmcvfs.exists(targetfile):
+            return ''
+
         try:
             f = open(targetfile,'r')
             filecontent = ''
