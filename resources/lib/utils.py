@@ -264,26 +264,63 @@ def imginfo(params):
 
 def playitem(params):
     clear_playlists()
-
-    dbtype = params.get('dbtype')
-    dbid = params.get('dbid')
-
-    if dbtype =='episode':
-        itemtype = 'episodeid'
-    elif dbtype =='song':
-        itemtype = 'songid'
-    else:
-        itemtype = 'movieid'
-
     execute('Dialog.Close(all,true)')
 
-    if dbid:
-        json_call('Player.Open',
-                    item={itemtype: int(dbid)}
-                    )
+    dbtype = params.get('type')
+    dbid = params.get('dbid')
+    file = remove_quotes(params.get('item'))
+
+    if dbtype == 'song':
+        param = 'songid'
+
+    elif dbtype == 'episode':
+        method_details = 'VideoLibrary.GetEpisodeDetails'
+        param = 'episodeid'
+        key_details = 'episodedetails'
+
     else:
+        method_details = 'VideoLibrary.GetMovieDetails'
+        param = 'movieid'
+        key_details = 'moviedetails'
+
+    if dbid:
+        if dbtype == 'song':
+            position = 0
+
+        else:
+            result = json_call(method_details,
+                               properties=['resume', 'runtime'],
+                               params={param: int(dbid)}
+                               )
+
+            try:
+                result = result['result'][key_details]
+                position = result['resume'].get('position') / result['resume'].get('total') * 100
+                resume_time = result.get('runtime') / 100 * position
+                resume_time = str(datetime.timedelta(seconds=resume_time))
+
+            except Exception:
+                position = 0
+                resume_time = None
+
+            if position > 0:
+                resume_string = xbmc.getLocalizedString(12022)[:-5] + resume_time
+                contextdialog = DIALOG.contextmenu([resume_string, xbmc.getLocalizedString(12021)])
+
+                if contextdialog == 1:
+                    position = 0
+
+                elif contextdialog == -1:
+                    return
+
+        json_call('Player.Open',
+                  item={param: int(dbid)},
+                  options={'resume': position},
+                  )
+
+    elif file:
         # playmedia() because otherwise resume points get ignored
-        execute('PlayMedia(%s)' % remove_quotes(params.get('item')))
+        execute('PlayMedia(%s)' % file)
 
 
 def playfolder(params):
