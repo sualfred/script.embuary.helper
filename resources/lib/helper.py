@@ -249,8 +249,9 @@ def reload_widgets(instant=False,reason='Timer'):
         execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:05,silent)' % timestamp)
 
 
-def sync_library_tags(tags=None):
+def sync_library_tags(tags=None,recreate=False):
     save = False
+
     if tags is None:
         tags = get_library_tags()
 
@@ -283,14 +284,17 @@ def sync_library_tags(tags=None):
             save = True
             new_tags.append(tag)
 
-    if save:
+    if save or recreate:
         known_tags = old_tags + new_tags
 
         ''' automatically whitelist new tags if enabled
         '''
         if visible('Skin.HasSetting(AutoLibraryTags)'):
-            for tag in new_tags:
-                whitelist.append(tag)
+            tags_to_whitelist = known_tags if recreate else new_tags
+
+            for tag in tags_to_whitelist:
+                if tag not in whitelist:
+                    whitelist.append(tag)
 
         addon_data('tags_all.data', str(known_tags))
 

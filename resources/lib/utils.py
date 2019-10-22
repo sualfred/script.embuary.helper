@@ -641,3 +641,7 @@ def selecttags(params):
 
     elif params.get('silent') != 'true':
         DIALOG.ok(heading=ADDON.getLocalizedString(32000), line1=ADDON.getLocalizedString(32024))
+
+
+def whitelisttags(params):
+    sync_library_tags(recreate=True)
