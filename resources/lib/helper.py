@@ -220,17 +220,22 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     if params is not None:
         json_string['params'].update(params)
 
-    json_string = json.dumps(json_string)
-    result = xbmc.executeJSONRPC(json_string)
-
-    if debug:
-        log('--> JSON CALL: ' + json_string)
-        log('--> JSON RESULT: ' + result)
+    jsonrpc_call = json.dumps(json_string)
+    result = xbmc.executeJSONRPC(jsonrpc_call)
 
     if not PYTHON3:
         result = unicode(result, 'utf-8', errors='ignore')
+    result = json.loads(result)
 
-    return json.loads(result)
+    if debug:
+        log('--> JSON CALL: ' + json_prettyprint(json_string))
+        log('--> JSON RESULT: ' + json_prettyprint(result))
+
+    return result
+
+
+def json_prettyprint(string):
+    return json.dumps(string, sort_keys=True, indent=4, separators=(',', ': '))
 
 
 def reload_widgets(instant=False,reason='Timer'):
