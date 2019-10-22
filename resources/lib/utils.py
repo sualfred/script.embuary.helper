@@ -282,7 +282,8 @@ def playitem(params):
                     item={itemtype: int(dbid)}
                     )
     else:
-        PLAYER.play(remove_quotes(params.get('item')))
+        # playmedia() because otherwise resume points get ignored
+        execute('PlayMedia(%s)' % remove_quotes(params.get('item')))
 
 
 def playfolder(params):
