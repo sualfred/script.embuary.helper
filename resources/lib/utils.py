@@ -89,6 +89,34 @@ def decode(params):
     winprop(prop,url_unquote(string))
 
 
+def createcontext(params):
+    selectionlist = []
+    indexlist = []
+    splitby = remove_quotes(params.get('splitby', '||'))
+
+    for i in range(1, 30):
+        label = xbmc.getInfoLabel('Window.Property(Context.%d.Label)' % (i))
+
+        if label == '':
+            break
+        elif label != 'none' and label != '-':
+            selectionlist.append(label)
+            indexlist.append(i)
+
+    if selectionlist:
+        index = DIALOG.contextmenu(selectionlist)
+
+        if index > -1:
+            value = xbmc.getInfoLabel('Window.Property(Context.%d.Builtin)' % (indexlist[index]))
+            for builtin in value.split(splitby):
+                execute(builtin)
+                xbmc.sleep(30)
+
+    for i in range(1, 30):
+        execute('ClearProperty(Context.%d.Builtin)' % i)
+        execute('ClearProperty(Context.%d.Label)' % i)
+
+
 def createselect(params):
     selectionlist = []
     indexlist = []
@@ -96,7 +124,6 @@ def createselect(params):
     splitby = remove_quotes(params.get('splitby', '||'))
 
     for i in range(1, 30):
-
         label = xbmc.getInfoLabel('Window.Property(Dialog.%d.Label)' % (i))
 
         if label == '':
