@@ -105,7 +105,9 @@ class PlayerMonitor(xbmc.Monitor):
 
             for i in range(1,200):
                 if xbmcgui.getCurrentWindowId() in [12005, 12006]:
+                    execute('Dialog.Close(all,true)')
                     self.fullscreen_lock = True
+                    log('Playback started. Force closing all dialogs.')
                     break
 
                 elif xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
