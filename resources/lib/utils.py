@@ -43,52 +43,9 @@ def togglefav(params):
                dbtype=params.get('type')
                )
 
-''' Functions
+
+''' Dialogs
 '''
-def restartservice(params):
-    execute('NotifyAll(%s, restart)' % ADDON_ID)
-
-
-def calc(params):
-    prop = remove_quotes(params.get('prop','CalcResult'))
-    formula = remove_quotes(params.get('do'))
-    result = eval(str(formula))
-    winprop(prop, str(result))
-
-
-def settimer(params):
-    actions = remove_quotes(params.get('do'))
-    time = params.get('time','50')
-    delay = params.get('delay')
-    busydialog = get_bool(params.get('busydialog','true'))
-
-    if busydialog:
-        execute('ActivateWindow(busydialognocancel)')
-
-    xbmc.sleep(int(time))
-    execute('Dialog.Close(all,true)')
-
-    while visible('Window.IsVisible(busydialognocancel)'):
-        xbmc.sleep(10)
-
-    for action in actions.split('||'):
-        execute(action)
-        if delay:
-            xbmc.sleep(int(delay))
-
-
-def encode(params):
-    string = remove_quotes(params.get('string'))
-    prop = params.get('prop','EncodedString')
-    winprop(prop,url_quote(string))
-
-
-def decode(params):
-    string = remove_quotes(params.get('string'))
-    prop = params.get('prop','DecodedString')
-    winprop(prop,url_unquote(string))
-
-
 def createcontext(params):
     selectionlist = []
     indexlist = []
@@ -190,6 +147,52 @@ def textviewer(params):
     DIALOG.textviewer(headertxt, bodytxt)
 
 
+''' Functions
+'''
+def restartservice(params):
+    execute('NotifyAll(%s, restart)' % ADDON_ID)
+
+
+def calc(params):
+    prop = remove_quotes(params.get('prop','CalcResult'))
+    formula = remove_quotes(params.get('do'))
+    result = eval(str(formula))
+    winprop(prop, str(result))
+
+
+def settimer(params):
+    actions = remove_quotes(params.get('do'))
+    time = params.get('time','50')
+    delay = params.get('delay')
+    busydialog = get_bool(params.get('busydialog','true'))
+
+    if busydialog:
+        execute('ActivateWindow(busydialognocancel)')
+
+    xbmc.sleep(int(time))
+    execute('Dialog.Close(all,true)')
+
+    while visible('Window.IsVisible(busydialognocancel)'):
+        xbmc.sleep(10)
+
+    for action in actions.split('||'):
+        execute(action)
+        if delay:
+            xbmc.sleep(int(delay))
+
+
+def encode(params):
+    string = remove_quotes(params.get('string'))
+    prop = params.get('prop','EncodedString')
+    winprop(prop,url_quote(string))
+
+
+def decode(params):
+    string = remove_quotes(params.get('string'))
+    prop = params.get('prop','DecodedString')
+    winprop(prop,url_unquote(string))
+
+
 def getaddonsetting(params):
     addon_id = params.get('addon')
     addon_setting = params.get('setting')
@@ -207,8 +210,8 @@ def togglekodisetting(params):
     value = False if visible('system.getbool(%s)' % settingname) else True
 
     json_call('Settings.SetSettingValue',
-                params={'setting': '%s' % settingname, 'value': value}
-                )
+              params={'setting': '%s' % settingname, 'value': value}
+              )
 
 
 def getkodisetting(params):
@@ -252,8 +255,8 @@ def setkodisetting(params):
             value = False
 
     json_call('Settings.SetSettingValue',
-                params={'setting': '%s' % settingname, 'value': value}
-                )
+              params={'setting': '%s' % settingname, 'value': value}
+              )
 
 
 def toggleaddons(params):
@@ -264,8 +267,8 @@ def toggleaddons(params):
 
         try:
             json_call('Addons.SetAddonEnabled',
-                params={'addonid': '%s' % addon, 'enabled': enable}
-                )
+                      params={'addonid': '%s' % addon, 'enabled': enable}
+                      )
             log('%s - enable: %s' % (addon, enable))
         except Exception:
             pass
@@ -295,6 +298,7 @@ def playitem(params):
 
     dbtype = params.get('type')
     dbid = params.get('dbid')
+    resume = params.get('resume',True)
     file = remove_quotes(params.get('item'))
 
     if dbtype == 'song':
@@ -311,7 +315,7 @@ def playitem(params):
         key_details = 'moviedetails'
 
     if dbid:
-        if dbtype == 'song':
+        if dbtype == 'song' or not resume:
             position = 0
 
         else:
@@ -325,7 +329,6 @@ def playitem(params):
                 position = result['resume'].get('position') / result['resume'].get('total') * 100
                 resume_time = result.get('runtime') / 100 * position
                 resume_time = str(datetime.timedelta(seconds=resume_time))
-
             except Exception:
                 position = 0
                 resume_time = None
@@ -336,7 +339,6 @@ def playitem(params):
 
                 if contextdialog == 1:
                     position = 0
-
                 elif contextdialog == -1:
                     return
 
@@ -361,9 +363,9 @@ def playfolder(params):
 
     if params.get('type') == 'season':
         json_query = json_call('VideoLibrary.GetSeasonDetails',
-                                properties=['title','season','tvshowid'],
-                                params={'seasonid': dbid}
-                                )
+                               properties=['title','season','tvshowid'],
+                               params={'seasonid': dbid}
+                               )
         try:
             result = json_query['result']['seasondetails']
         except Exception as error:
@@ -371,15 +373,15 @@ def playfolder(params):
             return
 
         json_query = json_call('VideoLibrary.GetEpisodes',
-                                properties=episode_properties,
-                                query_filter={'operator': 'is', 'field': 'season', 'value': '%s' % result['season']},
-                                params={'tvshowid': int(result['tvshowid'])}
-                                )
+                               properties=episode_properties,
+                               query_filter={'operator': 'is', 'field': 'season', 'value': '%s' % result['season']},
+                               params={'tvshowid': int(result['tvshowid'])}
+                               )
     else:
         json_query = json_call('VideoLibrary.GetEpisodes',
-                            properties=episode_properties,
-                            params={'tvshowid': dbid}
-                            )
+                               properties=episode_properties,
+                               params={'tvshowid': dbid}
+                               )
 
     try:
         result = json_query['result']['episodes']
@@ -389,16 +391,16 @@ def playfolder(params):
 
     for episode in result:
         json_call('Playlist.Add',
-                item={'episodeid': episode['episodeid']},
-                params={'playlistid': 1}
-                )
+                  item={'episodeid': episode['episodeid']},
+                  params={'playlistid': 1}
+                  )
 
     execute('Dialog.Close(all)')
 
     json_call('Player.Open',
-            item={'playlistid': 1, 'position': 0},
-            options={'shuffled': shuffled}
-            )
+              item={'playlistid': 1, 'position': 0},
+              options={'shuffled': shuffled}
+              )
 
 
 def playall(params):
@@ -434,24 +436,23 @@ def playall(params):
 
         if media_type and dbid:
             json_call('Playlist.Add',
-                        item={'%sid' % media_type: int(dbid)},
-                        params={'playlistid': playlistid}
-                        )
+                      item={'%sid' % media_type: int(dbid)},
+                      params={'playlistid': playlistid}
+                      )
         elif url:
             json_call('Playlist.Add',
-                        item={'file': url},
-                        params={'playlistid': playlistid}
-                        )
+                      item={'file': url},
+                      params={'playlistid': playlistid}
+                      )
 
     json_call('Player.Open',
-                item={'playlistid': playlistid, 'position': 0},
-                options={'shuffled': shuffled}
-                )
+              item={'playlistid': playlistid, 'position': 0},
+              options={'shuffled': shuffled}
+              )
 
 
 def playrandom(params):
     clear_playlists()
-
     container = params.get('id')
 
     i = random.randint(1,int(xbmc.getInfoLabel('Container(%s).NumItems' % container)))
@@ -468,14 +469,14 @@ def playrandom(params):
     item_dbid = xbmc.getInfoLabel('Container(%s).ListItemAbsolute(%s).DBID' % (dbid,i))
     url = xbmc.getInfoLabel('Container(%s).ListItemAbsolute(%s).Filenameandpath' % (dbid,i))
 
-    playitem({'dbtype': media_type, 'dbid': item_dbid, 'item': url})
+    playitem({'type': media_type, 'dbid': item_dbid, 'item': url, 'resume': False})
 
 
 def jumptoshow_by_episode(params):
     episode_query = json_call('VideoLibrary.GetEpisodeDetails',
-                    properties=['tvshowid'],
-                    params={'episodeid': int(params.get('dbid'))}
-                    )
+                              properties=['tvshowid'],
+                              params={'episodeid': int(params.get('dbid'))}
+                              )
     try:
         tvshow_id = str(episode_query['result']['episodedetails']['tvshowid'])
     except Exception:
@@ -511,9 +512,9 @@ def resetposition(params):
 
 def details_by_season(params):
     season_query = json_call('VideoLibrary.GetSeasonDetails',
-                        properties=season_properties,
-                        params={'seasonid': int(params.get('dbid'))}
-                        )
+                             properties=season_properties,
+                             params={'seasonid': int(params.get('dbid'))}
+                             )
 
     try:
         tvshow_id = str(season_query['result']['seasondetails']['tvshowid'])
@@ -522,9 +523,9 @@ def details_by_season(params):
         return
 
     tvshow_query = json_call('VideoLibrary.GetTVShowDetails',
-                        properties=tvshow_properties,
-                        params={'tvshowid': int(tvshow_id)}
-                        )
+                             properties=tvshow_properties,
+                             params={'tvshowid': int(tvshow_id)}
+                             )
 
     try:
         details = tvshow_query['result']['tvshowdetails']
@@ -598,16 +599,18 @@ def setinfo(params):
     if dbtype == 'movie':
         method = 'VideoLibrary.SetMovieDetails'
         key = 'movieid'
+
     elif dbtype == 'episode':
         method = 'VideoLibrary.SetEpisodeDetails'
         key = 'episodeid'
+
     elif dbtype == 'tvshow':
         method = 'VideoLibrary.SetTVShowDetails'
         key = 'tvshowid'
 
     json_call(method,
-            params={key: int(dbid), params.get('field'): value}
-            )
+              params={key: int(dbid), params.get('field'): value}
+              )
 
 
 def split(params):
@@ -638,6 +641,7 @@ def lookforfile(params):
     if xbmcvfs.exists(file):
         winprop('%s.bool' % prop, True)
         log('File exists: %s' % file)
+
     else:
         winprop(prop, clear=True)
         log('File does not exist: %s' % file)
