@@ -262,9 +262,12 @@ def _openimage(image,targetpath,filename):
             else:
                 targetfile = os.path.join(targetpath, filename)
                 if not xbmcvfs.exists(targetfile):
+                    image = image.encode('utf-8')
                     image = url_unquote(image.replace('image://', ''))
+
                     if image.endswith('/'):
                         image = image[:-1]
+
                     xbmcvfs.copy(image, targetfile)
 
                 img = Image.open(targetfile)
