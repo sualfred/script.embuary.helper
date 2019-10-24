@@ -7,6 +7,7 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
+import xbmcplugin
 import json
 import time
 import datetime
@@ -432,3 +433,10 @@ def addon_data(file,content=None):
         f = open(targetfile,'w')
         f.write(content)
         f.close()
+
+
+def set_plugincontent(content=None,category=None):
+    if category:
+        xbmcplugin.setPluginCategory(int(sys.argv[1]), category)
+    if content:
+        xbmcplugin.setContent(int(sys.argv[1]), content)

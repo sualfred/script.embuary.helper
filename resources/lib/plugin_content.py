@@ -109,6 +109,8 @@ class PluginContent(object):
             return
 
         add_items(self.li,[result],type=self.dbtype)
+        plugin_category = 'DBID #' + str(self.dbid) + ' (' + self.dbtype + ')'
+        set_plugincontent(content=self.key_items, category=plugin_category)
 
 
     ''' by custom args to parse own json
@@ -117,6 +119,7 @@ class PluginContent(object):
         limit = self.limit or None
         filter_args = remove_quotes(self.params.get('filter_args')) or None
         sort_args = remove_quotes(self.params.get('sort_args')) or None
+        plugin_category = self.params.get('category_label')
 
         filters = []
         if filter_args is not None:
@@ -145,6 +148,7 @@ class PluginContent(object):
             return
 
         add_items(self.li,result,type=self.dbtype)
+        set_plugincontent(content=self.key_items, category=plugin_category)
 
 
     ''' resource helper to create a list will all existing and matching resource images
@@ -169,6 +173,8 @@ class PluginContent(object):
                     list_item.setArt({'icon': filepath})
                     self.li.append(('', list_item, False))
                     break
+
+            set_plugincontent(content='files', category=resource_addon)
 
 
     ''' season widgets to display library content that fit a special seasson or date
@@ -203,17 +209,20 @@ class PluginContent(object):
 
         if list_type == 'xmas':
             use_episodes = True
+            plugin_category = ADDON.getLocalizedString(32032)
             for keyword in xmas:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
 
         elif list_type == 'horror':
             use_episodes = False
+            plugin_category = ADDON.getLocalizedString(32033)
             for keyword in horror:
                 filters.append({'operator': 'contains', 'field': 'genre', 'value': keyword})
 
         elif list_type == 'starwars':
             use_episodes = False
+            plugin_category = ADDON.getLocalizedString(32034)
             for keyword in starwars:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
@@ -221,6 +230,7 @@ class PluginContent(object):
 
         elif list_type == 'startrek':
             use_episodes = False
+            plugin_category = ADDON.getLocalizedString(32035)
             for keyword in startrek:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
@@ -273,6 +283,7 @@ class PluginContent(object):
                     add_items(self.li,json_query,type='tvshow')
 
         random.shuffle(self.li)
+        set_plugincontent(content='videos', category=plugin_category)
 
 
     ''' get seasons of a show
@@ -311,6 +322,7 @@ class PluginContent(object):
             log('Get seasons by TV show: No seasons found')
         else:
             add_items(self.li,season_query,type='season')
+            set_plugincontent(content='seasons', category=season_query[0].get('showtitle'))
 
 
     ''' get more episodes from the same season
@@ -347,6 +359,8 @@ class PluginContent(object):
             log('Get more episodes by season: No episodes found')
         else:
             add_items(self.li,episode_query,type='episode')
+            plugin_category = episode_query[0].get('showtitle') + ' - ' + xbmc.getLocalizedString(20373) + ' ' + str(episode_query[0].get('season'))
+            set_plugincontent(content='episodes', category=plugin_category)
 
 
     ''' get nextup of inprogress TV shows
@@ -383,6 +397,7 @@ class PluginContent(object):
                     log('Get next up episodes: No next episodes found for %s' % episode['title'])
                 else:
                     add_items(self.li,episode_details,type='episode')
+                    set_plugincontent(content='episodes', category=ADDON.getLocalizedString(32008))
 
 
     ''' get recently added episodes of unwatched shows
@@ -392,12 +407,15 @@ class PluginContent(object):
 
         if show_all:
             filter = self.tag_filter if self.tag else None
+            plugin_category = ADDON.getLocalizedString(32010)
 
         else:
             filters = [self.unplayed_filter]
             if self.tag:
                 filters.append(self.tag_filter)
             filter = {'and': filters}
+            plugin_category = ADDON.getLocalizedString(32007)
+
 
         json_query = json_call('VideoLibrary.GetTVShows',
                                properties=tvshow_properties,
@@ -463,6 +481,8 @@ class PluginContent(object):
 
                     tvshow_query = tvshow_query['result']['tvshowdetails']
                     add_items(self.li,[tvshow_query],type='tvshow')
+
+                set_plugincontent(content='tvshows', category=plugin_category)
 
             except Exception as error:
                 log('Get new media: Not able to parse data for show %s - %s' % (tvshow,error))
@@ -541,6 +561,8 @@ class PluginContent(object):
 
             random.shuffle(self.li)
 
+            set_plugincontent(content='videos', category=ADDON.getLocalizedString(32009))
+
 
     ''' get inprogress media
     '''
@@ -575,6 +597,8 @@ class PluginContent(object):
                 log('In progress media: No episodes found.')
             else:
                 add_items(self.li,json_query,type='episode')
+
+        set_plugincontent(content='videos', category=ADDON.getLocalizedString(32013))
 
 
     ''' genres listing with 4 posters of each available genre content
@@ -637,6 +661,7 @@ class PluginContent(object):
             genres.append(genre)
 
         add_items(self.li,genres,type='genre')
+        set_plugincontent(content='videos', category=xbmc.getLocalizedString(135))
 
 
     ''' get movies by director
@@ -674,6 +699,8 @@ class PluginContent(object):
             return
 
         add_items(self.li,json_query,type='movie',searchstring=joineddirectors)
+        plugin_category = ADDON.getLocalizedString(32029) + ' ' + joineddirectors
+        set_plugincontent(content='movies', category=plugin_category)
 
 
     ''' get items by actor
@@ -750,6 +777,9 @@ class PluginContent(object):
             '''
             if self.dbid and not self.li:
                 self._retry('getitemsbyactor')
+
+            plugin_category = ADDON.getLocalizedString(32030) + ' ' + actor
+            set_plugincontent(content='videos', category=plugin_category)
 
             random.shuffle(self.li)
 
@@ -834,8 +864,13 @@ class PluginContent(object):
 
         if self.dbtype == 'movie':
             add_items(self.li,json_query,type='movie',searchstring=title)
+            plugin_category = ADDON.getLocalizedString(32031) + ' ' + title
+            set_plugincontent(content='movies', category=plugin_category)
+
         elif self.dbtype == 'tvshow':
             add_items(self.li,json_query,type='tvshow',searchstring=title)
+            plugin_category = ADDON.getLocalizedString(32031) + ' ' + title
+            set_plugincontent(content='tvshows', category=plugin_category)
 
 
     ''' get cast of item
@@ -868,8 +903,7 @@ class PluginContent(object):
 
                     json_query = json_call('VideoLibrary.GetTVShowDetails',
                                            properties=['cast'],
-                                           params={'tvshowid': int(tvshow_id)},
-                                           debug=True
+                                           params={'tvshowid': int(tvshow_id)}
                                            )
 
                     cast = json_query['result']['tvshowdetails']['cast']

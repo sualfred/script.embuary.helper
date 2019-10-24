@@ -152,3 +152,43 @@ msgstr ""
 msgctxt "#32028"
 msgid "Add/remove TV show favourite"
 msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32029"
+msgid "Directed by"
+msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32030"
+msgid "Items starring"
+msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32031"
+msgid "Because you watched"
+msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32032"
+msgid "Christmas holiday season"
+msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32033"
+msgid "Spooky suggestions"
+msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32034"
+msgid "May the force be with you"
+msgstr ""
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32035"
+msgid "Live long and prosper"
+msgstr ""
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32036"
+msgid "Special and seasonal widgets"
+msgstr ""
