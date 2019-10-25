@@ -57,7 +57,11 @@ class Service(xbmc.Monitor):
 
         if method in NOTIFICATION_METHOD:
             sync_library_tags()
-            reload_widgets(reason=method)
+
+            if method.endswith('Finished'):
+                reload_widgets(instant=True, reason=method)
+            else:
+                reload_widgets(reason=method)
 
 
     def onSettingsChanged(self):

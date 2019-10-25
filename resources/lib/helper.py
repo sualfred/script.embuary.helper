@@ -245,7 +245,11 @@ def reload_widgets(instant=False,reason='Timer'):
     timestamp = time.strftime('%Y%m%d%H%M%S', time.gmtime())
 
     if instant:
+        if visible('System.HasAlarm(WidgetRefresh)'):
+            execute('CancelAlarm(WidgetRefresh,silent)')
+
         winprop('EmbuaryWidgetUpdate', timestamp)
+
     else:
         execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:10,silent)' % timestamp)
 
