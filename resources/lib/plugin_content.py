@@ -862,15 +862,9 @@ class PluginContent(object):
             self._retry('getsimilar')
             return
 
-        if self.dbtype == 'movie':
-            add_items(self.li,json_query,type='movie',searchstring=title)
-            plugin_category = ADDON.getLocalizedString(32031) + ' ' + title
-            set_plugincontent(content='movies', category=plugin_category)
-
-        elif self.dbtype == 'tvshow':
-            add_items(self.li,json_query,type='tvshow',searchstring=title)
-            plugin_category = ADDON.getLocalizedString(32031) + ' ' + title
-            set_plugincontent(content='tvshows', category=plugin_category)
+        add_items(self.li,json_query,type=self.dbtype,searchstring=title)
+        plugin_category = ADDON.getLocalizedString(32031) + ' ' + title
+        set_plugincontent(content='%ss' % self.dbtype, category=plugin_category)
 
 
     ''' get cast of item
