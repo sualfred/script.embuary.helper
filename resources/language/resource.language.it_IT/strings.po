@@ -4,15 +4,15 @@
 # Addon Provider: sualfred
 # Translators:
 # sualfred <su4lfred@gmail.com>, 2019
-# EffeF, 2019
 # Andrea Matesi <andreamatesi@gmail.com>, 2019
+# EffeF, 2019
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Embuary Helper\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2019-10-06 17:40+0000\n"
-"Last-Translator: Andrea Matesi <andreamatesi@gmail.com>, 2019\n"
+"Last-Translator: EffeF, 2019\n"
 "Language-Team: Italian (Italy) (https://www.transifex.com/sualfred/teams/80018/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -144,7 +144,7 @@ msgstr "elementi"
 #: /resources/lib/utils.py
 msgctxt "#32024"
 msgid "The video database has no library tags stored."
-msgstr "i"
+msgstr "Il database video non ha alcuna libreria tag disponibile."
 
 #: /resources/lib/utils.py
 msgctxt "#32025"
@@ -155,3 +155,53 @@ msgstr "Attenzione"
 msgctxt "#32026"
 msgid "Enable library tag detection for"
 msgstr "Attiva riconoscimento tag libreria per"
+
+#: /addon.xml
+msgctxt "#32027"
+msgid "Add/remove movie favourite"
+msgstr "Aggiungi/rimuovi film preferito"
+
+#: /addon.xml
+msgctxt "#32028"
+msgid "Add/remove TV show favourite"
+msgstr "Aggiungi/rimuovi programma TV preferito"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32029"
+msgid "Directed by"
+msgstr "Diretto da"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32030"
+msgid "Items starring"
+msgstr "Elementi con protagonista"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32031"
+msgid "Because you watched"
+msgstr "Perché hai visto"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32032"
+msgid "Christmas holiday season"
+msgstr "Festività natalizie"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32033"
+msgid "Spooky suggestions"
+msgstr "Suggerimenti spettrali"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32034"
+msgid "May the force be with you"
+msgstr "Che la forza sia con te"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32035"
+msgid "Live long and prosper"
+msgstr "Lunga vita e prosperità"
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32036"
+msgid "Special and seasonal widgets"
+msgstr "Widget speciali e stagionali"
