@@ -247,7 +247,7 @@ def reload_widgets(instant=False,reason='Timer'):
     if instant:
         winprop('EmbuaryWidgetUpdate', timestamp)
     else:
-        execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:05,silent)' % timestamp)
+        execute('AlarmClock(WidgetRefresh,SetProperty(EmbuaryWidgetUpdate,%s,home),00:10,silent)' % timestamp)
 
 
 def sync_library_tags(tags=None,recreate=False):
