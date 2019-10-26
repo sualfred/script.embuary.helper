@@ -172,7 +172,7 @@ def settimer(params):
     xbmc.sleep(int(time))
     execute('Dialog.Close(all,true)')
 
-    while visible('Window.IsVisible(busydialognocancel)'):
+    while condition('Window.IsVisible(busydialognocancel)'):
         xbmc.sleep(10)
 
     for action in actions.split('||'):
@@ -207,7 +207,7 @@ def getaddonsetting(params):
 
 def togglekodisetting(params):
     settingname = params.get('setting', '')
-    value = False if visible('system.getbool(%s)' % settingname) else True
+    value = False if condition('system.getbool(%s)' % settingname) else True
 
     json_call('Settings.SetSettingValue',
               params={'setting': '%s' % settingname, 'value': value}
@@ -422,11 +422,11 @@ def playall(params):
 
     for i in range(int(xbmc.getInfoLabel('Container(%s).NumItems' % container))):
 
-        if visible('String.IsEqual(%s(%s).DBType,movie)' % (method,i)):
+        if condition('String.IsEqual(%s(%s).DBType,movie)' % (method,i)):
             media_type = 'movie'
-        elif visible('String.IsEqual(%s(%s).DBType,episode)' % (method,i)):
+        elif condition('String.IsEqual(%s(%s).DBType,episode)' % (method,i)):
             media_type = 'episode'
-        elif visible('String.IsEqual(%s(%s).DBType,song)' % (method,i)):
+        elif condition('String.IsEqual(%s(%s).DBType,song)' % (method,i)):
             media_type = 'song'
         else:
             media_type = None
@@ -457,11 +457,11 @@ def playrandom(params):
 
     i = random.randint(1,int(xbmc.getInfoLabel('Container(%s).NumItems' % container)))
 
-    if visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,movie)' % (container,i)):
+    if condition('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,movie)' % (container,i)):
         media_type = 'movie'
-    elif visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,episode)' % (container,i)):
+    elif condition('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,episode)' % (container,i)):
         media_type = 'episode'
-    elif visible('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,song)' % (container,i)):
+    elif condition('String.IsEqual(Container(%s).ListItemAbsolute(%s).DBType,song)' % (container,i)):
         media_type = 'song'
     else:
         media_type = None

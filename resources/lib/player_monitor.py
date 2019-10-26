@@ -33,7 +33,7 @@ class PlayerMonitor(xbmc.Monitor):
         '''
         if method == 'Player.OnPlay':
             xbmc.stopSFX()
-            self.pvr_playback = visible('String.StartsWith(Player.Filenameandpath,pvr://)')
+            self.pvr_playback = condition('String.StartsWith(Player.Filenameandpath,pvr://)')
 
             self.get_art_info()
 
@@ -44,7 +44,7 @@ class PlayerMonitor(xbmc.Monitor):
                 self.get_videoinfo()
                 self.get_nextitem()
 
-            if PLAYER.isPlayingAudio() and not self.pvr_playback and visible('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
+            if PLAYER.isPlayingAudio() and not self.pvr_playback and condition('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
                 self.get_songartworks()
 
             if not self.fullscreen_lock:
@@ -89,7 +89,7 @@ class PlayerMonitor(xbmc.Monitor):
 
 
     def clear_playlists(self):
-        if self.data['position'] == 0 and visible('Skin.HasSetting(ClearPlaylist)'):
+        if self.data['position'] == 0 and condition('Skin.HasSetting(ClearPlaylist)'):
                 if self.data['playlistid'] == 0:
                     VIDEOPLAYLIST.clear()
                     log('Music playlist has been filled. Clear existing video playlist')
@@ -101,7 +101,7 @@ class PlayerMonitor(xbmc.Monitor):
 
     def do_fullscreen(self):
         xbmc.sleep(1000)
-        if visible('Skin.HasSetting(StartPlayerFullscreen)'):
+        if condition('Skin.HasSetting(StartPlayerFullscreen)'):
 
             for i in range(1,200):
                 if xbmcgui.getCurrentWindowId() in [12005, 12006]:
@@ -154,11 +154,11 @@ class PlayerMonitor(xbmc.Monitor):
         if clear or not dbid:
             return
 
-        if visible('VideoPlayer.Content(movies)'):
+        if condition('VideoPlayer.Content(movies)'):
             method = 'VideoLibrary.GetMovieDetails'
             mediatype = 'movieid'
             details = 'moviedetails'
-        elif visible('VideoPlayer.Content(episodes)'):
+        elif condition('VideoPlayer.Content(episodes)'):
             method = 'VideoLibrary.GetEpisodeDetails'
             mediatype = 'episodeid'
             details = 'episodedetails'

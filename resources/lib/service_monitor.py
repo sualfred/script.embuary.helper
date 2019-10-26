@@ -38,7 +38,7 @@ class Service(xbmc.Monitor):
         self.set_background = xbmc.getInfoLabel('Skin.String(BackgroundInterval)') or ADDON.getSetting('background_interval')
         self.set_background = int(self.set_background)
 
-        self.blur_background = visible('Skin.HasSetting(BlurEnabled)')
+        self.blur_background = condition('Skin.HasSetting(BlurEnabled)')
         self.blur_radius = xbmc.getInfoLabel('Skin.String(BlurRadius)') or ADDON.getSetting('blur_radius')
 
         self.master_lock = None
@@ -145,24 +145,24 @@ class Service(xbmc.Monitor):
             ''' Workaround for login screen bug
             '''
             if not self.login_reload:
-                if visible('System.HasLoginScreen'):
+                if condition('System.HasLoginScreen'):
                     log('System has login screen enabled. Reload the skin to load all strings correctly.')
                     execute('ReloadSkin()')
                     self.login_reload = True
 
             ''' Master lock reload logic for widgets
             '''
-            if visible('System.HasLocks'):
+            if condition('System.HasLocks'):
                 if self.master_lock is None:
-                    self.master_lock = visible('System.IsMaster')
+                    self.master_lock = condition('System.IsMaster')
                     log('Master mode: %s' % self.master_lock)
 
-                if self.master_lock == True and not visible('System.IsMaster'):
+                if self.master_lock == True and not condition('System.IsMaster'):
                     log('Left master mode. Reload skin.')
                     self.master_lock = False
                     execute('ReloadSkin()')
 
-                elif self.master_lock == False and visible('System.IsMaster'):
+                elif self.master_lock == False and condition('System.IsMaster'):
                     log('Entered master mode. Reload skin.')
                     self.master_lock = True
                     execute('ReloadSkin()')

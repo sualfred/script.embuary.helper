@@ -94,7 +94,7 @@ def execute(cmd):
     xbmc.executebuiltin(cmd)
 
 
-def visible(condition):
+def condition(condition):
     return xbmc.getCondVisibility(condition)
 
 
@@ -106,7 +106,7 @@ def clear_playlists():
 
 def go_to_path(path,target='videos'):
     execute('Dialog.Close(all,true)')
-    execute('Container.Update(%s)' % path) if visible('Window.IsMedia') else execute('ActivateWindow(%s,%s,return)' % (target,path))
+    execute('Container.Update(%s)' % path) if condition('Window.IsMedia') else execute('ActivateWindow(%s,%s,return)' % (target,path))
 
 
 def get_bool(value,string='true'):
@@ -245,7 +245,7 @@ def reload_widgets(instant=False,reason='Timer'):
     timestamp = time.strftime('%Y%m%d%H%M%S', time.gmtime())
 
     if instant:
-        if visible('System.HasAlarm(WidgetRefresh)'):
+        if condition('System.HasAlarm(WidgetRefresh)'):
             execute('CancelAlarm(WidgetRefresh,silent)')
 
         winprop('EmbuaryWidgetUpdate', timestamp)
@@ -294,7 +294,7 @@ def sync_library_tags(tags=None,recreate=False):
 
         ''' automatically whitelist new tags if enabled
         '''
-        if visible('Skin.HasSetting(AutoLibraryTags)'):
+        if condition('Skin.HasSetting(AutoLibraryTags)'):
             tags_to_whitelist = known_tags if recreate else new_tags
 
             for tag in tags_to_whitelist:

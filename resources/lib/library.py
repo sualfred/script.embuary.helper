@@ -111,7 +111,7 @@ def handle_tvshows(li,item,searchstring=None):
     if 'cast' in item:
         cast = _get_cast(item['cast'])
 
-    if not visible('Window.IsVisible(movieinformation)'):
+    if not condition('Window.IsVisible(movieinformation)'):
         folder = True
         item['file'] = 'videodb://tvshows/titles/%s/' % dbid
     else:
@@ -181,7 +181,7 @@ def handle_seasons(li,item):
         title = '%s %s' % (xbmc.getLocalizedString(20373), season)
         special = 'false'
 
-    if not visible('Window.IsVisible(movieinformation)'):
+    if not condition('Window.IsVisible(movieinformation)'):
         folder = True
         file = 'videodb://tvshows/titles/%s/%s/' % (tvshowdbid, season)
     else:
