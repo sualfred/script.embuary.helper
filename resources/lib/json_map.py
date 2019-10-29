@@ -26,6 +26,7 @@ movie_properties = [
                     'streamdetails',
                     'mpaa',
                     'director',
+                    'premiered',
                     'writer',
                     'cast',
                     'dateadded',

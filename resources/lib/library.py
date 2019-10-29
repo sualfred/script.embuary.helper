@@ -63,6 +63,7 @@ def handle_movies(li,item,searchstring=None):
                                               'mediatype': 'movie',
                                               'trailer': item['trailer'],
                                               'dateadded': item['dateadded'],
+                                              'premiered': item['premiered'],
                                               'path': item['file'],
                                               'playcount': item['playcount']
                                               })
