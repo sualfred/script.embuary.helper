@@ -65,7 +65,9 @@ def handle_movies(li,item,searchstring=None):
                                               'dateadded': item['dateadded'],
                                               'premiered': item['premiered'],
                                               'path': item['file'],
-                                              'playcount': item['playcount']
+                                              'playcount': item['playcount'],
+                                              'set': item['set'],
+                                              'setid': item['setid']
                                               })
 
     _set_ratings(li_item,item['ratings'])

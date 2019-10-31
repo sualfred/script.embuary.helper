@@ -30,7 +30,9 @@ movie_properties = [
                     'writer',
                     'cast',
                     'dateadded',
-                    'imdbnumber'
+                    'imdbnumber',
+                    'set',
+                    'setid'
                     ]
 
 episode_properties = [
