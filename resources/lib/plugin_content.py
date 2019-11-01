@@ -189,7 +189,7 @@ class PluginContent(object):
 
         horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas',
                   'borzalom', 'hryllingi', 'ホラー', 'siaubas', 'verschrikking', 'skrekk', 'przerażenie',
-                  'groază', 'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах'
+                  'groază', 'фильм ужасов', 'hrôza', 'grozo', 'Skräck', 'korku', 'жах', 'halloween'
                   ]
 
         starwars = ['Star Wars', 'Krieg der Sterne', 'Luke Skywalker', 'Darth Vader', 'Jedi ', 'Ewoks',
@@ -219,6 +219,9 @@ class PluginContent(object):
             plugin_category = ADDON.getLocalizedString(32033)
             for keyword in horror:
                 filters.append({'operator': 'contains', 'field': 'genre', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'plot', 'value': 'halloween'})
 
         elif list_type == 'starwars':
             use_episodes = False
