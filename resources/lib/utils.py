@@ -51,7 +51,7 @@ def createcontext(params):
     indexlist = []
     splitby = remove_quotes(params.get('splitby', '||'))
 
-    for i in range(1, 30):
+    for i in range(1, 100):
         label = xbmc.getInfoLabel('Window.Property(Context.%d.Label)' % (i))
 
         if label == '':
@@ -69,7 +69,7 @@ def createcontext(params):
                 execute(builtin)
                 xbmc.sleep(30)
 
-    for i in range(1, 30):
+    for i in range(1, 100):
         execute('ClearProperty(Context.%d.Builtin)' % i)
         execute('ClearProperty(Context.%d.Label)' % i)
 
@@ -79,18 +79,24 @@ def createselect(params):
     indexlist = []
     headertxt = remove_quotes(params.get('header', ''))
     splitby = remove_quotes(params.get('splitby', '||'))
+    usedetails = True if params.get('usedetails') == 'true' else False
 
-    for i in range(1, 30):
+    for i in range(1, 100):
         label = xbmc.getInfoLabel('Window.Property(Dialog.%d.Label)' % (i))
+        label2 = xbmc.getInfoLabel('Window.Property(Dialog.%d.Label2)' % (i))
+        icon = xbmc.getInfoLabel('Window.Property(Dialog.%d.Icon)' % (i))
 
         if label == '':
             break
+
         elif label != 'none' and label != '-':
-            selectionlist.append(label)
+            li_item = xbmcgui.ListItem(label=label, label2=label2)
+            li_item.setArt({'icon': icon})
+            selectionlist.append(li_item)
             indexlist.append(i)
 
     if selectionlist:
-        index = DIALOG.select(headertxt, selectionlist)
+        index = DIALOG.select(headertxt, selectionlist, useDetails=usedetails)
 
         if index > -1:
             value = xbmc.getInfoLabel('Window.Property(Dialog.%d.Builtin)' % (indexlist[index]))
@@ -98,9 +104,11 @@ def createselect(params):
                 execute(builtin)
                 xbmc.sleep(30)
 
-    for i in range(1, 30):
+    for i in range(1, 100):
         execute('ClearProperty(Dialog.%d.Builtin)' % i)
         execute('ClearProperty(Dialog.%d.Label)' % i)
+        execute('ClearProperty(Dialog.%d.Label2)' % i)
+        execute('ClearProperty(Dialog.%d.Icon)' % i)
 
 
 def splitandcreateselect(params):
