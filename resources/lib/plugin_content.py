@@ -29,6 +29,9 @@ class PluginContent(object):
         self.retry_count = 1
         self.li = li
 
+        if self.limit:
+            self.limit = int(self.limit)
+
         if self.dbtype == 'movie':
             self.method_details = 'VideoLibrary.GetMovieDetails'
             self.method_item = 'VideoLibrary.GetMovies'
@@ -204,7 +207,11 @@ class PluginContent(object):
                     'Captain Kathryn Janeway', 'Cpt. Kathryn Janeway'
                     ]
 
+        use_episodes = False
+        add_episodes = False
+
         filters = []
+        filters_episode = []
         list_type = self.params.get('list')
 
         if list_type == 'xmas':
@@ -213,18 +220,19 @@ class PluginContent(object):
             for keyword in xmas:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
+                filters_episode.append({'operator': 'contains', 'field': 'title', 'value': keyword})
+                filters_episode.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
 
         elif list_type == 'horror':
-            use_episodes = False
+            add_episodes = True
             plugin_category = ADDON.getLocalizedString(32033)
+            filters_episode.append({'operator': 'contains', 'field': 'plot', 'value': 'Halloween'})
+            filters.append({'operator': 'contains', 'field': 'title', 'value': 'Halloween'})
+            filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': 'Halloween'})
             for keyword in horror:
                 filters.append({'operator': 'contains', 'field': 'genre', 'value': keyword})
-                filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
-                filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
-                filters.append({'operator': 'contains', 'field': 'plot', 'value': 'halloween'})
 
         elif list_type == 'starwars':
-            use_episodes = False
             plugin_category = ADDON.getLocalizedString(32034)
             for keyword in starwars:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
@@ -232,7 +240,6 @@ class PluginContent(object):
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
 
         elif list_type == 'startrek':
-            use_episodes = False
             plugin_category = ADDON.getLocalizedString(32035)
             for keyword in startrek:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
@@ -243,7 +250,8 @@ class PluginContent(object):
             return
 
         filter = {'or': filters}
-        limit = self.limit or 25
+        filter_episode = {'or': filters_episode}
+        limit = self.limit or 26
 
         if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
@@ -259,20 +267,10 @@ class PluginContent(object):
                 add_items(self.li,json_query,type='movie')
 
         if self.dbtype != 'movie':
-            if use_episodes:
-                json_query = json_call('VideoLibrary.GetEpisodes',
-                                       properties=episode_properties,
-                                       sort=self.sort_random, limit=limit,
-                                       query_filter=filter
-                                       )
-                try:
-                    json_query = json_query['result']['episodes']
-                except Exception:
-                    log('Episodes by seasonal keyword: No episodes found.')
-                else:
-                    add_items(self.li,json_query,type='episode')
+            if add_episodes:
+                limit = int(limit/2)
 
-            else:
+            if not use_episodes:
                 json_query = json_call('VideoLibrary.GetTVShows',
                                        properties=tvshow_properties,
                                        sort=self.sort_random, limit=limit,
@@ -284,6 +282,19 @@ class PluginContent(object):
                     log('TV shows by seasonal keyword: No shows found.')
                 else:
                     add_items(self.li,json_query,type='tvshow')
+
+            if use_episodes or add_episodes:
+                json_query = json_call('VideoLibrary.GetEpisodes',
+                                       properties=episode_properties,
+                                       sort=self.sort_random, limit=limit,
+                                       query_filter=filter_episode
+                                       )
+                try:
+                    json_query = json_query['result']['episodes']
+                except Exception:
+                    log('Episodes by seasonal keyword: No episodes found.')
+                else:
+                    add_items(self.li,json_query,type='episode')
 
         random.shuffle(self.li)
         set_plugincontent(content='videos', category=plugin_category)
