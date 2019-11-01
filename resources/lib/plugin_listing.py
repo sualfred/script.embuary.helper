@@ -55,7 +55,11 @@ LISTING = {
               ],
           'seasonal': [
               {'name': ADDON.getLocalizedString(32032), 'info': 'getseasonal', 'list': 'xmas'},
+              {'name': ADDON.getLocalizedString(32032) + ' (' + xbmc.getLocalizedString(342) + ')', 'info': 'getseasonal', 'list': 'xmas', 'type': 'movie'},
+              {'name': ADDON.getLocalizedString(32032) + ' (' + xbmc.getLocalizedString(20343) + ')', 'info': 'getseasonal', 'list': 'xmas', 'type': 'tvshow'},
               {'name': ADDON.getLocalizedString(32033) + ' (Halloween)', 'info': 'getseasonal', 'list': 'horror'},
+              {'name': ADDON.getLocalizedString(32033) + ' (Halloween - ' + xbmc.getLocalizedString(342) + ')', 'info': 'getseasonal', 'list': 'horror', 'type': 'movie'},
+              {'name': ADDON.getLocalizedString(32033) + ' (Halloween - ' + xbmc.getLocalizedString(20343) + ')', 'info': 'getseasonal', 'list': 'horror', 'type': 'tvshow'},
               {'name': ADDON.getLocalizedString(32034) + ' (Star Wars)', 'info': 'getseasonal', 'list': 'starwars'},
               {'name': ADDON.getLocalizedString(32035) + ' (Star Trek)', 'info': 'getseasonal', 'list': 'startrek'}
               ]
@@ -139,8 +143,13 @@ class PluginListing(object):
             else:
                 category_label = None
 
+            if content_type == None and item.get('type') in ['tvshow','movie']:
+                dbtype = item.get('type')
+            else:
+                dbtype = content_type
+
             url = self._encode_url(info=item.get('info'),
-                                   type=content_type,
+                                   type=dbtype,
                                    tag=self.tag,
                                    pos=item.get('pos'),
                                    filter_args=item.get('filter_args'),
