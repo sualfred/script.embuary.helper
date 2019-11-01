@@ -183,11 +183,10 @@ class PluginContent(object):
     ''' season widgets to display library content that fit a special seasson or date
     '''
     def getseasonal(self):
-        xmas = ['xmas', 'christmas', 'x-mas', 'mistletow', 'claus', 'snowman', 'happy holidays',
-                'st. nick', 'Weihnacht', 'weihnachten', 'fest der liebe', 'trannenbaum', 'schneemann',
-                'heilige nacht', 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'mistelzweig',
-                'Noël', 'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta',
-                'Veselé Vánoce', 'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun'
+        xmas = ['xmas', 'christmas', 'x-mas', 'santa claus', 'st. claus', 'happy holidays', 'st. nick', 'Weihnacht',
+                'fest der liebe', 'heilige nacht', 'heiliger abend', 'heiligabend', 'nikolaus', 'christkind', 'Noël',
+                'Meilleurs vœux', 'feliz navidad', 'joyeux noel', 'Natale', 'szczęśliwe święta', 'Veselé Vánoce',
+                'Vrolijk kerstfeest', 'Kerstmis', 'Boże Narodzenie', 'Kalėdos', 'Crăciun'
                 ]
 
         horror = ['ужас', 'užas', 'rædsel', 'horror', 'φρίκη', 'õudus', 'kauhu', 'horreur', 'užas',
@@ -219,6 +218,7 @@ class PluginContent(object):
             plugin_category = ADDON.getLocalizedString(32032)
             for keyword in xmas:
                 filters.append({'operator': 'contains', 'field': 'title', 'value': keyword})
+                filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': keyword})
                 filters.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
                 filters_episode.append({'operator': 'contains', 'field': 'title', 'value': keyword})
                 filters_episode.append({'operator': 'contains', 'field': 'plot', 'value': keyword})
@@ -227,6 +227,7 @@ class PluginContent(object):
             add_episodes = True
             plugin_category = ADDON.getLocalizedString(32033)
             filters_episode.append({'operator': 'contains', 'field': 'plot', 'value': 'Halloween'})
+            filters_episode.append({'operator': 'contains', 'field': 'title', 'value': 'Halloween'})
             filters.append({'operator': 'contains', 'field': 'title', 'value': 'Halloween'})
             filters.append({'operator': 'contains', 'field': 'originaltitle', 'value': 'Halloween'})
             for keyword in horror:
