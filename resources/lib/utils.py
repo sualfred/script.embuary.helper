@@ -119,6 +119,7 @@ def splitandcreateselect(params):
     seperator = remove_quotes(params.get('seperator', ' / '))
     splitby = remove_quotes(params.get('splitby', '||'))
     window = params.get('window','')
+
     selectionlist = remove_quotes(params.get('items')).split(seperator)
 
     if selectionlist:
