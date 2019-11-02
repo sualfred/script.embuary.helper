@@ -83,6 +83,8 @@ def createselect(params):
     splitby = remove_quotes(params.get('splitby', '||'))
     window = params.get('window','')
     usedetails = True if params.get('usedetails') == 'true' else False
+    preselect = int(params.get('preselect',-1))
+
 
     for i in range(1, 100):
         label = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Label)' % (window,i))
@@ -99,7 +101,7 @@ def createselect(params):
             indexlist.append(i)
 
     if selectionlist:
-        index = DIALOG.select(headertxt, selectionlist, useDetails=usedetails)
+        index = DIALOG.select(headertxt, selectionlist, preselect=preselect, useDetails=usedetails)
 
         if index > -1:
             value = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Builtin)' % (window,indexlist[index]))
