@@ -3,6 +3,7 @@
 # Addon id: script.embuary.helper
 # Addon Provider: sualfred
 # Translators:
+# sualfred <su4lfred@gmail.com>, 2019
 # Snn 1452 <snn1452@gmail.com>, 2019
 # 
 msgid ""
@@ -163,3 +164,43 @@ msgstr "Favori film ekle/kaldır"
 msgctxt "#32028"
 msgid "Add/remove TV show favourite"
 msgstr "Favori TV programı ekle/kaldır"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32029"
+msgid "Directed by"
+msgstr "Yöneten"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32030"
+msgid "Items starring"
+msgstr "Oyuncular"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32031"
+msgid "Because you watched"
+msgstr "İzlediğin için"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32032"
+msgid "Christmas holiday season"
+msgstr "Noel tatili sezonu"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32033"
+msgid "Spooky suggestions"
+msgstr "Ürkütücü öneriler"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32034"
+msgid "May the force be with you"
+msgstr "Güç seninle olsun"
+
+#: /resources/lib/plugin_content.py
+msgctxt "#32035"
+msgid "Live long and prosper"
+msgstr "Uzun yaşa ve başarılı ol"
+
+#: /resources/lib/plugin_listing.py
+msgctxt "#32036"
+msgid "Special and seasonal widgets"
+msgstr "Özel ve sezonluk widget'ler"
