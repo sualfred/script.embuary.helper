@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.embuary.helper" name="Embuary Helper" version="1.3.2" provider-name="sualfred">
+<addon id="script.embuary.helper" name="Embuary Helper" version="1.3.3" provider-name="sualfred">
 	<requires>
 		<import addon="xbmc.python" version="2.26.0"/>
 		<import addon="script.module.pil" version="1.1.7"/>
@@ -9,18 +9,6 @@
 	  <provides>video</provides>
 	</extension>
 	<extension point="xbmc.service" library="service.py" />
-	<extension point="kodi.context.item">
-		<menu id="kodi.core.main">
-			<item library="context_movie_fav.py">
-				<label>$ADDON[script.embuary.helper 32027]</label>
-				<visible>String.IsEqual(ListItem.dbtype,movie) + !String.IsEmpty(ListItem.DBID) + Skin.HasSetting(EmbuaryFavs)</visible>
-			</item>
-			<item library="context_tvshow_fav.py">
-				<label>$ADDON[script.embuary.helper 32028]</label>
-				<visible>String.IsEqual(ListItem.dbtype,tvshow) + !String.IsEmpty(ListItem.DBID) + Skin.HasSetting(EmbuaryFavs)</visible>
-			</item>
-		</menu>
-	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en_GB">Embuary Helper Script</summary>
 		<description lang="en_GB">Helper script to provide features and functions to the Embuary skin. A full documentation can be found on GitHub: https://github.com/sualfred/script.embuary.helper/wiki</description>

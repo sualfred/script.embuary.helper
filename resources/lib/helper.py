@@ -311,9 +311,7 @@ def get_library_tags():
     all_tags = []
     duplicate_handler = []
     tag_blacklist = ['Favorite tvshows', # Emby
-                     'Favorite movies', # Emby
-                     'Fav. Kodi Movies',
-                     'Fav. Kodi TV Shows'
+                     'Favorite movies' # Emby
                      ]
 
     movie_tags = json_call('VideoLibrary.GetTags',

@@ -26,20 +26,14 @@ from resources.lib.cinema_mode import *
 ''' Classes
 '''
 def blurimg(params):
-    ImageBlur(prop=params.get('prop','output'),
+    ImageBlur(prop=params.get('prop', 'output'),
               file=remove_quotes(params.get('file')),
-              radius=params.get('radius',None)
+              radius=params.get('radius', None)
               )
 
 
 def playcinema(params):
     CinemaMode(dbid=params.get('dbid'),
-               dbtype=params.get('type')
-               )
-
-
-def togglefav(params):
-    Favourites(dbid=params.get('dbid'),
                dbtype=params.get('type')
                )
 
@@ -50,7 +44,7 @@ def createcontext(params):
     selectionlist = []
     indexlist = []
     splitby = remove_quotes(params.get('splitby', '||'))
-    window = params.get('window','')
+    window = params.get('window', '')
 
     for i in range(1, 100):
         label = xbmc.getInfoLabel('Window(%s).Property(Context.%d.Label)' % (window,i))
@@ -81,9 +75,9 @@ def createselect(params):
     indexlist = []
     headertxt = remove_quotes(params.get('header', ''))
     splitby = remove_quotes(params.get('splitby', '||'))
-    window = params.get('window','')
+    window = params.get('window', '')
     usedetails = True if params.get('usedetails') == 'true' else False
-    preselect = int(params.get('preselect',-1))
+    preselect = int(params.get('preselect', -1))
 
 
     for i in range(1, 100):
@@ -120,7 +114,7 @@ def splitandcreateselect(params):
     headertxt = remove_quotes(params.get('header', ''))
     seperator = remove_quotes(params.get('seperator', ' / '))
     splitby = remove_quotes(params.get('splitby', '||'))
-    window = params.get('window','')
+    window = params.get('window', '')
 
     selectionlist = remove_quotes(params.get('items')).split(seperator)
 
@@ -129,7 +123,7 @@ def splitandcreateselect(params):
 
         if index > -1:
             value = xbmc.getInfoLabel('Window(%s).Property(Dialog.Builtin)' % window)
-            value = value.replace('???',selectionlist[index])
+            value = value.replace('???', selectionlist[index])
             for builtin in value.split(splitby):
                 execute(builtin)
                 xbmc.sleep(30)
@@ -170,7 +164,7 @@ def restartservice(params):
 
 
 def calc(params):
-    prop = remove_quotes(params.get('prop','CalcResult'))
+    prop = remove_quotes(params.get('prop', 'CalcResult'))
     formula = remove_quotes(params.get('do'))
     result = eval(str(formula))
     winprop(prop, str(result))
@@ -178,9 +172,9 @@ def calc(params):
 
 def settimer(params):
     actions = remove_quotes(params.get('do'))
-    time = params.get('time','50')
+    time = params.get('time', '50')
     delay = params.get('delay')
-    busydialog = get_bool(params.get('busydialog','true'))
+    busydialog = get_bool(params.get('busydialog', 'true'))
 
     if busydialog:
         execute('ActivateWindow(busydialognocancel)')
@@ -199,13 +193,13 @@ def settimer(params):
 
 def encode(params):
     string = remove_quotes(params.get('string'))
-    prop = params.get('prop','EncodedString')
+    prop = params.get('prop', 'EncodedString')
     winprop(prop,url_quote(string))
 
 
 def decode(params):
     string = remove_quotes(params.get('string'))
-    prop = params.get('prop','DecodedString')
+    prop = params.get('prop', 'DecodedString')
     winprop(prop,url_unquote(string))
 
 
@@ -299,13 +293,13 @@ def stopsfx(params):
 
 
 def imginfo(params):
-    prop = remove_quotes(params.get('prop','img'))
+    prop = remove_quotes(params.get('prop', 'img'))
     img = remove_quotes(params.get('img'))
     if img:
         width,height,ar = image_info(img)
-        winprop(prop + '.width',str(width))
-        winprop(prop + '.height',str(height))
-        winprop(prop + '.ar',str(ar))
+        winprop(prop + '.width', str(width))
+        winprop(prop + '.height', str(height))
+        winprop(prop + '.ar', str(ar))
 
 
 def playitem(params):
@@ -314,7 +308,7 @@ def playitem(params):
 
     dbtype = params.get('type')
     dbid = params.get('dbid')
-    resume = params.get('resume',True)
+    resume = params.get('resume', True)
     file = remove_quotes(params.get('item'))
 
     if dbtype == 'song':
@@ -379,7 +373,7 @@ def playfolder(params):
 
     if params.get('type') == 'season':
         json_query = json_call('VideoLibrary.GetSeasonDetails',
-                               properties=['title','season','tvshowid'],
+                               properties=['title', 'season', 'tvshowid'],
                                params={'seasonid': dbid}
                                )
         try:
@@ -652,7 +646,7 @@ def split(params):
 
 def lookforfile(params):
     file = remove_quotes(params.get('file'))
-    prop = params.get('prop','FileExists')
+    prop = params.get('prop', 'FileExists')
 
     if xbmcvfs.exists(file):
         winprop('%s.bool' % prop, True)

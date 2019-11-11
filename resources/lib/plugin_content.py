@@ -32,34 +32,18 @@ class PluginContent(object):
         if self.limit:
             self.limit = int(self.limit)
 
-        if self.dbtype == 'movie':
-            self.method_details = 'VideoLibrary.GetMovieDetails'
-            self.method_item = 'VideoLibrary.GetMovies'
-            self.param = 'movieid'
-            self.key_details = 'moviedetails'
-            self.key_items = 'movies'
-            self.properties = movie_properties
-        elif self.dbtype == 'tvshow':
-            self.method_details = 'VideoLibrary.GetTVShowDetails'
-            self.method_item = 'VideoLibrary.GetTVShows'
-            self.param = 'tvshowid'
-            self.key_details = 'tvshowdetails'
-            self.key_items = 'tvshows'
-            self.properties = tvshow_properties
-        elif self.dbtype == 'season':
-            self.method_details = 'VideoLibrary.GetSeasonDetails'
-            self.method_item = 'VideoLibrary.GeSeasons'
-            self.param = 'seasonid'
-            self.key_details = 'seasondetails'
-            self.key_items = 'seasons'
-            self.properties = season_properties
-        elif self.dbtype == 'episode':
-            self.method_details = 'VideoLibrary.GetEpisodeDetails'
-            self.method_item = 'VideoLibrary.GetEpisodes'
-            self.param = 'episodeid'
-            self.key_details = 'episodedetails'
-            self.key_items = 'episodes'
-            self.properties = episode_properties
+        if self.dbtype:
+            if self.dbtype in ['movie', 'tvshow', 'season', 'episode', 'musicvideo']:
+                library = 'Video'
+            else:
+                library = 'Audio'
+
+            self.method_details = '%sLibrary.Get%sDetails' % (library, self.dbtype)
+            self.method_item = '%sLibrary.Get%ss' % (library, self.dbtype)
+            self.param = '%sid' % self.dbtype
+            self.key_details = '%sdetails' % self.dbtype
+            self.key_items = 'movies%s' % self.dbtype
+            self.properties = eval('%s_properties' % self.dbtype)
 
         self.sort_lastplayed = {'order': 'descending', 'method': 'lastplayed'}
         self.sort_recent = {'order': 'descending', 'method': 'dateadded'}
