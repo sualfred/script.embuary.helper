@@ -42,7 +42,7 @@ class PluginContent(object):
             self.method_item = '%sLibrary.Get%ss' % (library, self.dbtype)
             self.param = '%sid' % self.dbtype
             self.key_details = '%sdetails' % self.dbtype
-            self.key_items = 'movies%s' % self.dbtype
+            self.key_items = '%ss' % self.dbtype
             self.properties = eval('%s_properties' % self.dbtype)
 
         self.sort_lastplayed = {'order': 'descending', 'method': 'lastplayed'}
