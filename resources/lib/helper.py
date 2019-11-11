@@ -131,6 +131,18 @@ def url_quote(string):
     return urllib.quote(string)
 
 
+def encoded_dict(in_dict):
+    out_dict = {}
+    for k, v in in_dict.iteritems():
+        if isinstance(v, unicode):
+            v = v.encode('utf8')
+        elif isinstance(v, str):
+            # Must be encoded in UTF-8
+            v.decode('utf8')
+        out_dict[k] = v
+    return out_dict
+
+
 def url_unquote(string):
     return urllib.unquote(string)
 
@@ -141,6 +153,26 @@ def md5hash(value):
 
 def touch_file(filepath):
     os.utime(filepath,None)
+
+
+def encode_string(string):
+    if not isinstance(string, str):
+        string = str(string)
+
+    if not PYTHON3:
+        string = string.encode('utf-8')
+
+    return string
+
+
+def decode_string(string):
+    if not isinstance(string, str):
+        string = str(string)
+
+    if not PYTHON3 and isinstance(string, str):
+        string = string.decode('utf-8')
+
+    return string
 
 
 def winprop(key, value=None, clear=False, window_id=10000):

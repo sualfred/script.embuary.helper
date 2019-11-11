@@ -85,7 +85,7 @@ class PluginListing(object):
             self.plugin_category = ''
 
         if self.tag and self.plugin_category:
-            self.plugin_category = self.plugin_category + ' (' + self.tag + ')'
+            self.plugin_category = self.plugin_category + ' (' + decode_string(self.tag) + ')'
 
         if self.browse == 'widgets':
             self.list_widgets()
@@ -192,6 +192,8 @@ class PluginListing(object):
         empty_keys = [key for key,value in kwargs.items() if not value or value is None]
         for key in empty_keys:
             del kwargs[key]
+
+        kwargs = encoded_dict(kwargs)
 
         return '{0}?{1}'.format(sys.argv[0], urlencode(kwargs))
 
