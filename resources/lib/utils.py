@@ -18,7 +18,6 @@ from resources.lib.helper import *
 from resources.lib.library import *
 from resources.lib.json_map import *
 from resources.lib.image import *
-from resources.lib.context import *
 from resources.lib.cinema_mode import *
 
 ########################

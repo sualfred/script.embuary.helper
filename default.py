@@ -6,7 +6,6 @@ import xbmcgui
 
 from resources.lib.helper import *
 from resources.lib.utils import *
-from resources.lib.context import *
 from resources.lib.cinema_mode import *
 
 ########################

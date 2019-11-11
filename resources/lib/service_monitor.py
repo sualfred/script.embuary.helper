@@ -29,6 +29,7 @@ class Service(xbmc.Monitor):
     def __init__(self):
         self.player_monitor = False
         self.restart = False
+        self.screensaver = False
         self.service_enabled = ADDON.getSettingBool('service')
         self.service_interval = xbmc.getInfoLabel('Skin.String(ServiceInterval)') or ADDON.getSetting('service_interval')
         self.service_interval = float(self.service_interval)
@@ -49,7 +50,6 @@ class Service(xbmc.Monitor):
         else:
             self.keep_alive()
 
-
     def onNotification(self, sender, method, data):
         #log('Skin debug -----------------------------> Kodi_Monitor: sender %s - method: %s  - data: %s' % (sender, method, data))
         if ADDON_ID in sender and 'restart' in method:
@@ -63,11 +63,15 @@ class Service(xbmc.Monitor):
             else:
                 reload_widgets(reason=method)
 
-
     def onSettingsChanged(self):
         log('Service: Addon setting changed', force=True)
         self.restart = True
 
+    def onScreensaverActivated(self):
+        self.screensaver = True
+
+    def onScreensaverDeactivated(self):
+        self.screensaver = False
 
     def stop(self):
         if self.service_enabled:
@@ -81,7 +85,6 @@ class Service(xbmc.Monitor):
             DIALOG.notification(ADDON_ID, ADDON.getLocalizedString(32006))
             self.__init__()
 
-
     def keep_alive(self):
         log('Service: Disabled', force=True)
 
@@ -90,7 +93,6 @@ class Service(xbmc.Monitor):
 
         self.stop()
 
-
     def start(self):
         log('Service: Started', force=True)
 
@@ -98,49 +100,53 @@ class Service(xbmc.Monitor):
 
         while not self.abortRequested() and not self.restart:
 
-            ''' Grab fanarts
+            ''' Only run timed tasks if screensaver is inactive to avoid keeping NAS/servers awake
             '''
-            if self.get_backgrounds >= 200:
-                log('Start new fanart grabber process')
-                movie_fanarts, tvshow_fanarts, artists_fanarts = self.grabfanart()
-                self.get_backgrounds = 0
+            if not self.screensaver:
 
-            else:
-                self.get_backgrounds += self.service_interval
+                ''' Grab fanarts
+                '''
+                if self.get_backgrounds >= 200:
+                    log('Start new fanart grabber process')
+                    movie_fanarts, tvshow_fanarts, artists_fanarts = self.grabfanart()
+                    self.get_backgrounds = 0
 
-            ''' Set background properties
-            '''
-            if self.set_background >= 10:
+                else:
+                    self.get_backgrounds += self.service_interval
 
-                if movie_fanarts or tvshow_fanarts or artists_fanarts:
-                    winprop('EmbuaryBackground', random.choice(movie_fanarts + tvshow_fanarts + artists_fanarts))
-                if movie_fanarts or tvshow_fanarts:
-                    winprop('EmbuaryBackgroundVideos', random.choice(movie_fanarts + tvshow_fanarts))
-                if movie_fanarts:
-                    winprop('EmbuaryBackgroundMovies', random.choice(movie_fanarts))
-                if tvshow_fanarts:
-                    winprop('EmbuaryBackgroundTVShows', random.choice(tvshow_fanarts))
-                if artists_fanarts:
-                    winprop('EmbuaryBackgroundMusic', random.choice(artists_fanarts))
+                ''' Set background properties
+                '''
+                if self.set_background >= 10:
 
-                self.set_background = 0
+                    if movie_fanarts or tvshow_fanarts or artists_fanarts:
+                        winprop('EmbuaryBackground', random.choice(movie_fanarts + tvshow_fanarts + artists_fanarts))
+                    if movie_fanarts or tvshow_fanarts:
+                        winprop('EmbuaryBackgroundVideos', random.choice(movie_fanarts + tvshow_fanarts))
+                    if movie_fanarts:
+                        winprop('EmbuaryBackgroundMovies', random.choice(movie_fanarts))
+                    if tvshow_fanarts:
+                        winprop('EmbuaryBackgroundTVShows', random.choice(tvshow_fanarts))
+                    if artists_fanarts:
+                        winprop('EmbuaryBackgroundMusic', random.choice(artists_fanarts))
 
-            else:
-                self.set_background += self.service_interval
+                    self.set_background = 0
 
-            ''' Blur backgrounds
-            '''
-            if self.blur_background:
-                ImageBlur(radius=self.blur_radius)
+                else:
+                    self.set_background += self.service_interval
 
-            ''' Refresh widgets
-            '''
-            if self.widget_refresh >= 600:
-                reload_widgets(instant=True)
-                self.widget_refresh = 0
+                ''' Blur backgrounds
+                '''
+                if self.blur_background:
+                    ImageBlur(radius=self.blur_radius)
 
-            else:
-                self.widget_refresh += self.service_interval
+                ''' Refresh widgets
+                '''
+                if self.widget_refresh >= 600:
+                    reload_widgets(instant=True)
+                    self.widget_refresh = 0
+
+                else:
+                    self.widget_refresh += self.service_interval
 
             ''' Workaround for login screen bug
             '''
@@ -173,7 +179,6 @@ class Service(xbmc.Monitor):
             self.waitForAbort(self.service_interval)
 
         self.stop()
-
 
     def grabfanart(self):
         movie_fanarts = list()
