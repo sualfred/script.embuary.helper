@@ -63,7 +63,7 @@ class PluginContent(object):
     '''
     def getbydbid(self):
         try:
-            if self.dbtype == 'tvshow' and self.idtype in ['season','episode']:
+            if self.dbtype == 'tvshow' and self.idtype in ['season', 'episode']:
                 self.dbid = self._gettvshowid()
 
             json_query = json_call(self.method_details,
@@ -134,7 +134,7 @@ class PluginContent(object):
             log('Get by args: No result found: %s' % error)
             return
 
-        add_items(self.li,result,type=self.dbtype)
+        add_items(self.li, result, type=self.dbtype)
         set_plugincontent(content=self.key_items, category=plugin_category)
 
 
@@ -249,7 +249,7 @@ class PluginContent(object):
             except Exception:
                 log('Movies by seasonal keyword: No movies found.')
             else:
-                add_items(self.li,json_query,type='movie')
+                add_items(self.li, json_query, type='movie')
 
         if self.dbtype != 'movie':
             if add_episodes:
@@ -266,7 +266,7 @@ class PluginContent(object):
                 except Exception:
                     log('TV shows by seasonal keyword: No shows found.')
                 else:
-                    add_items(self.li,json_query,type='tvshow')
+                    add_items(self.li, json_query, type='tvshow')
 
             if use_episodes or add_episodes:
                 json_query = json_call('VideoLibrary.GetEpisodes',
@@ -279,7 +279,7 @@ class PluginContent(object):
                 except Exception:
                     log('Episodes by seasonal keyword: No episodes found.')
                 else:
-                    add_items(self.li,json_query,type='episode')
+                    add_items(self.li, json_query, type='episode')
 
         random.shuffle(self.li)
         set_plugincontent(content='videos', category=plugin_category)
@@ -301,7 +301,7 @@ class PluginContent(object):
                 return
 
         else:
-            if self.idtype in ['season','episode']:
+            if self.idtype in ['season', 'episode']:
                 tvshow_dbid = self._gettvshowid()
             else:
                 tvshow_dbid = self.dbid
@@ -320,7 +320,7 @@ class PluginContent(object):
         except Exception:
             log('Get seasons by TV show: No seasons found')
         else:
-            add_items(self.li,season_query,type='season')
+            add_items(self.li, season_query, type='season')
             set_plugincontent(content='seasons', category=season_query[0].get('showtitle'))
 
 
@@ -357,7 +357,7 @@ class PluginContent(object):
         except Exception:
             log('Get more episodes by season: No episodes found')
         else:
-            add_items(self.li,episode_query,type='episode')
+            add_items(self.li, episode_query, type='episode')
             plugin_category = episode_query[0].get('showtitle') + ' - ' + xbmc.getLocalizedString(20373) + ' ' + str(episode_query[0].get('season'))
             set_plugincontent(content='episodes', category=plugin_category)
 
@@ -395,7 +395,7 @@ class PluginContent(object):
                 except Exception:
                     log('Get next up episodes: No next episodes found for %s' % episode['title'])
                 else:
-                    add_items(self.li,episode_details,type='episode')
+                    add_items(self.li, episode_details, type='episode')
                     set_plugincontent(content='episodes', category=ADDON.getLocalizedString(32008))
 
 
@@ -430,7 +430,7 @@ class PluginContent(object):
 
         for tvshow in json_query:
             try:
-                unwatchedepisodes = get_unwatched(tvshow['episode'],tvshow['watchedepisodes'])
+                unwatchedepisodes = get_unwatched(tvshow['episode'], tvshow['watchedepisodes'])
                 append_tvshow = False
 
                 if show_all:
@@ -451,7 +451,7 @@ class PluginContent(object):
                         append_tvshow = True
 
                     except Exception:
-                        add_items(self.li,[episode_query[0]],type='episode')
+                        add_items(self.li, [episode_query[0]], type='episode')
 
                 elif unwatchedepisodes == 1:
                     ''' Recently added episodes based on unwatched or in progress TV shows. Episodes will be grouped
@@ -465,7 +465,7 @@ class PluginContent(object):
                                               )
 
                     episode_query = episode_query['result']['episodes']
-                    add_items(self.li,episode_query,type='episode')
+                    add_items(self.li,episode_query, type='episode')
 
                 else:
                     append_tvshow = True
@@ -479,12 +479,12 @@ class PluginContent(object):
                                              )
 
                     tvshow_query = tvshow_query['result']['tvshowdetails']
-                    add_items(self.li,[tvshow_query],type='tvshow')
+                    add_items(self.li, [tvshow_query], type='tvshow')
 
                 set_plugincontent(content='tvshows', category=plugin_category)
 
             except Exception as error:
-                log('Get new media: Not able to parse data for show %s - %s' % (tvshow,error))
+                log('Get new media: Not able to parse data for show %s - %s' % (tvshow, error))
                 pass
 
 
@@ -540,7 +540,7 @@ class PluginContent(object):
                 except Exception:
                     log('Movies by genre %s: No movies found.' % genre)
                 else:
-                    add_items(self.li,json_query,type='movie',searchstring=genre)
+                    add_items(self.li, json_query, type='movie', searchstring=genre)
 
             if self.dbtype != 'movie':
                 json_query = json_call('VideoLibrary.GetTVShows',
@@ -553,7 +553,7 @@ class PluginContent(object):
                 except Exception:
                     log('TV shows by genre %s: No shows found.' % genre)
                 else:
-                    add_items(self.li,json_query,type='tvshow',searchstring=genre)
+                    add_items(self.li, json_query, type='tvshow', searchstring=genre)
 
             if not self.li:
                 self._retry('getbygenre')
@@ -582,7 +582,7 @@ class PluginContent(object):
             except Exception:
                 log('In progress media: No movies found.')
             else:
-                add_items(self.li,json_query,type='movie')
+                add_items(self.li, json_query, type='movie')
 
         if self.dbtype != 'movie':
             json_query = json_call('VideoLibrary.GetEpisodes',
@@ -595,7 +595,7 @@ class PluginContent(object):
             except Exception:
                 log('In progress media: No episodes found.')
             else:
-                add_items(self.li,json_query,type='episode')
+                add_items(self.li, json_query, type='episode')
 
         set_plugincontent(content='videos', category=ADDON.getLocalizedString(32013))
 
@@ -646,12 +646,12 @@ class PluginContent(object):
 
             genre['art'] = posters
 
-            generated_thumb = CreateGenreThumb(genre['label'],posters)
+            generated_thumb = CreateGenreThumb(genre['label'], posters)
             if generated_thumb:
                 genre['art']['thumb'] = str(generated_thumb)
 
             if self.tag:
-                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.tag,self.dbtype)
+                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'], decode_string(self.tag), self.dbtype)
             else:
                 xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.dbtype)
 
@@ -659,7 +659,7 @@ class PluginContent(object):
 
             genres.append(genre)
 
-        add_items(self.li,genres,type='genre')
+        add_items(self.li, genres, type='genre')
         set_plugincontent(content='videos', category=xbmc.getLocalizedString(135))
 
 
@@ -697,7 +697,7 @@ class PluginContent(object):
             self._retry('getdirectedby')
             return
 
-        add_items(self.li,json_query,type='movie',searchstring=joineddirectors)
+        add_items(self.li, json_query, type='movie', searchstring=joineddirectors)
         plugin_category = ADDON.getLocalizedString(32029) + ' ' + joineddirectors
         set_plugincontent(content='movies', category=plugin_category)
 
@@ -756,7 +756,7 @@ class PluginContent(object):
                 except Exception:
                     log('Items by actor %s: No movies found' % actor)
                 else:
-                    add_items(self.li,movie_query,type='movie',searchstring=actor)
+                    add_items(self.li, movie_query, type='movie', searchstring=actor)
 
             if self.dbcontent != 'movie':
                 tvshow_query = json_call('VideoLibrary.GetTVShows',
@@ -770,7 +770,7 @@ class PluginContent(object):
                 except Exception:
                     log('Items by actor %s: No shows found' % actor)
                 else:
-                    add_items(self.li,tvshow_query,type='tvshow',searchstring=actor)
+                    add_items(self.li, tvshow_query, type='tvshow', searchstring=actor)
 
             ''' Retry if query is based on dbid and a random actor
             '''
@@ -798,7 +798,7 @@ class PluginContent(object):
         '''
         if not self.dbid:
             if self.dbtype == 'tvshow':
-                query_filter={'or': [self.played_filter,self.playedepisodes_filter]}
+                query_filter={'or': [self.played_filter, self.playedepisodes_filter]}
             else:
                 query_filter=self.played_filter
 
@@ -841,7 +841,7 @@ class PluginContent(object):
 
         ''' Get movies or shows based on one or two genres of selected watched item
         '''
-        filters = [{'operator': 'isnot', 'field': 'title', 'value': title},{'operator': 'is', 'field': 'genre', 'value': genres[0]}]
+        filters = [{'operator': 'isnot', 'field': 'title', 'value': title}, {'operator': 'is', 'field': 'genre', 'value': genres[0]}]
         if len(genres) > 1:
             filters.append({'operator': 'is', 'field': 'genre', 'value': genres[1]})
         if self.tag:
@@ -861,7 +861,7 @@ class PluginContent(object):
             self._retry('getsimilar')
             return
 
-        add_items(self.li,json_query,type=self.dbtype,searchstring=title)
+        add_items(self.li, json_query, type=self.dbtype, searchstring=title)
         plugin_category = ADDON.getLocalizedString(32031) + ' ' + title
         set_plugincontent(content='%ss' % self.dbtype, category=plugin_category)
 
@@ -878,7 +878,7 @@ class PluginContent(object):
                                        )
 
             elif self.dbid:
-                if self.dbtype == 'tvshow' and self.idtype in ['season','episode']:
+                if self.dbtype == 'tvshow' and self.idtype in ['season', 'episode']:
                     self.dbid = self._gettvshowid()
 
                 json_query = json_call(self.method_details,
@@ -892,7 +892,7 @@ class PluginContent(object):
                 ''' Fallback to TV show cast if episode has no cast stored
                 '''
                 if not cast and self.dbtype == 'episode':
-                    tvshow_id = self._gettvshowid(idtype='episode',dbid=self.dbid)
+                    tvshow_id = self._gettvshowid(idtype='episode', dbid=self.dbid)
 
                     json_query = json_call('VideoLibrary.GetTVShowDetails',
                                            properties=['cast'],
@@ -911,7 +911,7 @@ class PluginContent(object):
             log('Get cast: No cast found.')
             return
 
-        add_items(self.li,cast,type='cast')
+        add_items(self.li, cast, type='cast')
 
 
     ''' jump to letter for smsjump navigation
@@ -953,7 +953,7 @@ class PluginContent(object):
                         li_path = 'plugin://script.embuary.helper/?action=smsjump&letter=%s' % letter
                         append = True
 
-                    elif get_bool(self.params.get('showall','true')):
+                    elif get_bool(self.params.get('showall', 'true')):
                         li_path = ''
                         li_item.setProperty('NotAvailable', 'true')
                         append = True
@@ -967,7 +967,7 @@ class PluginContent(object):
 
     def getpathstats(self):
         path = remove_quotes(self.params.get('path'))
-        prop_prefix = self.params.get('prefix','Stats')
+        prop_prefix = self.params.get('prefix', 'Stats')
 
         played = 0
         numitems = 0
@@ -982,7 +982,7 @@ class PluginContent(object):
             path = remove_quotes("'" + path + "'") #be sure to remove unwanted quotes from the path
 
             json_query = json_call('Files.GetDirectory',
-                                    properties=['playcount','resume','episode','watchedepisodes','tvshowid'],
+                                    properties=['playcount', 'resume', 'episode', 'watchedepisodes', 'tvshowid'],
                                     params={'directory': path, 'media': 'video'}
                                     )
 
