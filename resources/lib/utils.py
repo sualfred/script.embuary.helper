@@ -46,7 +46,7 @@ def createcontext(params):
     window = params.get('window', '')
 
     for i in range(1, 100):
-        label = xbmc.getInfoLabel('Window(%s).Property(Context.%d.Label)' % (window,i))
+        label = xbmc.getInfoLabel('Window(%s).Property(Context.%d.Label)' % (window, i))
 
         if label == '':
             break
@@ -59,14 +59,18 @@ def createcontext(params):
         index = DIALOG.contextmenu(selectionlist)
 
         if index > -1:
-            value = xbmc.getInfoLabel('Window(%s).Property(Context.%d.Builtin)' % (window,indexlist[index]))
+            value = xbmc.getInfoLabel('Window(%s).Property(Context.%d.Builtin)' % (window, indexlist[index]))
             for builtin in value.split(splitby):
                 execute(builtin)
                 xbmc.sleep(30)
 
     for i in range(1, 100):
-        execute('ClearProperty(Context.%d.Builtin,%s)' % (i,window))
-        execute('ClearProperty(Context.%d.Label,%s)' % (i,window))
+    	if window:
+        	execute('ClearProperty(Context.%d.Builtin,%s)' % (i, window))
+        	execute('ClearProperty(Context.%d.Label,%s)' % (i, window))
+        else:
+        	execute('ClearProperty(Context.%d.Builtin)' % i)
+        	execute('ClearProperty(Context.%d.Label)' % i)
 
 
 def createselect(params):
@@ -78,11 +82,10 @@ def createselect(params):
     usedetails = True if params.get('usedetails') == 'true' else False
     preselect = int(params.get('preselect', -1))
 
-
     for i in range(1, 100):
-        label = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Label)' % (window,i))
-        label2 = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Label2)' % (window,i))
-        icon = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Icon)' % (window,i))
+        label = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Label)' % (window, i))
+        label2 = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Label2)' % (window, i))
+        icon = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Icon)' % (window, i))
 
         if label == '':
             break
@@ -97,16 +100,22 @@ def createselect(params):
         index = DIALOG.select(headertxt, selectionlist, preselect=preselect, useDetails=usedetails)
 
         if index > -1:
-            value = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Builtin)' % (window,indexlist[index]))
+            value = xbmc.getInfoLabel('Window(%s).Property(Dialog.%d.Builtin)' % (window, indexlist[index]))
             for builtin in value.split(splitby):
                 execute(builtin)
                 xbmc.sleep(30)
 
     for i in range(1, 100):
-        execute('ClearProperty(Dialog.%d.Builtin,%s)' % (i,window))
-        execute('ClearProperty(Dialog.%d.Label,%s)' % (i,window))
-        execute('ClearProperty(Dialog.%d.Label2,%s)' % (i,window))
-        execute('ClearProperty(Dialog.%d.Icon,%s)' % (i,window))
+    	if window:
+        	execute('ClearProperty(Dialog.%d.Builtin,%s)' % (i, window))
+        	execute('ClearProperty(Dialog.%d.Label,%s)' % (i, window))
+        	execute('ClearProperty(Dialog.%d.Label2,%s)' % (i, window))
+        	execute('ClearProperty(Dialog.%d.Icon,%s)' % (i, window))
+        else:
+        	execute('ClearProperty(Dialog.%d.Builtin)' % i)
+        	execute('ClearProperty(Dialog.%d.Label)' % i)
+        	execute('ClearProperty(Dialog.%d.Label2)' % i)
+        	execute('ClearProperty(Dialog.%d.Icon)' % i)
 
 
 def splitandcreateselect(params):
@@ -127,7 +136,10 @@ def splitandcreateselect(params):
                 execute(builtin)
                 xbmc.sleep(30)
 
-    execute('ClearProperty(Dialog.Builtin,%s)' % window)
+    if window:
+    	execute('ClearProperty(Dialog.Builtin,%s)' % window)
+    else:
+    	execute('ClearProperty(Dialog.Builtin)')
 
 
 def dialogok(params):
