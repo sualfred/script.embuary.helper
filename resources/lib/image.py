@@ -22,13 +22,18 @@ OLD_IMAGE = ''
 #################################################################################################
 
 
-''' create imgage storage folders
+''' create image storage folders
 '''
-if not os.path.exists(ADDON_DATA_IMG_PATH):
-    os.makedirs(ADDON_DATA_IMG_PATH)
+try:
+    if not os.path.exists(ADDON_DATA_IMG_PATH):
+        os.makedirs(ADDON_DATA_IMG_PATH)
+        os.makedirs(ADDON_DATA_IMG_TEMP_PATH)
 
-if not os.path.exists(ADDON_DATA_IMG_TEMP_PATH):
-    os.makedirs(ADDON_DATA_IMG_TEMP_PATH)
+except OSError, e:
+    # fix for race condition
+    if e.errno != os.errno.EEXIST:
+        raise
+    pass
 
 
 ''' blur image and store result in addon data folder
