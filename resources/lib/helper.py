@@ -45,18 +45,19 @@ MUSICPLAYLIST = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 
 ########################
 
-def log(txt,loglevel=NOTICE,force=False):
-    if (loglevel == NOTICE and ADDON.getSettingBool('log')) or loglevel in [DEBUG, WARNING, ERROR] or force:
+def log(txt,loglevel=DEBUG,force=False):
+    if (ADDON.getSettingBool('log') or force) and loglevel not in [WARNING, ERROR]:
+        loglevel = NOTICE
 
-        if not PYTHON3 and isinstance(txt, str):
-            txt = txt.decode('utf-8')
+    if not PYTHON3 and isinstance(txt, str):
+        txt = txt.decode('utf-8')
 
-        message = u'[ %s ] %s' % (ADDON_ID,txt)
+    message = u'[ %s ] %s' % (ADDON_ID,txt)
 
-        if not PYTHON3:
-            xbmc.log(msg=message.encode('utf-8'), level=loglevel)
-        else:
-            xbmc.log(msg=message, level=loglevel)
+    if not PYTHON3:
+        xbmc.log(msg=message.encode('utf-8'), level=loglevel)
+    else:
+        xbmc.log(msg=message, level=loglevel)
 
 
 def remove_quotes(label):
@@ -447,23 +448,17 @@ def addon_data(file,content=None):
     targetfile = os.path.join(ADDON_DATA_PATH, file)
 
     if not content:
-        if not xbmcvfs.exists(targetfile):
-            return ''
+        filecontent = ''
 
-        try:
-            f = open(targetfile,'r')
-            filecontent = ''
-            for line in f:
-                filecontent = filecontent + line
-            f.close()
+        if xbmcvfs.exists(targetfile):
+            with open(targetfile, 'r') as f:
+                for line in f:
+                    filecontent = filecontent + line
 
-            return filecontent
-
-        except Exception:
-            return ''
+        return filecontent
 
     else:
-        f = open(targetfile,'w')
+        f = open(targetfile, 'w')
         f.write(content)
         f.close()
 
