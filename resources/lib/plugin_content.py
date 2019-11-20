@@ -1006,7 +1006,7 @@ class PluginContent(object):
 
                     else:
                         numitems += 1
-                        if 'playcount' in item.keys():
+                        if 'playcount' in list(item.keys()):
                             if item['playcount'] > 0:
                                 played += 1
                             if item['resume']['position'] > 0:

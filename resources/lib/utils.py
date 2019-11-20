@@ -695,12 +695,10 @@ def selecttags(params):
     tags = get_library_tags()
 
     if tags:
-        setting = xbmc.getSkinDir() + '_' + 'library_tags'
+        sync_library_tags(tags)
+
         try:
-            whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
-        except Exception:
-            sync_library_tags(tags)
-            whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
+            whitelist = addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data')
         except Exception:
             whitelist = []
 
@@ -719,7 +717,7 @@ def selecttags(params):
         selectdialog = DIALOG.multiselect(ADDON.getLocalizedString(32026), selectlist, preselect=preselectlist)
 
         if selectdialog is not None and not selectdialog:
-            set_library_tags(tags,[],clear=True)
+            set_library_tags(tags, [], clear=True)
 
         elif selectdialog is not None:
             whitelist_new = []
@@ -727,7 +725,7 @@ def selecttags(params):
                 whitelist_new.append(indexlist[item])
 
             if whitelist != whitelist_new:
-                set_library_tags(tags,whitelist_new)
+                set_library_tags(tags, whitelist_new)
 
     elif params.get('silent') != 'true':
         DIALOG.ok(heading=ADDON.getLocalizedString(32000), line1=ADDON.getLocalizedString(32024))

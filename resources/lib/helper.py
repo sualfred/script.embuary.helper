@@ -134,7 +134,7 @@ def url_quote(string):
 
 def encoded_dict(in_dict):
     out_dict = {}
-    for k, v in in_dict.items():
+    for k, v in list(in_dict.items()):
         if isinstance(v, unicode):
             v = v.encode('utf8')
         elif isinstance(v, str):
@@ -293,13 +293,13 @@ def sync_library_tags(tags=None,recreate=False):
         tags = get_library_tags()
 
     try:
-        whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
+        whitelist = addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data')
     except Exception:
         whitelist = []
         save = True
 
     try:
-        old_tags = eval(addon_data('tags_all.data'))
+        old_tags = addon_data('tags_all.data')
     except Exception:
         old_tags = []
         save = True
@@ -333,9 +333,9 @@ def sync_library_tags(tags=None,recreate=False):
                 if tag not in whitelist:
                     whitelist.append(tag)
 
-        addon_data('tags_all.data', str(known_tags))
+        addon_data('tags_all.data', known_tags)
 
-    set_library_tags(tags,whitelist,save=save)
+    set_library_tags(tags, whitelist, save=save)
 
 
 def get_library_tags():
@@ -399,7 +399,7 @@ def set_library_tags(tags,whitelist=None,save=True,clear=False):
     if tags and not clear:
         if not whitelist:
             try:
-                whitelist = eval(addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data'))
+                whitelist = addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data')
             except Exception:
                 pass
 
@@ -419,7 +419,7 @@ def set_library_tags(tags,whitelist=None,save=True,clear=False):
     winprop('library.tags', get_joined_items(whitelist))
 
     if save:
-        addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data', str(whitelist))
+        addon_data('tags_whitelist.' + xbmc.getSkinDir() +'.data', whitelist)
 
 
 def addon_data_cleanup(number_of_days=60):
@@ -444,23 +444,29 @@ def addon_data_cleanup(number_of_days=60):
             os.remove(full_path)
 
 
-def addon_data(file,content=None):
+def addon_data(file,content=False):
     targetfile = os.path.join(ADDON_DATA_PATH, file)
 
-    if not content:
-        filecontent = ''
+    if content is False:
+        data = []
 
         if xbmcvfs.exists(targetfile):
             with open(targetfile, 'r') as f:
-                for line in f:
-                    filecontent = filecontent + line
+                try:
+                    setting = json.load(f)
+                    data = setting['data']
 
-        return filecontent
+                except Exception:
+                    pass
+
+        return data
 
     else:
-        f = open(targetfile, 'w')
-        f.write(content)
-        f.close()
+        data = {}
+        data['data'] = content
+
+        with open(targetfile, 'w') as f:
+            json.dump(data, f)
 
 
 def set_plugincontent(content=None,category=None):

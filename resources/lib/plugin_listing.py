@@ -189,7 +189,7 @@ class PluginListing(object):
         return tags
 
     def _encode_url(self,**kwargs):
-        empty_keys = [key for key,value in kwargs.items() if not value or value is None]
+        empty_keys = [key for key,value in list(kwargs.items()) if not value or value is None]
         for key in empty_keys:
             del kwargs[key]
 

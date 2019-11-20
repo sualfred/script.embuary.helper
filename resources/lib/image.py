@@ -29,7 +29,7 @@ try:
         os.makedirs(ADDON_DATA_IMG_PATH)
         os.makedirs(ADDON_DATA_IMG_TEMP_PATH)
 
-except OSError, e:
+except OSError as e:
     # fix for race condition
     if e.errno != os.errno.EEXIST:
         raise

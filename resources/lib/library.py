@@ -86,7 +86,7 @@ def handle_movies(li,item,searchstring=None):
     li_item.setArt({'icon': 'DefaultVideo.png'})
 
     hasVideo = False
-    for key, value in iter(item['streamdetails'].items()):
+    for key, value in iter(list(item['streamdetails'].items())):
         for stream in value:
             if 'video' in key:
                 hasVideo = True
@@ -265,7 +265,7 @@ def handle_episodes(li,item):
     li_item.setArt(item['art'])
 
     hasVideo = False
-    for key, value in iter(item['streamdetails'].items()):
+    for key, value in iter(list(item['streamdetails'].items())):
         for stream in value:
             if 'video' in key:
                 hasVideo = True
