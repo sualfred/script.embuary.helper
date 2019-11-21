@@ -120,12 +120,6 @@ def get_bool(value,string='true'):
         return False
 
 
-def encode_string(string):
-    if not PYTHON3:
-        string = string.encode('utf-8')
-    return string
-
-
 def url_quote(string):
     if not PYTHON3:
         string = string.encode('utf-8')
@@ -156,19 +150,13 @@ def touch_file(filepath):
 
 
 def encode_string(string):
-    if not isinstance(string, str):
-        string = str(string)
-
-    if not PYTHON3:
+    if not PYTHON3 and isinstance(string, unicode):
         string = string.encode('utf-8')
 
     return string
 
 
 def decode_string(string):
-    if not isinstance(string, str):
-        string = str(string)
-
     if not PYTHON3 and isinstance(string, str):
         string = string.decode('utf-8')
 
@@ -423,6 +411,9 @@ def set_library_tags(tags,whitelist=None,save=True,clear=False):
 
 
 def addon_data_cleanup(number_of_days=60):
+    if not os.path.exists(ADDON_DATA_IMG_PATH):
+        return
+
     time_in_secs = time.time() - (number_of_days * 24 * 60 * 60)
 
     ''' Image storage maintaining. Deletes all created images which were unused in the
