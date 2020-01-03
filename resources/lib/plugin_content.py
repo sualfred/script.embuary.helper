@@ -58,6 +58,8 @@ class PluginContent(object):
         self.tag_filter = {'operator': 'is', 'field': 'tag', 'value': self.tag}
         self.title_filter = {'operator': 'is', 'field': 'title', 'value': self.dbtitle}
 
+        self.playlist = remove_quotes(params.get('playlist'))
+        self.playlist_filter = {'operator': 'is', 'field': 'playlist', 'value': self.playlist}
 
     ''' by dbid to get all available listitems
     '''
@@ -368,6 +370,8 @@ class PluginContent(object):
         filters = [self.inprogress_filter]
         if self.tag:
             filters.append(self.tag_filter)
+        if self.playlist:
+            filters.append(self.playlist_filter)
         filter = {'and': filters}
 
         json_query = json_call('VideoLibrary.GetTVShows',
