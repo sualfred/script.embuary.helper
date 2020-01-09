@@ -389,18 +389,30 @@ class PluginContent(object):
         for episode in json_query:
                 episode_query = json_call('VideoLibrary.GetEpisodes',
                                           properties=episode_properties,
-                                          sort={'order': 'ascending', 'method': 'episode'},limit=1,
-                                          query_filter={'and': [self.unplayed_filter,{'field': 'season', 'operator': 'greaterthan', 'value': '0'}]},
+                                          sort={'order': 'descending', 'method': 'lastplayed'},limit=1,
+                                          query_filter={'field': 'season', 'operator': 'greaterthan', 'value': '0'},
                                           params={'tvshowid': int(episode['tvshowid'])}
                                           )
-
+                
                 try:
-                    episode_details = episode_query['result']['episodes']
+                    episode_details = episode_query['result']['episodes'][0]
                 except Exception:
                     log('Get next up episodes: No next episodes found for %s' % episode['title'])
                 else:
-                    add_items(self.li, episode_details, type='episode')
-                    set_plugincontent(content='episodes', category=ADDON.getLocalizedString(32008))
+                    episode_query = json_call('VideoLibrary.GetEpisodes',
+                                              properties=episode_properties,
+                                              sort={'order': 'ascending', 'method': 'episode'},limit=1,
+                                              query_filter={'and': [self.unplayed_filter, {'or': [{'field': 'season', 'operator': 'greaterthan', 'value': str(episode_details['season'])}, {'and': [{'field': 'season', 'operator': 'is', 'value': str(episode_details['season'])},{'field': 'episode', 'operator': 'greaterthan', 'value': str(episode_details['episode']-1)}]}]}]},
+                                              params={'tvshowid': int(episode['tvshowid'])}
+                                              )
+
+                    try:
+                        episode_details = episode_query['result']['episodes']
+                    except Exception:
+                        log('Get next up episodes: No next episodes found for %s' % episode['title'])
+                    else:
+                        add_items(self.li, episode_details, type='episode')
+                        set_plugincontent(content='episodes', category=ADDON.getLocalizedString(32008))
 
 
     ''' get recently added episodes of unwatched shows
