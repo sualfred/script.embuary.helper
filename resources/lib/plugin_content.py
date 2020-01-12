@@ -387,10 +387,40 @@ class PluginContent(object):
             return
 
         for episode in json_query:
+                use_last_played_season = True
+
+                if use_last_played_season:
+                    last_played_query = json_call('VideoLibrary.GetEpisodes',
+                                                  properties=['seasonid', 'season'],
+                                                  sort={'order': 'descending', 'method': 'lastplayed'},limit=1,
+                                                  query_filter={'field': 'season', 'operator': 'greaterthan', 'value': '0'},
+                                                  params={'tvshowid': int(episode['tvshowid'])}
+                                                  )
+
+                    try:
+                        season_details = last_played_query['result']['episodes'][0]
+
+                        season_query = json_call('VideoLibrary.GetSeasonDetails',
+                                                 properties=['playcount'],
+                                                 params={'seasonid': int(season_details.get('seasonid'))}
+                                                 )
+
+                        season_playcount = season_query['result']['seasondetails'].get('playcount')
+                        if season_playcount >= 1:
+                            use_last_played_season = False
+
+                    except Exception:
+                        use_last_played_season = False
+
+                if use_last_played_season:
+                    episode_filter = {'field': 'season', 'operator': 'is', 'value': str(season_details.get('season'))}
+                else:
+                    episode_filter = {'field': 'season', 'operator': 'greaterthan', 'value': '0'}
+
                 episode_query = json_call('VideoLibrary.GetEpisodes',
                                           properties=episode_properties,
                                           sort={'order': 'ascending', 'method': 'episode'},limit=1,
-                                          query_filter={'and': [self.unplayed_filter,{'field': 'season', 'operator': 'greaterthan', 'value': '0'}]},
+                                          query_filter={'and': [self.unplayed_filter, episode_filter]},
                                           params={'tvshowid': int(episode['tvshowid'])}
                                           )
 
