@@ -372,12 +372,11 @@ class PluginContent(object):
             filters.append(self.tag_filter)
         if self.playlist:
             filters.append(self.playlist_filter)
-        filter = {'and': filters}
 
         json_query = json_call('VideoLibrary.GetTVShows',
-                               properties=tvshow_properties,
+                               properties=['lastplayed'],
                                sort=self.sort_lastplayed, limit=25,
-                               query_filter=filter
+                               query_filter={'and': filters}
                                )
 
         try:
@@ -388,41 +387,34 @@ class PluginContent(object):
 
         for episode in json_query:
                 use_last_played_season = True
+                last_played_query = json_call('VideoLibrary.GetEpisodes',
+                                              properties=['seasonid', 'season'],
+                                              sort={'order': 'descending', 'method': 'lastplayed'}, limit=1,
+                                              query_filter={'and': [{'or': [self.inprogress_filter, self.unplayed_filter]}, self.specials_filter]},
+                                              params={'tvshowid': int(episode['tvshowid'])}
+                                              )
+
+                if last_played_query['result']['limits']['total'] < 1:
+                     use_last_played_season = False
 
                 if use_last_played_season:
-                    last_played_query = json_call('VideoLibrary.GetEpisodes',
-                                                  properties=['seasonid', 'season'],
-                                                  sort={'order': 'descending', 'method': 'lastplayed'},limit=1,
-                                                  query_filter={'field': 'season', 'operator': 'greaterthan', 'value': '0'},
-                                                  params={'tvshowid': int(episode['tvshowid'])}
-                                                  )
+                    episode_query = json_call('VideoLibrary.GetEpisodes',
+                                              properties=episode_properties,
+                                              sort={'order': 'ascending', 'method': 'episode'}, limit=1,
+                                              query_filter={'and': [self.unplayed_filter, {'field': 'season', 'operator': 'is', 'value': str(last_played_query.get('season'))}]},
+                                              params={'tvshowid': int(episode['tvshowid'])}
+                                              )
 
-                    try:
-                        season_details = last_played_query['result']['episodes'][0]
-
-                        season_query = json_call('VideoLibrary.GetSeasonDetails',
-                                                 properties=['playcount'],
-                                                 params={'seasonid': int(season_details.get('seasonid'))}
-                                                 )
-
-                        season_playcount = season_query['result']['seasondetails'].get('playcount')
-                        if season_playcount >= 1:
-                            use_last_played_season = False
-
-                    except Exception:
+                    if episode_query['result']['limits']['total'] < 1:
                         use_last_played_season = False
 
-                if use_last_played_season:
-                    episode_filter = {'field': 'season', 'operator': 'is', 'value': str(season_details.get('season'))}
-                else:
-                    episode_filter = {'field': 'season', 'operator': 'greaterthan', 'value': '0'}
-
-                episode_query = json_call('VideoLibrary.GetEpisodes',
-                                          properties=episode_properties,
-                                          sort={'order': 'ascending', 'method': 'episode'},limit=1,
-                                          query_filter={'and': [self.unplayed_filter, episode_filter]},
-                                          params={'tvshowid': int(episode['tvshowid'])}
-                                          )
+                if not use_last_played_season:
+                    episode_query = json_call('VideoLibrary.GetEpisodes',
+                                              properties=episode_properties,
+                                              sort={'order': 'ascending', 'method': 'episode'}, limit=1,
+                                              query_filter={'and': [self.unplayed_filter, self.specials_filter]},
+                                              params={'tvshowid': int(episode['tvshowid'])},
+                                              )
 
                 try:
                     episode_details = episode_query['result']['episodes']
