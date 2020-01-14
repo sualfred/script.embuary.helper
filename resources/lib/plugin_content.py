@@ -115,6 +115,7 @@ class PluginContent(object):
             filters.append(eval(filter_args))
         if self.tag:
             filters.append(self.tag_filter)
+
         if filters:
             filter = {'and': filters}
         else:
@@ -236,15 +237,13 @@ class PluginContent(object):
         else:
             return
 
-        filter = {'or': filters}
-        filter_episode = {'or': filters_episode}
         limit = self.limit or 26
 
         if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
                                    properties=movie_properties,
                                    sort=self.sort_random, limit=limit,
-                                   query_filter=filter
+                                   query_filter={'or': filters}
                                    )
             try:
                 json_query = json_query['result']['movies']
@@ -261,7 +260,7 @@ class PluginContent(object):
                 json_query = json_call('VideoLibrary.GetTVShows',
                                        properties=tvshow_properties,
                                        sort=self.sort_random, limit=limit,
-                                       query_filter=filter
+                                       query_filter={'or': filters}
                                        )
                 try:
                     json_query = json_query['result']['tvshows']
@@ -274,7 +273,7 @@ class PluginContent(object):
                 json_query = json_call('VideoLibrary.GetEpisodes',
                                        properties=episode_properties,
                                        sort=self.sort_random, limit=limit,
-                                       query_filter=filter_episode
+                                       query_filter={'or': filters_episode}
                                        )
                 try:
                     json_query = json_query['result']['episodes']
@@ -391,7 +390,8 @@ class PluginContent(object):
                                               properties=['seasonid', 'season'],
                                               sort={'order': 'descending', 'method': 'lastplayed'}, limit=1,
                                               query_filter={'and': [{'or': [self.inprogress_filter, self.unplayed_filter]}, self.specials_filter]},
-                                              params={'tvshowid': int(episode['tvshowid'])}
+                                              params={'tvshowid': int(episode['tvshowid'])},
+                                              debug=True
                                               )
 
                 if last_played_query['result']['limits']['total'] < 1:
@@ -401,7 +401,7 @@ class PluginContent(object):
                     episode_query = json_call('VideoLibrary.GetEpisodes',
                                               properties=episode_properties,
                                               sort={'order': 'ascending', 'method': 'episode'}, limit=1,
-                                              query_filter={'and': [self.unplayed_filter, {'field': 'season', 'operator': 'is', 'value': str(last_played_query.get('season'))}]},
+                                              query_filter={'and': [self.unplayed_filter, {'field': 'season', 'operator': 'is', 'value': str(last_played_query['result']['episodes'][0].get('season'))}]},
                                               params={'tvshowid': int(episode['tvshowid'])}
                                               )
 
@@ -443,7 +443,7 @@ class PluginContent(object):
 
 
         json_query = json_call('VideoLibrary.GetTVShows',
-                               properties=tvshow_properties,
+                               properties=['episode', 'watchedepisodes'],
                                sort=self.sort_recent, limit=25,
                                query_filter=filter
                                )
@@ -553,13 +553,12 @@ class PluginContent(object):
                 filters.append(self.unplayed_filter)
             if self.tag:
                 filters.append(self.tag_filter)
-            filter = {'and': filters}
 
             if self.dbtype != 'tvshow':
                 json_query = json_call('VideoLibrary.GetMovies',
                                        properties=movie_properties,
                                        sort=self.sort_random, limit=10,
-                                       query_filter=filter
+                                       query_filter={'and': filters}
                                        )
                 try:
                     json_query = json_query['result']['movies']
@@ -572,7 +571,7 @@ class PluginContent(object):
                 json_query = json_call('VideoLibrary.GetTVShows',
                                        properties=tvshow_properties,
                                        sort=self.sort_random, limit=10,
-                                       query_filter=filter
+                                       query_filter={'and': filters}
                                        )
                 try:
                     json_query = json_query['result']['tvshows']
@@ -595,13 +594,12 @@ class PluginContent(object):
         filters = [self.inprogress_filter]
         if self.tag:
             filters.append(self.tag_filter)
-        filter = {'and': filters}
 
         if self.dbtype != 'tvshow':
             json_query = json_call('VideoLibrary.GetMovies',
                                    properties=movie_properties,
                                    sort=self.sort_lastplayed,
-                                   query_filter=filter
+                                   query_filter={'and': filters}
                                    )
             try:
                 json_query = json_query['result']['movies']
@@ -614,7 +612,7 @@ class PluginContent(object):
             json_query = json_call('VideoLibrary.GetEpisodes',
                                    properties=episode_properties,
                                    sort=self.sort_lastplayed,
-                                   query_filter=filter
+                                   query_filter={'and': filters}
                                    )
             try:
                 json_query = json_query['result']['episodes']
@@ -644,12 +642,11 @@ class PluginContent(object):
             filters = [{'operator': 'is', 'field': 'genre', 'value': genre['label']}]
             if self.tag:
                 filters.append(self.tag_filter)
-            filter = {'and': filters}
 
             genre_items = json_call(self.method_item,
                                     properties=['art'],
                                     sort=self.sort_recent, limit=4,
-                                    query_filter=filter
+                                    query_filter={'and': filters}
                                     )
 
             try:
@@ -709,12 +706,11 @@ class PluginContent(object):
         filters=[]
         for director in directors:
             filters.append({'operator': 'is', 'field': 'director', 'value': director})
-        filter = {'and': [{'or': filters}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
 
         json_query = json_call('VideoLibrary.GetMovies',
                                properties=movie_properties,
                                sort=self.sort_random,
-                               query_filter=filter
+                               query_filter={'and': [{'or': filters}, {'operator': 'isnot', 'field': 'title', 'value': title}]}
                                )
         try:
             json_query = json_query['result']['movies']
@@ -768,13 +764,12 @@ class PluginContent(object):
             filters = [{'operator': 'is', 'field': 'actor', 'value': actor}]
             if exclude:
                 filters.append({'operator': 'isnot', 'field': 'title', 'value': exclude})
-            filter = {'and': filters}
 
             if self.dbcontent != 'tvshow':
                 movie_query = json_call('VideoLibrary.GetMovies',
                                         properties=movie_properties,
                                         sort=self.sort_random,
-                                        query_filter=filter
+                                        query_filter={'and': filters}
                                         )
 
                 try:
@@ -788,7 +783,7 @@ class PluginContent(object):
                 tvshow_query = json_call('VideoLibrary.GetTVShows',
                                          properties=tvshow_properties,
                                          sort=self.sort_random,
-                                         query_filter=filter
+                                         query_filter={'and': filters}
                                          )
 
                 try:
@@ -872,12 +867,11 @@ class PluginContent(object):
             filters.append({'operator': 'is', 'field': 'genre', 'value': genres[1]})
         if self.tag:
             filters.append(self.tag_filter)
-        filter = {'and': filters}
 
         json_query = json_call(self.method_item,
                                properties=self.properties,
                                sort=self.sort_random, limit=15,
-                               query_filter=filter
+                               query_filter={'and': filters}
                                )
 
         try:
