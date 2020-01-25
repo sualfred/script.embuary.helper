@@ -254,36 +254,47 @@ class PlayerMonitor(xbmc.Monitor):
         art = {}
         try:
             songdetails = json_call('AudioLibrary.GetSongDetails',
-                                properties=['art', 'albumid'],
-                                params={'songid': int(xbmc.getInfoLabel('MusicPlayer.DBID'))},
-                                )
+                                    properties=['art', 'albumid'],
+                                    params={'songid': int(xbmc.getInfoLabel('MusicPlayer.DBID'))},
+                                    )
 
             songdetails = songdetails['result']['songdetails']
-            art['fanart'] = songdetails['art'].get('fanart', '')
-            art['thumb'] = songdetails['art'].get('thumb', '')
-            art['clearlogo'] = songdetails['art'].get('clearlogo') or songdetails['art'].get('logo')
+            fanart = songdetails['art'].get('fanart')
+            thumb = songdetails['art'].get('thumb')
+            clearlogo = songdetails['art'].get('clearlogo') or songdetails['art'].get('logo')
+
+            if not xbmc.getInfoLabel('Player.Art(fanart)') and fanart:
+                art['fanart'] = fanart
+            if not xbmc.getInfoLabel('Player.Art(thumb)') and thumb:
+                art['thumb'] = thumb
+            if not xbmc.getInfoLabel('Player.Art(clearlogo)') and clearlogo:
+                art['clearlogo'] = clearlogo
 
         except Exception:
             return
 
         try:
             albumdetails = json_call('AudioLibrary.GetAlbumDetails',
-                                properties=['art'],
-                                params={'albumid': int(songdetails['albumid'])},
-                                )
+                                     properties=['art'],
+                                     params={'albumid': int(songdetails['albumid'])},
+                                     )
 
             albumdetails = albumdetails['result']['albumdetails']
             discart = albumdetails['art'].get('discart') or albumdetails['art'].get('logo')
-            art['discart'] = discart
-            art['album.discart'] = discart
+
+            if not xbmc.getInfoLabel('Player.Art(discart)') and discart:
+                art['discart'] = discart
+            if not xbmc.getInfoLabel('Player.Art(album.discart)') and discart:
+                art['album.discart'] = discart
 
         except Exception:
             pass
 
-        item = xbmcgui.ListItem()
-        item.setPath(PLAYER.getPlayingFile())
-        item.setArt(art)
-        PLAYER.updateInfoTag(item)
+        if art:
+            item = xbmcgui.ListItem()
+            item.setPath(PLAYER.getPlayingFile())
+            item.setArt(art)
+            PLAYER.updateInfoTag(item)
 
 
     def get_art_info(self,clear=False):
