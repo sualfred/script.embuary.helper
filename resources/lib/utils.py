@@ -205,7 +205,11 @@ def settimer(params):
 def encode(params):
     string = remove_quotes(params.get('string'))
     prop = params.get('prop', 'EncodedString')
-    winprop(prop,url_quote(string))
+
+    if not PYTHON3:
+        string = string.decode('utf-8')
+
+    winprop(prop, url_quote(string))
 
 
 def decode(params):
