@@ -200,7 +200,7 @@ class PlayerMonitor(xbmc.Monitor):
             position = int(VIDEOPLAYLIST.getposition())
 
             json_query = json_call('Playlist.GetItems',
-                                    properties=playlist_properties,
+                                    properties=JSON_MAP['playlist_properties'],
                                     limits={"start": position+1, "end": position+2},
                                     params={'playlistid': 1}
                                     )
@@ -259,3 +259,9 @@ class PlayerMonitor(xbmc.Monitor):
                 winprop(art + '.width',clear=True)
                 winprop(art + '.height',clear=True)
                 winprop(art + '.ar',clear=True)
+
+
+        ImageBlur(prop='playericon',
+                  file=xbmc.getInfoLabel('Player.Icon'),
+                  radius=5
+                  )
