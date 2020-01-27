@@ -368,7 +368,7 @@ class PluginContent(object):
             filters.append(self.filter_playlist)
 
         json_query = json_call('VideoLibrary.GetTVShows',
-                               properties=['lastplayed'],
+                               properties=['title', 'lastplayed'],
                                sort=self.sort_lastplayed, limit=25,
                                query_filter={'and': filters}
                                )
