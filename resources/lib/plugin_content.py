@@ -446,7 +446,7 @@ class PluginContent(object):
             if self.tag:
                 filters.append(self.filter_tag)
             filter = {'and': filters}
-            plugin_category = ADDON.getLocalizedString(32007)
+            plugin_category = ADDON.getLocalizedString(32015)
 
 
         json_query = json_call('VideoLibrary.GetTVShows',
