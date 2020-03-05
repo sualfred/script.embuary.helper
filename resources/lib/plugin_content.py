@@ -683,7 +683,7 @@ class PluginContent(object):
                 genre['art']['thumb'] = str(generated_thumb)
 
             if self.tag:
-                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'], decode_string(self.tag), self.dbtype)
+                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'], self.tag, self.dbtype)
             else:
                 xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.dbtype)
 
