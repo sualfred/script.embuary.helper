@@ -244,8 +244,8 @@ def getkodisetting(params):
     strip = params.get('strip')
 
     json_query = json_call('Settings.GetSettingValue',
-                params={'setting': '%s' % setting}
-                )
+                           params={'setting': '%s' % setting}
+                           )
 
     try:
         result = json_query['result']
@@ -582,7 +582,7 @@ def txtfile(params):
         if prop:
             winprop(prop,text)
         else:
-            DIALOG.textviewer(remove_quotes(params.get('header')),text)
+            DIALOG.textviewer(remove_quotes(params.get('header')), text)
 
     else:
         log('Cannot find %s' % path)
