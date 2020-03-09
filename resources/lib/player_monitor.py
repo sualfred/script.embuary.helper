@@ -37,6 +37,9 @@ class PlayerMonitor(xbmc.Monitor):
 
             self.get_art_info()
 
+            if condition('Skin.HasSetting(BlurPlayerIcon)'):
+                self.blur_player_icon()
+
             if self.pvr_playback:
                 self.get_channellogo()
 
@@ -260,7 +263,7 @@ class PlayerMonitor(xbmc.Monitor):
                 winprop(art + '.height',clear=True)
                 winprop(art + '.ar',clear=True)
 
-
+    def blur_player_icon(self):
         ImageBlur(prop='playericon',
                   file=xbmc.getInfoLabel('Player.Icon'),
                   radius=5
