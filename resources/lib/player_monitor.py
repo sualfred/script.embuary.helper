@@ -66,7 +66,9 @@ class PlayerMonitor(xbmc.Monitor):
         ''' Playback stopped. Clean up.
         '''
         if method == 'Player.OnStop':
-            xbmc.sleep(2500)
+            while not self.abortRequested(): # workaround for unwanted behaviours on slow systems
+                self.waitForAbort(3)
+
             if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
                 self.fullscreen_lock = False
                 self.pvr_playback = False
