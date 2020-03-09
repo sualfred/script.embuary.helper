@@ -14,7 +14,6 @@ from resources.lib.image import *
 ########################
 
 class PlayerMonitor(xbmc.Monitor):
-
     def __init__(self):
         log('Service: Player monitor started', force=True)
         self.fullscreen_lock = False
@@ -84,9 +83,8 @@ class PlayerMonitor(xbmc.Monitor):
                     winprop('script.shuffle', clear=True)
 
                     json_call('Player.SetShuffle',
-                                params={'playerid': 1, 'shuffle': False}
-                                )
-
+                              params={'playerid': 1, 'shuffle': False}
+                              )
 
     def clear_playlists(self):
         if self.data['position'] == 0 and condition('Skin.HasSetting(ClearPlaylist)'):
@@ -97,7 +95,6 @@ class PlayerMonitor(xbmc.Monitor):
                 elif self.data['playlistid'] == 1:
                     MUSICPLAYLIST.clear()
                     log('Video playlist has been filled. Clear existing music playlist')
-
 
     def do_fullscreen(self):
         xbmc.sleep(1000)
@@ -120,7 +117,6 @@ class PlayerMonitor(xbmc.Monitor):
                 else:
                     xbmc.sleep(50)
 
-
     def get_audiotracks(self,clear=False):
         xbmc.sleep(100)
         audiotracks = PLAYER.getAvailableAudioStreams()
@@ -128,7 +124,6 @@ class PlayerMonitor(xbmc.Monitor):
             winprop('EmbuaryPlayerAudioTracks.bool', True)
         else:
             winprop('EmbuaryPlayerAudioTracks', clear=True)
-
 
     def get_channellogo(self,clear=False):
         try:
@@ -140,7 +135,6 @@ class PlayerMonitor(xbmc.Monitor):
 
         except Exception:
             winprop('Player.ChannelLogo', clear=True)
-
 
     def get_videoinfo(self,clear=False):
         dbid = xbmc.getInfoLabel('VideoPlayer.DBID')
@@ -193,7 +187,6 @@ class PlayerMonitor(xbmc.Monitor):
 
         except Exception:
             return
-
 
     def get_nextitem(self,clear=False):
         try:
