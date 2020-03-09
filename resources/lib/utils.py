@@ -576,10 +576,8 @@ def txtfile(params):
 
     if os.path.isfile(path):
         log('Reading file %s' % path)
-
-        file = open(path, 'r')
-        text = file.read()
-        file.close()
+        with open(path) as f:
+            text = f.read()
 
         if prop:
             winprop(prop,text)
