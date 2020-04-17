@@ -943,6 +943,60 @@ class PluginContent(object):
         add_items(self.li, cast, type='cast')
 
 
+    ''' get full cast of movie set
+    '''
+    def getsetcast(self):
+        movies = json_call('VideoLibrary.GetMovieSetDetails',
+                           params={'setid': int(self.dbid)})
+
+        try:
+            movies = movies['result']['setdetails']['movies']
+        except KeyError:
+            return
+
+        cast_list = {}
+        for movie in movies:
+            dbid = movie.get('movieid')
+            dbtitle = movie.get('title')
+
+            json_query = json_call('VideoLibrary.GetMovieDetails',
+                                   properties=['cast'],
+                                   params={'movieid': dbid}
+                                   )
+            try:
+                cast = json_query['result']['moviedetails']['cast']
+            except KeyError:
+                continue
+
+            for actor in cast:
+                actor_name = actor.get('name')
+                actor_role = actor.get('role')
+                actor_thumbnail = actor.get('thumbnail')
+
+                if actor_name not in cast_list:
+                    cast_list[actor_name] = {'thumbnail': actor.get('thumbnail')}
+
+                if not cast_list[actor_name].get('thumbnail') and actor_thumbnail:
+                    cast_list[actor_name].update({'thumbnail': actor_thumbnail})
+
+                if actor_role:
+                    roles = cast_list[actor_name].get('roles', [])
+
+                    if actor_role not in roles:
+                        roles.append(actor_role)
+                        cast_list[actor_name].update({'roles': roles})
+
+
+        cast_cleaned = []
+        for actor in cast_list:
+            cast_cleaned.append({'name': actor,
+                                 'thumbnail': cast_list[actor].get('thumbnail'),
+                                 'role': get_joined_items(cast_list[actor].get('roles', []))
+                                 })
+
+        add_items(self.li, cast_cleaned, type='cast')
+
+
     ''' jump to letter for smsjump navigation
     '''
     def jumptoletter(self):
