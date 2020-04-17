@@ -286,6 +286,7 @@ def handle_cast(li,item):
     li_item = xbmcgui.ListItem(item['name'])
     li_item.setLabel(item['name'])
     li_item.setLabel2(item['role'])
+    li_item.setProperty('role', item['role'])
 
     li_item.setArt({'icon': 'DefaultActor.png',
                     'thumb': item.get('thumbnail', '')
