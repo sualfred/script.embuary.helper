@@ -191,15 +191,16 @@ class Service(xbmc.Monitor):
 
         for item in ['movies', 'tvshows', 'artists', 'musicvideos']:
             query = json_call('VideoLibrary.Get%s' % item,
-                              properties=['art'],
+                              properties=['art', 'title'],
                               sort={'method': 'random'}, limit=40
                               )
 
             try:
-                for art in query['result'][item]:
-                    fanart = art['art'].get('fanart')
-                    if fanart:
-                        arts[item].append(art['art'])
+                for result in query['result'][item]:
+                    if result['art'].get('fanart'):
+                        data = {'title': result.get('title', '')}
+                        data.update(result['art'])
+                        arts[item].append(data)
 
             except KeyError:
                 pass
@@ -215,5 +216,5 @@ class Service(xbmc.Monitor):
     def setfanart(self,key,items):
         arts = random.choice(items)
         winprop(key, arts.get('fanart', ''))
-        for item in ['clearlogo', 'landscape', 'banner', 'poster', 'discart']:
+        for item in ['clearlogo', 'landscape', 'banner', 'poster', 'discart', 'title']:
             winprop('%s.%s' % (key, item), arts.get(item, ''))
