@@ -190,15 +190,16 @@ class Service(xbmc.Monitor):
         arts['videos'] = []
 
         for item in ['movies', 'tvshows', 'artists', 'musicvideos']:
-            query = json_call('VideoLibrary.Get%s' % item,
-                              properties=['art', 'title'],
+            dbtype = 'Video' if item != 'artists' else 'Audio'
+            query = json_call('%sLibrary.Get%s' % (dbtype, item),
+                              properties=['art'],
                               sort={'method': 'random'}, limit=40
                               )
 
             try:
                 for result in query['result'][item]:
                     if result['art'].get('fanart'):
-                        data = {'title': result.get('title', '')}
+                        data = {'title': result.get('label', '')}
                         data.update(result['art'])
                         arts[item].append(data)
 
