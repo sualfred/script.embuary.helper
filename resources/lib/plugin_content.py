@@ -1055,7 +1055,7 @@ class PluginContent(object):
 
         json_query = json_call('Files.GetDirectory',
                                properties=['art', 'title'],
-                               params={'directory': path, 'media': 'plugin'}
+                               params={'directory': path}
                                )
 
         try:
