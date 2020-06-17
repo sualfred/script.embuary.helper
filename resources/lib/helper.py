@@ -15,6 +15,8 @@ import os
 import sys
 import hashlib
 
+from random import sample
+
 ''' Python 2<->3 compatibility
 '''
 try:
@@ -475,3 +477,12 @@ def set_plugincontent(content=None,category=None):
         xbmcplugin.setPluginCategory(int(sys.argv[1]), category)
     if content:
         xbmcplugin.setContent(int(sys.argv[1]), content)
+
+def random_listitems(list,numitems=None):
+    if numitems is None
+        numitems = len(list)
+
+    return sample(list,numitems)
+
+def has_addon(id):
+    return xbmc.getCondVisibility('System.HasAddon(%s)' % id) == 1
