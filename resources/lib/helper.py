@@ -492,7 +492,7 @@ def set_plugincontent(content=None,category=None):
         xbmcplugin.setContent(int(sys.argv[1]), content)
 
 def random_listitems(list,numitems=None):
-    if not numitems:
+    if not numitems or numitems > len(list):
         numitems = len(list)
 
     return sample(list,numitems)
