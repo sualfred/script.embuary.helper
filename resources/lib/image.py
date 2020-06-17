@@ -88,54 +88,12 @@ class ImageBlur():
 
         try:
             img = Image.open(self.filepath)
-            width, height = img.size
-            pixels = img.load()
-
-            data = []
-            for x in range(int(width / 2)):
-                for y in range(int(height / 2)):
-                    cpixel = pixels[x * 2, y * 2]
-                    data.append(cpixel)
-
-            counter, r, g, b = 0, 0, 0, 0
-            for x in range(len(data)):
-                brightness = data[x][0] + data[x][1] + data[x][2]
-                if brightness > 150 and brightness < 720:
-                    r += data[x][0]
-                    g += data[x][1]
-                    b += data[x][2]
-                    counter += 1
-
-            if counter > 0:
-                rAvg = int(r / counter)
-                gAvg = int(g / counter)
-                bAvg = int(b / counter)
-                Avg = int((rAvg + gAvg + bAvg) / 3)
-                minBrightness = 130
-
-                if Avg < minBrightness:
-                    Diff = minBrightness - Avg
-
-                    if rAvg <= (255 - Diff):
-                        rAvg += Diff
-                    else:
-                        rAvg = 255
-                    if gAvg <= (255 - Diff):
-                        gAvg += Diff
-                    else:
-                        gAvg = 255
-                    if bAvg <= (255 - Diff):
-                        bAvg += Diff
-                    else:
-                        bAvg = 255
-
-                imagecolor = 'FF%s%s%s' % (format(rAvg, '02x'), format(gAvg, '02x'), format(bAvg, '02x'))
-                log('Average color: ' + imagecolor, DEBUG)
-
-            else:
-                raise Exception
-
-        except Exception as error:
+            imgResize = img.resize((1,1), Image.ANTIALIAS)
+            col = imgResize.getpixel((0,0))
+            imagecolor = 'FF%s%s%s' % (format(col[0], '02x'), format(col[1], '02x'), format(col[2], '02x'))
+            log('Average color: ' + imagecolor, DEBUG)
+            
+        except:
             log('Use fallback average color: ' + imagecolor, DEBUG)
             pass
 
@@ -230,18 +188,16 @@ def image_info(image):
 ''' get cached images or copy to temp if file has not been cached yet
 '''
 def _openimage(image,targetpath,filename):
-    if not PYTHON3:
-        image = image.encode('utf-8')
+    # some paths require unquoting to get a valid cached thumb hash
+    cached_image_path = url_unquote(image.replace('image://', ''))
+    if cached_image_path.endswith('/'):
+        cached_image_path = cached_image_path[:-1]
 
-    image = url_unquote(image.replace('image://', ''))
-    if image.endswith('/'):
-        image = image[:-1]
-
-    cached_files = list()
-    cachedthumb = xbmc.getCacheThumbName(image)
-    cached_files.append(os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.jpg'))
-    cached_files.append(os.path.join('special://profile/Thumbnails/', cachedthumb[0], cachedthumb[:-4] + '.png'))
-    cached_files.append(os.path.join('special://profile/Thumbnails/Video/', cachedthumb[0], cachedthumb))
+    cached_files = []
+    for path in [xbmc.getCacheThumbName(cached_image_path), xbmc.getCacheThumbName(image)]:
+        cached_files.append(os.path.join('special://profile/Thumbnails/', path[0], path[:-4] + '.jpg'))
+        cached_files.append(os.path.join('special://profile/Thumbnails/', path[0], path[:-4] + '.png'))
+        cached_files.append(os.path.join('special://profile/Thumbnails/Video/', path[0], path))
 
     for i in range(1, 4):
         try:
@@ -252,9 +208,9 @@ def _openimage(image,targetpath,filename):
                     try:
                         img = Image.open(xbmc.translatePath(cache))
                         return img
+
                     except Exception as error:
                         log('Image error: Could not open cached image --> %s' % error, WARNING)
-                        pass
 
             ''' Skin images will be tried to be accessed directly. For all other ones
                 the source will be copied to the addon_data folder to get access.
@@ -266,6 +222,7 @@ def _openimage(image,targetpath,filename):
                 try: # in case image is packed in textures.xbt
                     img = Image.open(xbmc.translatePath(image))
                     return img
+
                 except Exception:
                     return ''
 

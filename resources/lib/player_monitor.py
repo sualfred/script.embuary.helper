@@ -14,7 +14,6 @@ from resources.lib.image import *
 ########################
 
 class PlayerMonitor(xbmc.Monitor):
-
     def __init__(self):
         log('Service: Player monitor started', force=True)
         self.fullscreen_lock = False
@@ -37,15 +36,15 @@ class PlayerMonitor(xbmc.Monitor):
 
             self.get_art_info()
 
+            if condition('Skin.HasSetting(BlurPlayerIcon)'):
+                self.blur_player_icon()
+
             if self.pvr_playback:
                 self.get_channellogo()
 
             if PLAYER.isPlayingVideo() and not self.pvr_playback:
                 self.get_videoinfo()
                 self.get_nextitem()
-
-            if PLAYER.isPlayingAudio() and not self.pvr_playback and condition('!String.IsEmpty(MusicPlayer.DBID) + [String.IsEmpty(Player.Art(thumb)) | String.IsEmpty(Player.Art(album.discart))]'):
-                self.get_songartworks()
 
             if not self.fullscreen_lock:
                 self.do_fullscreen()
@@ -67,7 +66,10 @@ class PlayerMonitor(xbmc.Monitor):
         ''' Playback stopped. Clean up.
         '''
         if method == 'Player.OnStop':
-            xbmc.sleep(2500)
+            while not self.abortRequested(): # workaround for unwanted behaviours on slow systems
+                self.waitForAbort(3)
+                break
+
             if not PLAYER.isPlaying() and xbmcgui.getCurrentWindowId() not in [12005, 12006, 10028, 10500, 10138, 10160]:
                 self.fullscreen_lock = False
                 self.pvr_playback = False
@@ -84,9 +86,8 @@ class PlayerMonitor(xbmc.Monitor):
                     winprop('script.shuffle', clear=True)
 
                     json_call('Player.SetShuffle',
-                                params={'playerid': 1, 'shuffle': False}
-                                )
-
+                              params={'playerid': 1, 'shuffle': False}
+                              )
 
     def clear_playlists(self):
         if self.data['position'] == 0 and condition('Skin.HasSetting(ClearPlaylist)'):
@@ -97,7 +98,6 @@ class PlayerMonitor(xbmc.Monitor):
                 elif self.data['playlistid'] == 1:
                     MUSICPLAYLIST.clear()
                     log('Video playlist has been filled. Clear existing music playlist')
-
 
     def do_fullscreen(self):
         xbmc.sleep(1000)
@@ -120,7 +120,6 @@ class PlayerMonitor(xbmc.Monitor):
                 else:
                     xbmc.sleep(50)
 
-
     def get_audiotracks(self,clear=False):
         xbmc.sleep(100)
         audiotracks = PLAYER.getAvailableAudioStreams()
@@ -128,7 +127,6 @@ class PlayerMonitor(xbmc.Monitor):
             winprop('EmbuaryPlayerAudioTracks.bool', True)
         else:
             winprop('EmbuaryPlayerAudioTracks', clear=True)
-
 
     def get_channellogo(self,clear=False):
         try:
@@ -140,7 +138,6 @@ class PlayerMonitor(xbmc.Monitor):
 
         except Exception:
             winprop('Player.ChannelLogo', clear=True)
-
 
     def get_videoinfo(self,clear=False):
         dbid = xbmc.getInfoLabel('VideoPlayer.DBID')
@@ -194,7 +191,6 @@ class PlayerMonitor(xbmc.Monitor):
         except Exception:
             return
 
-
     def get_nextitem(self,clear=False):
         try:
             if clear:
@@ -203,7 +199,7 @@ class PlayerMonitor(xbmc.Monitor):
             position = int(VIDEOPLAYLIST.getposition())
 
             json_query = json_call('Playlist.GetItems',
-                                    properties=playlist_properties,
+                                    properties=JSON_MAP['playlist_properties'],
                                     limits={"start": position+1, "end": position+2},
                                     params={'playlistid': 1}
                                     )
@@ -249,43 +245,6 @@ class PlayerMonitor(xbmc.Monitor):
             for info in ['Duration','Duration(m)','Duration(s)','Title','TVShowTitle','Genre','Plot','Tagline','Season','Episode','Year','Rating','UserRating','DBID','DBType']:
                 winprop('VideoPlayer.Next.%s' % info, clear=True)
 
-
-    def get_songartworks(self):
-        art = {}
-        try:
-            songdetails = json_call('AudioLibrary.GetSongDetails',
-                                properties=['art', 'albumid'],
-                                params={'songid': int(xbmc.getInfoLabel('MusicPlayer.DBID'))},
-                                )
-
-            songdetails = songdetails['result']['songdetails']
-            art['fanart'] = songdetails['art'].get('fanart', '')
-            art['thumb'] = songdetails['art'].get('thumb', '')
-            art['clearlogo'] = songdetails['art'].get('clearlogo') or songdetails['art'].get('logo')
-
-        except Exception:
-            return
-
-        try:
-            albumdetails = json_call('AudioLibrary.GetAlbumDetails',
-                                properties=['art'],
-                                params={'albumid': int(songdetails['albumid'])},
-                                )
-
-            albumdetails = albumdetails['result']['albumdetails']
-            discart = albumdetails['art'].get('discart') or albumdetails['art'].get('logo')
-            art['discart'] = discart
-            art['album.discart'] = discart
-
-        except Exception:
-            pass
-
-        item = xbmcgui.ListItem()
-        item.setPath(PLAYER.getPlayingFile())
-        item.setArt(art)
-        PLAYER.updateInfoTag(item)
-
-
     def get_art_info(self,clear=False):
         for art in ['Player.Icon', 'Player.Art(poster)', 'Player.Art(tvshow.poster)', 'Pvr.EPGEventIcon']:
             image = xbmc.getInfoLabel(art)
@@ -299,3 +258,9 @@ class PlayerMonitor(xbmc.Monitor):
                 winprop(art + '.width',clear=True)
                 winprop(art + '.height',clear=True)
                 winprop(art + '.ar',clear=True)
+
+    def blur_player_icon(self):
+        ImageBlur(prop='playericon',
+                  file=xbmc.getInfoLabel('Player.Icon'),
+                  radius=5
+                  )

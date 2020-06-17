@@ -1,0 +1,8 @@
+.gitignore export-ignore
+.gitattributes export-ignore
+.github export-ignore
+__pycache__ export-ignore
+*.psd export-ignore
+*.pyo export-ignore
+*.pyc export-ignore
+*.mo export-ignore
