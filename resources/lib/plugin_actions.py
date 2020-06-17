@@ -26,7 +26,7 @@ class PluginActions(object):
             path = 'videodb://tvshows/titles/%s/%s/' % (dbid, self.params.get('season'))
 
         try:
-            xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
+            xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem(offscreen=True))
         except Exception:
             pass
 
@@ -37,7 +37,7 @@ class PluginActions(object):
         jumpcmd = None
 
         try:
-            xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem())
+            xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=xbmcgui.ListItem(offscreen=True))
         except Exception:
             pass
 

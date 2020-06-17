@@ -492,10 +492,10 @@ def set_plugincontent(content=None,category=None):
         xbmcplugin.setContent(int(sys.argv[1]), content)
 
 def random_listitems(list,numitems=None):
-    if numitems is None
+    if not numitems:
         numitems = len(list)
 
     return sample(list,numitems)
 
-def has_addon(id):
-    return xbmc.getCondVisibility('System.HasAddon(%s)' % id) == 1
+def get_addon(id):
+    return xbmcaddon.Addon(id) if xbmc.getCondVisibility('System.HasAddon(%s)' % id) else None

@@ -161,14 +161,16 @@ class Service(xbmc.Monitor):
         for item in ['movies', 'tvshows', 'artists', 'musicvideos']:
             dbtype = 'Video' if item != 'artists' else 'Audio'
             query = json_call('%sLibrary.Get%s' % (dbtype, item),
-                              properties=['art'],
+                              properties = ['art','file'] if item != 'artists' else ['art'],
                               sort={'method': 'random'}, limit=40
                               )
 
             try:
                 for result in query['result'][item]:
                     if result['art'].get('fanart'):
-                        data = {'title': result.get('label', '')}
+                        data = {'title': result.get('label', ''), 'path': ''}
+                        if result['file']:
+                            data.update({'path': 'dbid=%s&amp;type=%s' % (result[item[:-1]+'id'], item[:-1])})
                         data.update(result['art'])
                         arts[item].append(data)
 
@@ -186,5 +188,5 @@ class Service(xbmc.Monitor):
     def setfanart(self,key,items):
         arts = random.choice(items)
         winprop(key, arts.get('fanart', ''))
-        for item in ['clearlogo', 'landscape', 'banner', 'poster', 'discart', 'title']:
+        for item in ['clearlogo', 'landscape', 'banner', 'poster', 'discart', 'title', 'path']:
             winprop('%s.%s' % (key, item), arts.get(item, ''))

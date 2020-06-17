@@ -91,7 +91,7 @@ def createselect(params):
             break
 
         elif label != 'none' and label != '-':
-            li_item = xbmcgui.ListItem(label=label, label2=label2)
+            li_item = xbmcgui.ListItem(label=label, label2=label2, offscreen=True)
             li_item.setArt({'icon': icon})
             selectionlist.append(li_item)
             indexlist.append(i)
@@ -326,7 +326,22 @@ def playitem(params):
     resume = params.get('resume', True)
     file = remove_quotes(params.get('item'))
 
-    if dbtype == 'song':
+    if not dbid and not file:
+        dbtype = xbmc.getInfoLabel('Container.ListItem.DBTYPE')
+
+        if dbtype:
+            dbid = xbmc.getInfoLabel('Container.ListItem.DBID')
+        else:
+            file = xbmc.getInfoLabel('Container.ListItem.Filenameandpath')
+            if not file.startswith('pvr://'):
+                playall(params={'id': xbmc.getInfoLabel('System.CurrentControlID'),'method': 'fromhere', 'limit': 1})
+                return
+
+    if dbtype in ['tvshow','season']:
+        playfolder(params={'dbid': dbid, 'type': dbtype})
+        return
+
+    elif dbtype == 'song':
         param = 'songid'
 
     elif dbtype == 'episode':
@@ -358,7 +373,7 @@ def playitem(params):
                 position = 0
                 resume_time = None
 
-            if position > 0:
+            if position > 0 and resume != 'force':
                 resume_string = xbmc.getLocalizedString(12022)[:-5] + resume_time
                 contextdialog = DIALOG.contextmenu([resume_string, xbmc.getLocalizedString(12021)])
 
@@ -375,7 +390,7 @@ def playitem(params):
     elif file:
         # playmedia() because otherwise resume points get ignored
         execute('PlayMedia(%s)' % file)
-
+        return
 
 def playfolder(params):
     clear_playlists()
@@ -398,13 +413,13 @@ def playfolder(params):
             return
 
         json_query = json_call('VideoLibrary.GetEpisodes',
-                               properties=JSON_MAP['episode_properties'],
+                               properties=['episode'],
                                query_filter={'operator': 'is', 'field': 'season', 'value': '%s' % result['season']},
                                params={'tvshowid': int(result['tvshowid'])}
                                )
     else:
         json_query = json_call('VideoLibrary.GetEpisodes',
-                               properties=JSON_MAP['episode_properties'],
+                               properties=['episode'],
                                params={'tvshowid': dbid}
                                )
 
@@ -414,11 +429,10 @@ def playfolder(params):
         log('Play folder error getting episodes: %s' % error)
         return
 
-    for episode in result:
-        json_call('Playlist.Add',
-                  item={'episodeid': episode['episodeid']},
-                  params={'playlistid': 1}
-                  )
+    json_call('Playlist.Add',
+              item=[{'episodeid': episode['episodeid']} for episode in result],
+              params={'playlistid': 1}
+              )
 
     execute('Dialog.Close(all)')
 
@@ -434,8 +448,9 @@ def playall(params):
     container = params.get('id')
     method = params.get('method')
 
-    playlistid = 0 if params.get('type') == 'music' else 1
     shuffled = get_bool(method,'shuffle')
+
+    limit = params.get('limit', 0) - 1
 
     if shuffled:
         winprop('script.shuffle.bool', True)
@@ -445,7 +460,13 @@ def playall(params):
     else:
         method = 'Container(%s).ListItemAbsolute' % container
 
-    for i in range(int(xbmc.getInfoLabel('Container(%s).NumItems' % container))):
+    items = []
+    numitems = xbmc.getInfoLabel('Container(%s).NumItems' % container)
+    if not numitems:
+        return
+    numitems = int(numitems)
+
+    for i in range(numitems):
 
         if condition('String.IsEqual(%s(%s).DBType,movie)' % (method,i)):
             media_type = 'movie'
@@ -458,17 +479,39 @@ def playall(params):
 
         dbid = xbmc.getInfoLabel('%s(%s).DBID' % (method,i))
         url = xbmc.getInfoLabel('%s(%s).Filenameandpath' % (method,i))
+        path = os.path.dirname(url) if url else xbmc.getInfoLabel('%s(%s).Path' % (method,i))
 
         if media_type and dbid:
-            json_call('Playlist.Add',
-                      item={'%sid' % media_type: int(dbid)},
-                      params={'playlistid': playlistid}
-                      )
+            item = [{'%sid' % media_type: int(dbid)}]
+
+        elif path and (not url or url.endswith('/') or path == url):
+            item = [{'directory': path, 'recursive': True, 'media': 'music'},
+                    {'directory': path, 'recursive': True, 'media': 'video'}]
+
         elif url:
-            json_call('Playlist.Add',
-                      item={'file': url},
-                      params={'playlistid': playlistid}
-                      )
+            item = [{'file': url}]
+
+        items.extend(item)
+
+        if i >= limit >= 0:
+            break
+
+    json_call('Playlist.Add',
+              item=items,
+              params={'playlistid': 0}
+              )
+              
+    json_call('Playlist.Add',
+              item=items,
+              params={'playlistid': 1}
+              )
+
+    numitems = json_call('Playlist.GetProperties',
+                         properties=['size'],
+                         params={'playlistid': 0}
+                         )['result']['size']
+
+    playlistid = 0 if params.get('type') == 'music' or int(numitems) > 0 else 1
 
     json_call('Player.Open',
               item={'playlistid': playlistid, 'position': 0},
@@ -736,3 +779,21 @@ def selecttags(params):
 
 def whitelisttags(params):
     sync_library_tags(recreate=True)
+
+def refreshinfodialog(params):
+    dbid = xbmc.getInfoLabel('Container(2000).ListItemAbsolute(0).DBID')
+    dbtype = xbmc.getInfoLabel('Container(2000).ListItemAbsolute(0).DBType')
+
+    if condition('Window.IsTopMost(movieinformation)') and (winprop('ListItemDBType',window_id=12003) <> dbtype or winprop('ListItemDBID',window_id=12003) <> dbid):
+        winprop('ListItemDBType',value=dbtype,window_id=12003)
+        winprop('ListItemDBID',value=dbid,window_id=12003)
+        execute('setFocus(200,0,absolute)')
+        execute('setFocus(201,0,absolute)')
+        execute('setFocus(202,0,absolute)')
+        execute('setFocus(203,0,absolute)')
+        execute('setFocus(204,0,absolute)')
+        execute('setFocus(205,0,absolute)')
+        execute('SetFocus(100)')
+        addon = get_addon('context.item.extras')
+        if addon:
+            lookforfile(params={'file': '%s%s/' % (xbmc.getInfoLabel('Container(2000).ListItem.Path'), addon.getSetting('extras-folder')), 'prop': 'HasExtras'}) 

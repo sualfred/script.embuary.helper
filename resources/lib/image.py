@@ -105,7 +105,7 @@ class ImageBlur():
 class CreateGenreThumb():
     def __init__(self,genre,images):
         self.images = images
-        self.filename = 'genre_' + md5hash(images) + '.jpg'
+        self.filename = 'genre_' + url_quote(genre) + '_' + md5hash(images) + '.png'
         self.filepath = os.path.join(ADDON_DATA_IMG_PATH, self.filename)
 
         if xbmcvfs.exists(self.filepath):
@@ -122,7 +122,7 @@ class CreateGenreThumb():
         ''' copy source posters to addon_data/img/tmp
         '''
         posters = list()
-        for poster in self.images:
+        for poster in random_listitems(self.images,4):
             posterfile = self.images.get(poster)
             temp_filename = md5hash(posterfile) + '.jpg'
             image = _openimage(posterfile,ADDON_DATA_IMG_TEMP_PATH,temp_filename)
@@ -147,7 +147,7 @@ class CreateGenreThumb():
                 image = ImageOps.fit(poster, (size), method=Image.ANTIALIAS, bleed=0.0, centering=(0.5, 0.5))
                 collage_images.append(image)
 
-            collage = Image.new('RGB', (width, height), (5,5,5))
+            collage = Image.new('RGBA', (width, height), (100,100,100,0))
             i, x, y = 0, 0 ,0
             for row in range(rows):
                 for col in range(cols):
@@ -160,7 +160,7 @@ class CreateGenreThumb():
                 y += thumbnail_height
                 x = 0
 
-            collage.save(self.filepath,optimize=True,quality=75)
+            collage.save(self.filepath,optimize=False,compress_level=1)
 
             return self.filepath
 
@@ -188,6 +188,8 @@ def image_info(image):
 ''' get cached images or copy to temp if file has not been cached yet
 '''
 def _openimage(image,targetpath,filename):
+    if not PYTHON3:
+        image = image.encode('utf-8')
     # some paths require unquoting to get a valid cached thumb hash
     cached_image_path = url_unquote(image.replace('image://', ''))
     if cached_image_path.endswith('/'):

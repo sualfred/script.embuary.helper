@@ -163,7 +163,7 @@ class PluginContent(object):
             for filename in ['%s.jpg' % item, '%s.png' % item]:
                 filepath = resource_dir + filename
                 if xbmcvfs.exists(filepath):
-                    list_item = xbmcgui.ListItem(label=item)
+                    list_item = xbmcgui.ListItem(label=item, offscreen=True)
                     list_item.setArt({'icon': filepath})
                     self.li.append(('', list_item, False))
                     break
@@ -654,7 +654,7 @@ class PluginContent(object):
 
             genre_items = json_call(self.method_item,
                                     properties=['art'],
-                                    sort=self.sort_recent, limit=4,
+                                    sort=self.sort_recent, limit=16,
                                     query_filter={'and': filters}
                                     )
 
@@ -678,7 +678,7 @@ class PluginContent(object):
 
             genre['art'] = posters
 
-            generated_thumb = CreateGenreThumb(genre['label'], posters)
+            generated_thumb = CreateGenreThumb(self.dbtype+'_'+genre['label'], posters)
             if generated_thumb:
                 genre['art']['thumb'] = str(generated_thumb)
 
@@ -1025,7 +1025,7 @@ class PluginContent(object):
                     return
 
                 for letter in alphabet:
-                    li_item = xbmcgui.ListItem(label=letter)
+                    li_item = xbmcgui.ListItem(label=letter, offscreen=True)
 
                     if letter == '#' and first_number:
                         li_path = 'plugin://script.embuary.helper/?action=smsjump&letter=0'
@@ -1065,7 +1065,7 @@ class PluginContent(object):
                 if not arts.get('fanart'):
                     continue
 
-                li_item = xbmcgui.ListItem(label=item.get('title'))
+                li_item = xbmcgui.ListItem(label=item.get('title'), offscreen=True)
                 li_item.setArt(arts)
                 self.li.append(('', li_item, False))
 
