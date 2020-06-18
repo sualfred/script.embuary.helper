@@ -784,16 +784,11 @@ def refreshinfodialog(params):
     dbid = xbmc.getInfoLabel('Container(2000).ListItemAbsolute(0).DBID')
     dbtype = xbmc.getInfoLabel('Container(2000).ListItemAbsolute(0).DBType')
 
-    if condition('Window.IsTopMost(movieinformation)') and (winprop('ListItemDBType',window_id=12003) <> dbtype or winprop('ListItemDBID',window_id=12003) <> dbid):
+    if condition('Window.IsTopMost(movieinformation)') and (winprop('ListItemDBType',window_id=12003) != dbtype or winprop('ListItemDBID',window_id=12003) != dbid):
         winprop('ListItemDBType',value=dbtype,window_id=12003)
         winprop('ListItemDBID',value=dbid,window_id=12003)
-        execute('setFocus(200,0,absolute)')
-        execute('setFocus(201,0,absolute)')
-        execute('setFocus(202,0,absolute)')
-        execute('setFocus(203,0,absolute)')
-        execute('setFocus(204,0,absolute)')
-        execute('setFocus(205,0,absolute)')
+        resetposition(params={'container': '200||201||202||203||204||205'})
         execute('SetFocus(100)')
         addon = get_addon('context.item.extras')
         if addon:
-            lookforfile(params={'file': '%s%s/' % (xbmc.getInfoLabel('Container(2000).ListItem.Path'), addon.getSetting('extras-folder')), 'prop': 'HasExtras'}) 
+            lookforfile(params={'file': '%s%s/' % (xbmc.getInfoLabel('Container(2000).ListItem.Path'), addon.getSetting('extras-folder')), 'prop': 'HasExtras'})
