@@ -486,10 +486,15 @@ def addon_data(file,content=False):
 
 
 def set_plugincontent(content=None,category=None):
+    try:
+        handle = int(sys.argv[1])
+    except ValueError:
+        return
+
     if category:
-        xbmcplugin.setPluginCategory(int(sys.argv[1]), category)
+        xbmcplugin.setPluginCategory(handle, category)
     if content:
-        xbmcplugin.setContent(int(sys.argv[1]), content)
+        xbmcplugin.setContent(handle, content)
 
 def random_listitems(list,numitems=None):
     if not numitems or numitems > len(list):

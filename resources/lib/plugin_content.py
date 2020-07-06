@@ -74,32 +74,55 @@ class PluginContent(object):
     '''
     def getbydbid(self):
         try:
+            dbid = self.dbid
             if self.dbtype == 'tvshow' and self.idtype in ['season', 'episode']:
-                self.dbid = self._gettvshowid()
+                dbid = self._gettvshowid()
+                if self.idtype in ['episode','season']:
+                    self.dbtype = self.idtype
+                    self.key_items = '%ss' % self.dbtype
 
-            json_query = json_call(self.method_details,
+            result = json_call(self.method_details,
                                 properties=self.properties,
-                                params={self.param: int(self.dbid)}
+                                params={self.param: int(dbid)}
                                 )
 
-            result = json_query['result'][self.key_details]
+            result = result['result'][self.key_details]
 
             if self.dbtype == 'episode':
                 try:
-                    season_query = json_call('VideoLibrary.GetSeasons',
-                                             properties=JSON_MAP['season_properties'],
-                                             sort={'order': 'ascending', 'method': 'season'},
-                                             params={'tvshowid': int(result.get('tvshowid'))}
-                                             )
+                    episode = json_call('VideoLibrary.GetEpisodeDetails',
+                                        properties=JSON_MAP['episode_properties'],
+                                        params={'episodeid': int(self.dbid)}
+                                        )
 
-                    season_query = season_query['result']['seasons']
+                    episode = episode['result']['episodedetails']
+                    result.update(episode)
+                
+                    season = json_call('VideoLibrary.GetSeasonDetails',
+                                       properties=JSON_MAP['season_properties'],
+                                       params={'seasonid': int(episode.get('seasonid'))}
+                                       )
 
-                    for season in season_query:
-                        if season.get('season') == result.get('season'):
-                            result['season_label'] = season.get('label')
-                            break
+                    season = season['result']['seasondetails']
+                    result['season_label'] = season.get('label')
 
-                except Exception:
+                except Exception as error:
+                    pass
+
+            elif self.dbtype == 'season':
+                try:
+                    season = json_call('VideoLibrary.GetSeasonDetails',
+                                              properties=JSON_MAP['season_properties'],
+                                              params={'seasonid': int(self.dbid)}
+                                              )
+
+                    season = season['result']['seasondetails']
+                    result.update(season)
+                    self.dbtype = 'tvshow'
+                    self.dbid = dbid
+                    self.key_items = '%ss' % self.dbtype
+
+                except Exception as error:
                     pass
 
         except Exception as error:
@@ -109,7 +132,6 @@ class PluginContent(object):
         add_items(self.li,[result],type=self.dbtype)
         plugin_category = 'DBID #' + str(self.dbid) + ' (' + self.dbtype + ')'
         set_plugincontent(content=self.key_items, category=plugin_category)
-
 
     ''' by custom args to parse own json
     '''
@@ -391,7 +413,7 @@ class PluginContent(object):
         for episode in json_query:
                 use_last_played_season = True
                 last_played_query = json_call('VideoLibrary.GetEpisodes',
-                                              properties=['seasonid', 'season'],
+                                              properties=['seasonid', 'season','episode'],
                                               sort={'order': 'descending', 'method': 'lastplayed'}, limit=1,
                                               query_filter={'and': [{'or': [self.filter_inprogress, self.filter_watched]}, self.filter_no_specials]},
                                               params={'tvshowid': int(episode['tvshowid'])}
@@ -403,23 +425,14 @@ class PluginContent(object):
                 ''' Return the next episode of last played season
                 '''
                 if use_last_played_season:
+                    episode_details = last_played_query['result']['episodes'][0]
                     episode_query = json_call('VideoLibrary.GetEpisodes',
                                               properties=JSON_MAP['episode_properties'],
                                               sort={'order': 'ascending', 'method': 'episode'}, limit=1,
-                                              query_filter={'and': [self.filter_unwatched, {'field': 'season', 'operator': 'is', 'value': str(last_played_query['result']['episodes'][0].get('season'))}]},
-                                              params={'tvshowid': int(episode['tvshowid'])}
-                                              )
-
-                    if episode_query['result']['limits']['total'] < 1:
-                        use_last_played_season = False
-
-                ''' If no episode is left of the last played season, fall back to the very first unwatched episode
-                '''
-                if not use_last_played_season:
-                    episode_query = json_call('VideoLibrary.GetEpisodes',
-                                              properties=JSON_MAP['episode_properties'],
-                                              sort={'order': 'ascending', 'method': 'episode'}, limit=1,
-                                              query_filter={'and': [self.filter_unwatched, self.filter_no_specials]},
+                                              query_filter={'and': [self.filter_unwatched, {'or': [{'and': [{'field': 'season', 'operator': 'is', 'value': str(episode_details['season'])}
+                                                                                                           ,{'field': 'episode', 'operator': 'greaterthan', 'value': str(episode_details['episode']-1)}]}
+                                                                                                    ,{'field': 'season', 'operator': 'greaterthan', 'value': str(episode_details['season'])}
+                                                                                                    ]}]},
                                               params={'tvshowid': int(episode['tvshowid'])}
                                               )
 
