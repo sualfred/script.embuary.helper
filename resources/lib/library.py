@@ -209,6 +209,7 @@ def handle_seasons(li,item):
     li_item.setProperty('unwatchedepisodes', str(unwatchedepisodes))
     li_item.setProperty('isspecial', special)
     li_item.setProperty('season_label', item.get('label', ''))
+    li_item.setProperty('tvshowdbid', str(tvshowdbid))
 
     li.append((file, li_item, folder))
 
@@ -261,6 +262,7 @@ def handle_episodes(li,item):
     li_item.setProperty('resumetime', str(item['resume']['position']))
     li_item.setProperty('totaltime', str(item['resume']['total']))
     li_item.setProperty('season_label', item.get('season_label', ''))
+    li_item.setProperty('tvshowdbid', str(item.get('tvshowid','')))
 
     li_item.setArt({'icon': 'DefaultTVShows.png',
                     'fanart': item['art'].get('tvshow.fanart', ''),
