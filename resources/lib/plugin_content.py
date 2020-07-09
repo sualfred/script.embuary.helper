@@ -413,7 +413,7 @@ class PluginContent(object):
         for episode in json_query:
                 use_last_played_season = True
                 last_played_query = json_call('VideoLibrary.GetEpisodes',
-                                              properties=['seasonid', 'season'],
+                                              properties=['seasonid', 'season','episode'],
                                               sort={'order': 'descending', 'method': 'lastplayed'}, limit=1,
                                               query_filter={'and': [{'or': [self.filter_inprogress, self.filter_watched]}, self.filter_no_specials]},
                                               params={'tvshowid': int(episode['tvshowid'])}
@@ -425,23 +425,14 @@ class PluginContent(object):
                 ''' Return the next episode of last played season
                 '''
                 if use_last_played_season:
+                    episode_details = last_played_query['result']['episodes'][0]
                     episode_query = json_call('VideoLibrary.GetEpisodes',
                                               properties=JSON_MAP['episode_properties'],
                                               sort={'order': 'ascending', 'method': 'episode'}, limit=1,
-                                              query_filter={'and': [self.filter_unwatched, {'field': 'season', 'operator': 'is', 'value': str(last_played_query['result']['episodes'][0].get('season'))}]},
-                                              params={'tvshowid': int(episode['tvshowid'])}
-                                              )
-
-                    if episode_query['result']['limits']['total'] < 1:
-                        use_last_played_season = False
-
-                ''' If no episode is left of the last played season, fall back to the very first unwatched episode
-                '''
-                if not use_last_played_season:
-                    episode_query = json_call('VideoLibrary.GetEpisodes',
-                                              properties=JSON_MAP['episode_properties'],
-                                              sort={'order': 'ascending', 'method': 'episode'}, limit=1,
-                                              query_filter={'and': [self.filter_unwatched, self.filter_no_specials]},
+                                              query_filter={'and': [self.filter_unwatched, {'or': [{'and': [{'field': 'season', 'operator': 'is', 'value': str(episode_details['season'])}
+                                                                                                           ,{'field': 'episode', 'operator': 'greaterthan', 'value': str(episode_details['episode']-1)}]}
+                                                                                                    ,{'field': 'season', 'operator': 'greaterthan', 'value': str(episode_details['season'])}
+                                                                                                    ]}]},
                                               params={'tvshowid': int(episode['tvshowid'])}
                                               )
 
