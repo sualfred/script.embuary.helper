@@ -449,7 +449,7 @@ def playfolder(params):
               params={'playlistid': 1}
               )
 
-    execute('Dialog.Close(all)')
+    execute('Dialog.Close(all,true)')
 
     json_call('Player.Open',
               item={'playlistid': 1, 'position': 0},
@@ -533,7 +533,7 @@ def playall(params):
     playlistid = 0 if params.get('type') == 'music' or num_music > num_video else 1
 
     if num_music or num_video:
-        execute('Dialog.Close(all)')
+        execute('Dialog.Close(all,true)')
         json_call('Player.Open',
                   item={'playlistid': playlistid, 'position': 0},
                   options={'shuffled': shuffled}
@@ -849,23 +849,18 @@ def refreshinfodialog(params):
     if not ldbid or not ldbtype:
         return
 
-    if force or cdbid != ldbid or cdbtype != ldbtype:
+    if cdbid != ldbid or cdbtype != ldbtype:
         addon = get_addon('context.item.extras')
         if addon:
             lookforfile(params={'file': '%s%s/' % (xbmc.getInfoLabel('ListItem.Path'), addon.getSetting('extras-folder')), 'prop': 'HasExtras'})
 
-        if force:
-            execute('Container.Refresh')
-            execute('Info')
-            plugin = PluginContent({'dbid': ldbid, 'type': ldbtype},list())
-            plugin.getbydbid()
-            monitor = xbmc.Monitor()
-            while True:
-                monitor.waitForAbort(1)
-                if plugin.li:
-                    break
-            dialog = xbmcgui.Dialog()
-            dialog.info(plugin.li[0][1])
+    if force:
+        plugin = PluginContent({'dbid': ldbid, 'type': ldbtype},list())
+        plugin.getbydbid()
+        monitor = xbmc.Monitor()
+        while not plugin.li:
+            monitor.waitForAbort(1)
+        DIALOG.info(plugin.li[0][1])
 
     resetposition(params={'container': '200||201||202||203||204||205'})
     execute('SetFocus(100)')
@@ -878,4 +873,8 @@ def toggleplaycount(params):
     playcount = getinfo(params={'dbid': dbid, 'type': dbtype, 'field': 'playcount'})
     playcount = 0 if playcount else 1
     setinfo(params={'dbid': dbid, 'type': dbtype, 'field': 'playcount', 'value': playcount})
-
+    monitor = xbmc.Monitor()
+    while playcount != getinfo(params={'dbid': dbid, 'type': dbtype, 'field': 'playcount'}):
+        monitor.waitForAbort(1)
+    if params.get('info'):
+        refreshinfodialog(params={'force': True})
