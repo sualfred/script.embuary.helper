@@ -99,6 +99,11 @@ def handle_movies(li,item,searchstring=None):
     if searchstring:
         li_item.setProperty('searchstring', searchstring)
 
+    li_item.setProperty('isPlayable', 'true')
+    li_item.setIsFolder(False)
+
+    li_item.setPath(item['file'])
+
     li.append((item['file'], li_item, False))
 
 
@@ -159,12 +164,15 @@ def handle_tvshows(li,item,searchstring=None):
     li_item.setProperty('totalepisodes', str(episode))
     li_item.setProperty('watchedepisodes', str(watchedepisodes))
     li_item.setProperty('unwatchedepisodes', str(unwatchedepisodes))
+    li_item.setIsFolder(folder)
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
 
     if searchstring:
         li_item.setProperty('searchstring', searchstring)
+
+    li_item.setPath(item['file'])
 
     li.append((item['file'], li_item, folder))
 
@@ -210,6 +218,9 @@ def handle_seasons(li,item):
     li_item.setProperty('isspecial', special)
     li_item.setProperty('season_label', item.get('label', ''))
     li_item.setProperty('tvshowdbid', str(tvshowdbid))
+    li_item.setIsFolder(folder)
+
+    li_item.setPath(file)
 
     li.append((file, li_item, folder))
 
@@ -263,6 +274,8 @@ def handle_episodes(li,item):
     li_item.setProperty('totaltime', str(item['resume']['total']))
     li_item.setProperty('season_label', item.get('season_label', ''))
     li_item.setProperty('tvshowdbid', str(item.get('tvshowid','')))
+    li_item.setProperty('isPlayable', 'true')
+    li_item.setIsFolder(False)
 
     li_item.setArt({'icon': 'DefaultTVShows.png',
                     'fanart': item['art'].get('tvshow.fanart', ''),
@@ -287,6 +300,8 @@ def handle_episodes(li,item):
 
     if item['season'] == '0':
         li_item.setProperty('IsSpecial', 'true')
+
+    li_item.setPath(item['file'])
 
     li.append((item['file'], li_item, False))
 
@@ -315,6 +330,8 @@ def handle_genre(li,item):
     li_item.setArt({'icon': 'DefaultGenre.png',
                     'poster': item['art'].get('thumb')
                     })
+
+    li_item.setPath(item['url'])
 
     li.append((item['url'], li_item, True))
 
