@@ -855,7 +855,7 @@ def refreshinfodialog(params):
             lookforfile(params={'file': '%s%s/' % (xbmc.getInfoLabel('ListItem.Path'), addon.getSetting('extras-folder')), 'prop': 'HasExtras'})
 
     if force:
-        plugin = PluginContent({'dbid': ldbid, 'type': ldbtype},list())
+        plugin = PluginContent({'dbid': ldbid, 'type': ldbtype, 'infoOnly': True},list())
         plugin.getbydbid()
         monitor = xbmc.Monitor()
         while not plugin.li:

@@ -131,7 +131,8 @@ class PluginContent(object):
 
         add_items(self.li,[result],type=self.dbtype)
         plugin_category = 'DBID #' + str(self.dbid) + ' (' + self.dbtype + ')'
-        set_plugincontent(content=self.key_items, category=plugin_category)
+        if not self.params.get('infoOnly', False):
+            set_plugincontent(content=self.key_items, category=plugin_category)
 
     ''' by custom args to parse own json
     '''

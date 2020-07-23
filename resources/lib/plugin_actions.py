@@ -9,6 +9,7 @@ import xbmcgui
 
 from resources.lib.library import *
 from resources.lib.helper import *
+from resources.lib.plugin_content import PluginContent
 
 ########################
 
@@ -72,3 +73,9 @@ class PluginActions(object):
 
                 if xbmc.getInfoLabel('ListItem.Sortletter').upper() == letter or letter == '0':
                     break
+
+    def playitem(self):
+        plugin = PluginContent({'dbid': self.params.get('dbid'), 'type': self.params.get('type'), 'infoOnly': True},list())
+        plugin.getbydbid()
+
+        xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, plugin.li[0][1])
