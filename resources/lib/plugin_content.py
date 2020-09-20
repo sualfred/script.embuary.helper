@@ -149,7 +149,7 @@ class PluginContent(object):
     '''
     def getresourceimages(self):
         resource_addon = self.params.get('addon')
-        resource_dir = xbmc.translatePath('resource://%s/' % resource_addon)
+        resource_dir = xbmcvfs.translatePath('resource://%s/' % resource_addon)
 
         string = remove_quotes(self.params.get('string'))
         separator = remove_quotes(self.params.get('separator'))

@@ -17,7 +17,7 @@ from resources.lib.helper import *
 
 BLUR_CONTAINER = xbmc.getInfoLabel('Skin.String(BlurContainer)') or 100000
 BLUR_RADIUS = xbmc.getInfoLabel('Skin.String(BlurRadius)') or ADDON.getSetting('blur_radius')
-BLUR_SATURATION = xbmc.getInfoLabel('Skin.String(BlurSaturation)')
+BLUR_SATURATION = xbmc.getInfoLabel('Skin.String(BlurSaturation)') or '1.0'
 OLD_IMAGE = ''
 
 #################################################################################################
@@ -210,7 +210,7 @@ def _openimage(image,targetpath,filename):
             for cache in cached_files:
                 if xbmcvfs.exists(cache):
                     try:
-                        img = Image.open(xbmc.translatePath(cache))
+                        img = Image.open(xbmcvfs.translatePath(cache))
                         return img
 
                     except Exception as error:
@@ -224,7 +224,7 @@ def _openimage(image,targetpath,filename):
                     image = os.path.join('special://skin/media/', image)
 
                 try: # in case image is packed in textures.xbt
-                    img = Image.open(xbmc.translatePath(image))
+                    img = Image.open(xbmcvfs.translatePath(image))
                     return img
 
                 except Exception:
