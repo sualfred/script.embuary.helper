@@ -852,7 +852,9 @@ def refreshinfodialog(params):
     if cdbid != ldbid or cdbtype != ldbtype:
         addon = get_addon('context.item.extras')
         if addon:
-            lookforfile(params={'file': '%s%s/' % (xbmc.getInfoLabel('ListItem.Path'), addon.getSetting('extras-folder')), 'prop': 'HasExtras'})
+            extras_path = '%s../%s/' if ldbtype == 'episode' else '%s%s/'
+            extras_path = extras_path % (xbmc.getInfoLabel('ListItem.Path'), addon.getSetting('extras-folder'))
+            lookforfile(params={'file': extras_path, 'prop': 'HasExtras'})
 
     if force:
         plugin = PluginContent({'dbid': ldbid, 'type': ldbtype, 'infoOnly': True},list())
