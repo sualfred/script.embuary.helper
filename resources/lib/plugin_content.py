@@ -18,6 +18,7 @@ class PluginContent(object):
         self.dbtitle = remove_quotes(params.get('title'))
         self.dblabel = remove_quotes(params.get('label'))
         self.dbtype = remove_quotes(params.get('type'))
+        self.generate_collage = False if (remove_quotes(params.get('collage')).lower() == 'false') else True
         self.exclude = remove_quotes(params.get('exclude'))
         self.dbcontent = remove_quotes(params.get('content'))
         self.dbid = remove_quotes(params.get('dbid'))
@@ -633,7 +634,7 @@ class PluginContent(object):
         set_plugincontent(content='videos', category=ADDON.getLocalizedString(32013))
 
 
-    ''' genres listing with 4 posters of each available genre content
+    ''' genres listing with 4 posters and 4 fanarts of each available genre content
     '''
     def getgenre(self):
         json_query = json_call('VideoLibrary.GetGenres',
@@ -654,7 +655,7 @@ class PluginContent(object):
 
             genre_items = json_call(self.method_item,
                                     properties=['art'],
-                                    sort=self.sort_recent, limit=4,
+                                    sort=self.sort_random, limit=4,
                                     query_filter={'and': filters}
                                     )
 
@@ -667,20 +668,28 @@ class PluginContent(object):
                 continue
 
             posters = {}
+            fanarts = {}
             index = 0
             try:
                 for art in genre_items:
                     poster = 'poster.%s' % index
                     posters[poster] = art['art'].get('poster', '')
+                    fanart = 'fanart.%s' % index
+                    fanarts[fanart] = art['art'].get('fanart', '')
                     index += 1
             except Exception:
                 pass
 
             genre['art'] = posters
+            genre['art'].update(fanarts)
+            genre['art']['fanart'] = fanarts['fanart.0']
 
-            generated_thumb = CreateGenreThumb(genre['label'], posters)
-            if generated_thumb:
-                genre['art']['thumb'] = str(generated_thumb)
+            if self.generate_collage:
+                generated_thumb = CreateGenreThumb(genre['label'], posters)
+                if generated_thumb:
+                    genre['art']['thumb'] = str(generated_thumb)
+            else:
+                genre['art']['thumb'] = posters['poster.0']
 
             if self.tag:
                 xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'], self.tag, self.dbtype)
