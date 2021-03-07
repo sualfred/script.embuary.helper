@@ -693,10 +693,9 @@ class PluginContent(object):
 
             if self.tag:
                 xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]},{"field":"tag","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'], self.tag, self.dbtype)
+                genre['url'] = 'videodb://{0}s/titles/?xsp={1}'.format(self.dbtype, url_quote(xsp))
             else:
-                xsp = '{"rules":{"and":[{"field":"genre","operator":"is","value":["%s"]}]},"type":"%ss"}' % (genre['label'],self.dbtype)
-
-            genre['url'] = 'videodb://{0}s/titles/?xsp={1}'.format(self.dbtype, url_quote(xsp))
+                genre['url'] = 'videodb://{0}s/genres/{1}/'.format(self.dbtype, genre['genreid'])
 
             genres.append(genre)
 
