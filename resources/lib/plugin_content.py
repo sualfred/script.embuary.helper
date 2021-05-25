@@ -23,6 +23,7 @@ class PluginContent(object):
         self.dbid = remove_quotes(params.get('dbid'))
         self.idtype = remove_quotes(params.get('idtype'))
         self.season = remove_quotes(params.get('season'))
+        self.tvshowtype = remove_quotes(params.get('tvshowtype'))
         self.tag = remove_quotes(params.get('tag'))
         self.playlist = remove_quotes(params.get('playlist'))
         self.unwatched = remove_quotes(params.get('unwatched'))
@@ -618,17 +619,31 @@ class PluginContent(object):
                 add_items(self.li, json_query, type='movie')
 
         if self.dbtype != 'movie':
-            json_query = json_call('VideoLibrary.GetEpisodes',
-                                   properties=JSON_MAP['episode_properties'],
-                                   sort=self.sort_lastplayed,
-                                   query_filter={'and': filters}
-                                   )
-            try:
-                json_query = json_query['result']['episodes']
-            except Exception:
-                log('In progress media: No episodes found.')
+            if self.tvshowtype == 'tvshows':
+                json_query = json_call('VideoLibrary.GetTVShows',
+                                    properties=JSON_MAP['tvshow_properties'],
+                                    sort=self.sort_lastplayed,
+                                    query_filter={'and': filters}
+                                    )
+                try:
+                    json_query = json_query['result']['tvshows']
+                except Exception:
+                    log('In progress media: No episodes found.')
+                else:
+                    add_items(self.li, json_query, type='tvshow')
             else:
-                add_items(self.li, json_query, type='episode')
+                json_query = json_call('VideoLibrary.GetEpisodes',
+                                    properties=JSON_MAP['episode_properties'],
+                                    sort=self.sort_lastplayed,
+                                    query_filter={'and': filters}
+                                    )
+                try:
+                    json_query = json_query['result']['episodes']
+                except Exception:
+                    log('In progress media: No episodes found.')
+                else:
+                    add_items(self.li, json_query, type='episode')
+            
 
         set_plugincontent(content='videos', category=ADDON.getLocalizedString(32013))
 
