@@ -9,6 +9,7 @@ on:
 
 jobs:
   default:
+    if: github.repository == 'sualfred/script.embuary.helper'
     runs-on: ubuntu-latest
 
     strategy:
