@@ -88,6 +88,7 @@ class Service(xbmc.Monitor):
         service_interval = float(service_interval)
         background_interval = xbmc.getInfoLabel('Skin.String(BackgroundInterval)') or ADDON.getSetting('background_interval')
         background_interval = int(background_interval)
+        background_interval_count = background_interval
         widget_refresh = 0
         get_backgrounds = 200
 
@@ -109,7 +110,7 @@ class Service(xbmc.Monitor):
 
                 ''' Set background properties
                 '''
-                if background_interval >= 10:
+                if background_interval_count >= background_interval:
                     if arts.get('all'):
                         self.setfanart('EmbuaryBackground', arts['all'])
                     if arts.get('videos'):
@@ -125,10 +126,10 @@ class Service(xbmc.Monitor):
                     if arts.get('artists'):
                         self.setfanart('EmbuaryBackgroundMusic', arts['artists'])
 
-                    background_interval = 0
+                    background_interval_count = 0
 
                 else:
-                    background_interval += service_interval
+                    background_interval_count += service_interval
 
                 ''' Blur backgrounds
                 '''
