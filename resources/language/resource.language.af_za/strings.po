@@ -16,6 +16,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.6.2\n"
 
+msgctxt "Addon Summary"
+msgid "Embuary Helper Script"
+msgstr ""
+
+msgctxt "Addon Description"
+msgid "Helper script to provide features and functions to the Embuary skin. A full documentation can be found on GitHub: https://github.com/sualfred/script.embuary.helper/wiki"
+msgstr ""
+
 msgctxt "#32000"
 msgid "Error"
 msgstr "Fout"
