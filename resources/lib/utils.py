@@ -424,6 +424,17 @@ def playfolder(params):
               )
 
 
+def playlistplayoffset(params):
+    playlistid = 0 if params.get('type') == 'music' else 1
+    
+    playlist = xbmc.PlayList(playlistid)
+    current = playlist.getposition()
+    selected = xbmc.getInfoLabel('ListItem.CurrentItem')
+    index = int(selected) - int(current) -1
+
+    xbmc.executebuiltin('Playlist.PlayOffset(%s)' % index)
+
+
 def playall(params):
     clear_playlists()
 
