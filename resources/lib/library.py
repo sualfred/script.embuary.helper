@@ -110,6 +110,7 @@ def handle_tvshows(li,item,searchstring=None):
     episode = item['episode']
     watchedepisodes = item['watchedepisodes']
     unwatchedepisodes = get_unwatched(episode,watchedepisodes)
+    watchedepisodepercent = get_watched_percent(episode, watchedepisodes)
 
     if not condition('Window.IsVisible(movieinformation)'):
         folder = True
@@ -159,6 +160,7 @@ def handle_tvshows(li,item,searchstring=None):
     li_item.setProperty('totalepisodes', str(episode))
     li_item.setProperty('watchedepisodes', str(watchedepisodes))
     li_item.setProperty('unwatchedepisodes', str(unwatchedepisodes))
+    li_item.setProperty('watchedepisodepercent', str(watchedepisodepercent))
 
     li_item.setArt(item['art'])
     li_item.setArt({'icon': 'DefaultVideo.png'})
@@ -175,6 +177,7 @@ def handle_seasons(li,item):
     episode = item['episode']
     watchedepisodes = item['watchedepisodes']
     unwatchedepisodes = get_unwatched(episode,watchedepisodes)
+    watchedepisodepercent = get_watched_percent(episode, watchedepisodes)
 
     if season == 0:
         title = '%s' % (xbmc.getLocalizedString(20381))
@@ -207,6 +210,7 @@ def handle_seasons(li,item):
 
     li_item.setProperty('watchedepisodes', str(watchedepisodes))
     li_item.setProperty('unwatchedepisodes', str(unwatchedepisodes))
+    li_item.setProperty('watchedepisodepercent', str(watchedepisodepercent))
     li_item.setProperty('isspecial', special)
     li_item.setProperty('season_label', item.get('label', ''))
 
@@ -321,6 +325,12 @@ def get_unwatched(episode,watchedepisodes):
         return unwatchedepisodes
     else:
         return 0
+
+def get_watched_percent(total, watched):
+    if total == None or total == 0 or watched == None:
+        return 0
+    else:
+        return (watched * 100) // total
 
 
 def _get_cast(castData):
