@@ -27,8 +27,7 @@ msgid "Error"
 msgstr ""
 
 msgctxt "#32001"
-msgid ""
-"This is a tool to provide features to a skin and requires skin integration."
+msgid "This is a tool to provide features to a skin and requires skin integration."
 msgstr ""
 
 msgctxt "#32002"
@@ -108,9 +107,7 @@ msgid "Background change interval"
 msgstr ""
 
 msgctxt "#32019"
-msgid ""
-"This will delete all created images (blurred backgrounds, genre thumbs, "
-"etc.) in the addon_data folder. Do you want to proceed?"
+msgid "This will delete all created images (blurred backgrounds, genre thumbs, etc.) in the addon_data folder. Do you want to proceed?"
 msgstr ""
 
 msgctxt "#32022"
