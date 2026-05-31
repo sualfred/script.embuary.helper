@@ -94,9 +94,15 @@ class Service(xbmc.Monitor):
 
         while not self.abortRequested() and not self.restart:
 
-            ''' Only run timed tasks if screensaver is inactive to avoid keeping NAS/servers awake
+            ''' Only run timed tasks if screensaver is inactive to avoid keeping NAS/servers awake.
+                Also skip them while something is playing: grabfanart() issues several synchronous
+                JSON-RPC library queries (and ImageBlur() runs a PIL blur) on this service thread,
+                which can briefly starve the video render thread and cause microstutters on weaker
+                devices. The backgrounds these feed are not visible during fullscreen playback
+                anyway. Gated on isPlaying() rather than isPlayingVideo() so a brief pause or seek
+                cannot let the grabber slip through and hitch playback on resume.
             '''
-            if not self.screensaver:
+            if not self.screensaver and not xbmc.Player().isPlaying():
 
                 ''' Grab fanarts
                 '''
