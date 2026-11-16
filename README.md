@@ -10,10 +10,16 @@ A widget and helper add-on for Kodi 21 (Omega) skins. It provides library-backed
 
 Install the Flatscan repository once, and Kodi will keep the add-on up to date:
 
-1. In Kodi, enable **Settings → System → Add-ons → Unknown sources**.
-2. **Settings → File manager → Add source**, enter `https://flatscan.github.io/kodi-repo/` and name it `flatscan`.
-3. **Settings → Add-ons → Install from zip file → flatscan** and pick `repository.flatscan-<version>.zip`.
-4. **Install from repository → Flatscan Repository**, open the category it is listed under and install **Flatscan Widgets**.
+1. **Settings → File manager → Add source**, enter `https://flatscan.github.io/kodi-repo/` and name it `flatscan`.
+2. **Settings → Add-ons → Install from zip file**. Kodi will say installing from unknown sources is disabled; choose **Settings** and enable **Unknown sources** (confirm the warning with **Yes**), then go back.
+3. **Install from zip file → flatscan** and pick `repository.flatscan-<version>.zip`.
+4. **Install from repository → Flatscan Repository → Video add-ons** (the add-on also shows under Program add-ons and Services) and install **Flatscan Widgets**.
+
+**Unknown sources** is only needed to install the repository zip, so you can switch it off again afterwards.
+
+### Manual install
+
+Download `script.flatscan.widgets-<version>.zip` from the [GitHub releases](https://github.com/flatscan/flatscanwidgets/releases) and use **Install from zip file**. The zip must contain a top-level `script.flatscan.widgets/` folder with `addon.xml` inside it, so GitHub's *Download ZIP* of a branch (folder `flatscanwidgets-<branch>`) is rejected by Kodi.
 
 ## Using the widgets
 

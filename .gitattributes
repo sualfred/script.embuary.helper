@@ -1,6 +1,11 @@
+* text=auto eol=lf
+*.png binary
+
 # Development files left out of release zips (git archive), see kodi-repo/build.py
+# Keep in sync with the robocopy exclusions in .vscode/tasks.json
 .gitattributes export-ignore
 .gitignore export-ignore
 .vscode export-ignore
 CLAUDE.md export-ignore
+README.md export-ignore
 TODO.md export-ignore
